@@ -1,0 +1,92 @@
+ref-001:
+  url: https://www.robots.ox.ac.uk/~vgg/data/pets/
+  label: Oxford-IIIT Pet
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://susanqq.github.io/UTKFace/
+  label: UTKFace
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://depth-anything-v2.github.io/
+  label: 著者公開の同じ結果集
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://arxiv.org/html/2006.10204v1#S4.F6
+  label: 'BlazePose: On-device Real-time Body Pose tracking, Figure 6'
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker
+  label: MediaPipe Pose：公式の結果例とガイド ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://arxiv.org/abs/1801.00868
+  label: Panoptic Segmentation：3種類の出力定義 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-007:
+  url: https://arxiv.org/html/2408.00714v2
+  label: SAM 2 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-008:
+  url: https://arxiv.org/html/2406.09414v2
+  label: Depth Anything V2 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-depth-input.jpg:
+  url: content/fields/vision/media/depth-input.jpg
+  label: depth-input.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-depth-result.jpg:
+  url: content/fields/vision/media/depth-result.jpg
+  label: depth-result.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-pose-result.png:
+  url: content/fields/vision/media/pose-result.png
+  label: pose-result.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-depth-bicycle-input.jpg:
+  url: content/fields/vision/media/depth-bicycle-input.jpg
+  label: depth-bicycle-input.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-depth-bicycle-result.jpg:
+  url: content/fields/vision/media/depth-bicycle-result.jpg
+  label: depth-bicycle-result.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-pet-dog.jpg:
+  url: content/fields/vision/media/pet-dog.jpg
+  label: pet-dog.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-utkface-train-2000-age-30.jpg:
+  url: content/fields/vision/media/utkface-train-2000-age-30.jpg
+  label: utkface-train-2000-age-30.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-utkface-train-2001-age-35.jpg:
+  url: content/fields/vision/media/utkface-train-2001-age-35.jpg
+  label: utkface-train-2001-age-35.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-blazepose-fig6-yoga1.png:
+  url: content/fields/vision/media/blazepose-fig6-yoga1.png
+  label: blazepose-fig6-yoga1.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-blazepose-fig6-yoga2.png:
+  url: content/fields/vision/media/blazepose-fig6-yoga2.png
+  label: blazepose-fig6-yoga2.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

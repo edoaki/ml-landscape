@@ -1,0 +1,52 @@
+/* Learning methods: one concrete example per section, readable on phones. */
+body[data-page="efficiency"] .learning-figure { padding: 22px; }
+.learning-panels { display: flex; align-items: stretch; gap: 10px; }
+.learning-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 18px 10px; border: 1px solid #cddbd1; border-radius: 10px; background: #f5f8f4; }
+.learning-panel:last-child { background: #faf3eb; border-color: #e4ceb8; }
+.learning-label { font-size: .8rem; color: #52685b; }
+.learning-example { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 86px; font-size: 1.05rem; font-weight: 650; line-height: 1.8; }
+.learning-caption { font-size: .8rem; line-height: 1.7; color: #52685b; }
+.learning-arrow { align-self: center; color: #738679; font-size: 1.3rem; }
+.learning-example mark { background: #e2ecd4; padding: 2px 7px; color: #294337; border-radius: 4px; }
+.learning-example img { width: 100px; height: 86px; object-fit: cover; border-radius: 5px; }
+.learning-photos { display: flex; gap: 6px; }
+.learning-photos img { width: 62px; height: 74px; }
+.learning-photos .learning-crop { object-fit: none; object-position: 50% 40%; }
+.learning-detail { margin: 16px 0 40px; border: 1px solid #cddbd1; border-radius: 10px; padding: 16px; }
+.learning-detail summary { cursor: pointer; font-weight: 600; }
+@media (max-width: 650px) {
+  .learning-panels { flex-direction: column; }
+  .learning-panel { gap: 8px; padding: 14px; }
+  .learning-example { min-height: 46px; }
+  .learning-arrow { transform: rotate(90deg); line-height: 1; }
+  body[data-page="efficiency"] .learning-figure { padding: 14px; }
+}
+
+/* Sparse attention: the same positions, fewer computed pairs. */
+.attention-patterns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.attention-pattern-panel h4 { text-align: center; margin: 0 0 8px; }
+.attention-pattern-panel { min-width: 0; }
+.attention-pattern-panel svg { display: block; width: 100%; min-width: 0; height: auto; padding: 0; }
+.attention-pattern-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; font-size: .8rem; margin-top: 12px; }
+.attention-pattern-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.attention-pattern-legend i { display: inline-block; width: 12px; height: 12px; border: 1px solid #b2bdb6; border-radius: 2px; }
+@media (max-width: 650px) { .attention-patterns { grid-template-columns: 1fr; } }
+.fa-demo { padding: 18px; }
+.fa-panel { min-width: 0; text-align: center; font-size: .85rem; }
+.fa-panel h4 { margin: 0 0 16px; font-size: 1rem; }
+.fa-input, .fa-output { padding: 12px 6px; background: #edf1f6; border-radius: 5px; }
+.fa-memory { border: 1px solid #cdd8d0; border-radius: 6px; padding: 12px 6px; }
+.fa-memory small { display: block; }
+.fa-arrow { padding: 12px 2px; color: #657568; }
+.fa-blocks { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
+.fa-block { width: 54px; height: 64px; background: #f2f3f0; color: #b5bdb7; border: 2px solid transparent; border-radius: 4px; display: flex; flex-direction: column; }
+.fa-block b { font-size: 12px; }
+.fa-block span { font-size: 27px; }
+.fa-block.filled { background: #dce5f2; color: #526ba3; }
+.fa-work { min-height: 64px; margin: 12px 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.fa-tile { min-width: 58px; padding: 14px 4px; color: #657568; background: #f2f3f0; border-radius: 4px; border: 2px solid transparent; }
+.fa-tile-label { max-width: 135px; }
+.fa-demo .active { background: #fcf0cd; color: #694714; border-color: #c39038; }
+.fa-output.done { background: #dcebd9; color: #294337; }
+.fa-status { min-height: 5.8em; margin: 12px 0 0; font-size: .85rem; text-align: left; }
+.fa-explanation { margin: 10px 0 0; font-size: .85rem; }

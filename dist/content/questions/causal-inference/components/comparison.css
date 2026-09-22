@@ -1,0 +1,12 @@
+.causal-comparison { margin: 28px 0; border: 1px solid #d5dfd5; border-radius: 10px; overflow: hidden; background: #fff; }
+.causal-panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.causal-panel { padding: 20px; }
+.causal-panel + .causal-panel { border-left: 1px solid #d5dfd5; background: #f7faf5; }
+.causal-panel h3 { font-size: 18px; margin: 0 0 8px; }
+.causal-panel .causal-scene { font-size: 13px; margin: 0 0 12px; color: #516457; }
+.causal-panel svg { display: block; width: 100%; min-width: 0; max-width: 100%; height: auto; }
+.causal-panel .causal-takeaway { font-size: 16px; font-weight: 700; line-height: 1.65; margin: 18px 0 0; }
+@media (max-width: 700px) { .causal-panels { grid-template-columns: 1fr; } .causal-panel { padding: 16px; } .causal-panel + .causal-panel { border-left: 0; border-top: 1px solid #d5dfd5; } }
+
+.causal-graph { border: 1px solid #d5dfd5; border-radius: 10px; background: #fff; margin: 28px 0; overflow: hidden; }
+.causal-graph svg { display: block; width: 100%; max-width: 560px; min-width: 0; height: auto; margin: 16px auto; }

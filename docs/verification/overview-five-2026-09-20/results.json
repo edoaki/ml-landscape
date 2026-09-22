@@ -1,0 +1,149 @@
+{
+  "views": [
+    {
+      "page": "classical",
+      "width": 1440,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "introduction",
+      "width": 1440,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "decision-making",
+      "width": 1440,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "life-science",
+      "width": 1440,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "earth-science",
+      "width": 1440,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "ensembles-experts",
+      "width": 1440,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "classical",
+      "width": 390,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "introduction",
+      "width": 390,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "decision-making",
+      "width": 390,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "life-science",
+      "width": 390,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "earth-science",
+      "width": 390,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "ensembles-experts",
+      "width": 390,
+      "javascript": true,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "classical",
+      "width": 1440,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "introduction",
+      "width": 1440,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "decision-making",
+      "width": 1440,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "life-science",
+      "width": 1440,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "earth-science",
+      "width": 1440,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "ensembles-experts",
+      "width": 1440,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "classical",
+      "width": 390,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "introduction",
+      "width": 390,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "decision-making",
+      "width": 390,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "life-science",
+      "width": 390,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "earth-science",
+      "width": 390,
+      "javascript": false,
+      "closed_and_open": "pass"
+    },
+    {
+      "page": "ensembles-experts",
+      "width": 390,
+      "javascript": false,
+      "closed_and_open": "pass"
+    }
+  ],
+  "errors": []
+}

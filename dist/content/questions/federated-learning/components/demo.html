@@ -1,0 +1,26 @@
+<figure class="fed-figure" id="fed-demo" aria-labelledby="fed-round-title">
+  <div class="fed-inner">
+    <strong class="fed-title" id="fed-round-title">記録を残して、モデルを共有</strong>
+    <div class="fed-step fed-server">
+      <h3>① 共通モデルを各工場へ配る</h3>
+      <p>共通モデルを管理するサーバーから、同じモデルを送る。</p>
+    </div>
+    <div class="fed-arrow">↓ モデルを送る</div>
+    <div class="fed-step fed-local">
+      <h3>② それぞれの工場で学習する</h3>
+      <div class="fed-factories">
+        <div class="fed-factory"><strong>工場A</strong><span class="fed-record">Aの設備記録</span><span>↓ 学習に使う</span><b>学習後のモデル</b></div>
+        <div class="fed-factory"><strong>工場B</strong><span class="fed-record">Bの設備記録</span><span>↓ 学習に使う</span><b>学習後のモデル</b></div>
+        <div class="fed-factory"><strong>工場C</strong><span class="fed-record">Cの設備記録</span><span>↓ 学習に使う</span><b>学習後のモデル</b></div>
+      </div>
+      <p><strong>設備記録は、各工場の外へ出さない。</strong></p>
+    </div>
+    <div class="fed-arrow">↓ 学習後のモデルを送る</div>
+    <div class="fed-step fed-server">
+      <h3>③ 学習したモデルをまとめる</h3>
+      <p>サーバーがA・B・Cで調整した数値を平均し、新しい共通モデルを作る。</p>
+    </div>
+    <p class="fed-repeat">↳ 新しい共通モデルを①で配り、繰り返す</p>
+  </div>
+  <figcaption>工場とサーバーの間を移動するのは、モデルの計算に使う数値です。設備記録そのものは移動しません。学習の流れを示した模式図です。</figcaption>
+</figure>

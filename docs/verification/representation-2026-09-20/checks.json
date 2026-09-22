@@ -1,0 +1,26 @@
+[
+  {
+    "width": 1440,
+    "javascript": true,
+    "figures": 5,
+    "horizontal_overflow": false,
+    "svg_text_clipping": false,
+    "page_errors": []
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "figures": 5,
+    "horizontal_overflow": false,
+    "svg_text_clipping": false,
+    "page_errors": []
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "figures": 5,
+    "horizontal_overflow": false,
+    "svg_text_clipping": false,
+    "page_errors": []
+  }
+]

@@ -1,0 +1,21 @@
+/* Each figure makes one comparison; the panels stack before labels get small. */
+.ig-figure { background: #fafbf7; }
+.ig-panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding: 22px; }
+.ig-panel { min-width: 0; }
+.ig-panel h3 { font-size: 17px; margin: 0 0 12px; line-height: 1.6; }
+.ig-panel .ig-takeaway { font-size: 15px; font-weight: 600; line-height: 1.8; margin: 12px 0 0; }
+.ig-figure svg { display: block; width: 100%; height: auto; min-width: 0; max-width: 380px; margin: 0 auto; font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif; }
+.ig-figure svg text { fill: #243b30; font-size: 16px; }
+.ig-figure svg .ig-label { font-size: 20px; font-weight: 650; }
+.ig-legend { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 20px 22px 0; font-size: 14px; }
+.ig-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.ig-swatch { display: inline-block; width: 26px; border-top: 3px solid; flex: 0 0 auto; }
+.ig-straight { border-color: #386b9b; border-top-style: dashed; }
+.ig-shortest { border-color: #28735c; }
+@media (max-width: 1150px) { .ig-panels { grid-template-columns: 1fr; gap: 28px; } }
+@media (max-width: 520px) {
+  .ig-panels { padding: 14px 10px; }
+  .ig-legend { padding: 14px 10px 0; gap: 8px 16px; }
+}
+
+.ig-quadratic { border-color: #a65c26; border-top-style: dashed; }

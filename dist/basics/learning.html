@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="学習に使える情報の違いを、製品検査の例で比べます。人が付けた正解、データから作る答え、行動の結果が、それぞれ何を教えるかを説明します。"><meta name="color-scheme" content="light">
+<title>学習の枠組み | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<link rel="stylesheet" href="../content/basics/learning/components/page.css">
+</head>
+<body data-page="learning" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details open><summary>基礎と代表的な機械学習手法</summary><a href="fundamentals.html">学習・最適化の基本概念</a><a href="learning.html" aria-current="page">学習の枠組み</a><a href="probabilistic-inference.html">確率モデルとベイズ推論</a><a href="classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">基礎と代表的な機械学習手法 · <span lang="en">Learning Paradigms</span></p><h1>学習の枠組み</h1><p class="lead">学習に使える情報の違いを、製品検査の例で比べます。人が付けた正解、データから作る答え、行動の結果が、それぞれ何を教えるかを説明します。</p></header>
+<h2 id="learning-signal">教師信号と学習の枠組み</h2>
+<p>機械学習では、予測や行動を改善するための手がかりを<strong>教師信号</strong>と呼びます。手がかりが人の付けた正解か、データから作った答えか、行動した後の報酬かによって、学び方が変わります。モデルは、その手がかりに合うよう内部の数値（重み）を調整します。</p>
+<p>例えば製品写真から傷を見つけたいとします。写真に「傷あり」と教える方法も、ラベルのない写真を先に読ませて形を学ぶ方法もあります。次の表は、同じ検査の場面で利用できる情報を変えた例です。</p>
+<table>
+<thead>
+<tr>
+<th>枠組み</th>
+<th>学習に渡せる情報</th>
+<th>この例で学ぶこと</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>教師あり</td>
+<td>写真と傷の有無</td>
+<td>写真から傷あり／なしを予測</td>
+</tr>
+<tr>
+<td>教師なし</td>
+<td>写真だけ</td>
+<td>見え方の似た製品をまとめる。まとまりの意味は人が調べる</td>
+</tr>
+<tr>
+<td>自己教師あり</td>
+<td>写真の一部と、隠す前の写真</td>
+<td>隠した部分を当て、形や模様の特徴を学ぶ</td>
+</tr>
+<tr>
+<td>半教師あり</td>
+<td>正解付き100枚と、正解なし1万枚</td>
+<td>少ない正解と多くの写真の両方を使って傷を分類</td>
+</tr>
+<tr>
+<td>弱教師あり</td>
+<td>個々の傷の位置はなく、製品全体の合否だけ</td>
+<td>粗い正解から、傷を捉える手がかりを学ぶ</td>
+</tr>
+<tr>
+<td>強化学習</td>
+<td>カメラを動かした結果と、検査成功などの報酬</td>
+<td>どの角度から撮れば見落としを減らせるかを学ぶ</td>
+</tr>
+</tbody>
+</table>
+<p>枚数は説明用です。半教師ありと弱教師ありの条件は重なることもあります。「どの情報が使えるか」を確かめる方が、名前だけで分類するより大切です。</p>
+<section id="supervised">
+<h2>教師あり学習</h2>
+<p><strong>教師あり学習</strong>は、入力と正解の組から、未知の入力への答えを予測する方法です。製品写真に「傷あり／なし」という<strong>ラベル</strong>を付け、予測と正解を比べてモデルの重みを調整します。学習後は、新しい写真だけを渡して判定します。</p>
+<p>種類を答える問題を<strong>分類</strong>、傷の長さなど数値を答える問題を<strong>回帰</strong>と呼びます。いずれも、練習に使わなかった製品で役立つかを確かめます。</p>
+<details>
+<summary>別の例：メール分類の学習と利用</summary>
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>メール本文を読み、種類を予測する</p>
+<div class="lf-mail"><span>受信メール</span><strong>件名：当選のお知らせ</strong><p>賞品を受け取るには、こちらから<br>今すぐ手続きをしてください。</p></div>
+<div class="lf-split"><div><span class="lf-kicker">モデルの予測の例</span><p class="lf-large">通常のメール</p></div><div><span class="lf-kicker">用意しておいた正解</span><p class="lf-large"><mark>迷惑メール</mark></p></div></div>
+<p class="lf-step"><span>2</span>正解と比べて学習する</p>
+<p class="lf-takeaway">この例では予測が外れている。「迷惑メール」の予測確率が高くなるよう、モデルの重みを調整する。</p>
+<p>学習後、新しいメールを判定するときは本文だけを渡す。</p>
+</div>
+
+<p>メールの本文と予測は、手順を示す教材例です。「教師」は答え合わせに使う正解で、人が利用時にも横で教えるという意味ではありません。</p>
+</details>
+</section>
+<section id="unsupervised">
+<h2>教師なし学習</h2>
+<p><strong>教師なし学習</strong>は、正解ラベルを用意せず、データの共通点や違いを調べる方法です。製品写真なら、見え方の似たものをまとめる<strong>クラスタリング</strong>が一例です。正解の「傷あり／なし」を当てる練習とは異なり、できたまとまりが傷、製品の型、照明のどれを表すかは人が調べます。</p>
+<p>多くの特徴を少ない数値で表し、データを眺めやすくする<strong>次元削減</strong>もあります。どちらも、まだ分類の仕方が決まっていないデータを整理するのに役立ちます。</p>
+<details>
+<summary>別の例：購入記録のグループ分け</summary>
+<div class="lf-demo"><div class="lf-split"><div><strong>入力：利用者ごとの購入記録</strong><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 285" role="img" aria-label="ラベルを付けていない10人の購入回数と購入金額"><path d="M42 18 V224 H285" fill="none" stroke="#76877c" stroke-width="1.5"/><text x="42" y="242" text-anchor="middle">0</text><text x="34" y="229" text-anchor="end">0</text><text x="157" y="242" text-anchor="middle">5</text><text x="34" y="134" text-anchor="end">5</text><text x="272" y="242" text-anchor="middle">10</text><text x="34" y="39" text-anchor="end">10</text><text x="160" y="268" text-anchor="middle">月の購入回数（回）</text><text x="42" y="13">1回の金額（千円）</text><circle cx="65" cy="72" r="5" fill="#647682"/><circle cx="88" cy="91" r="5" fill="#647682"/><circle cx="88" cy="53" r="5" fill="#647682"/><circle cx="111" cy="72" r="5" fill="#647682"/><circle cx="111" cy="110" r="5" fill="#647682"/><circle cx="203" cy="186" r="5" fill="#647682"/><circle cx="226" cy="205" r="5" fill="#647682"/><circle cx="226" cy="167" r="5" fill="#647682"/><circle cx="249" cy="186" r="5" fill="#647682"/><circle cx="249" cy="148" r="5" fill="#647682"/></svg><p>点一つが一人。「常連客」などのラベルはない。</p></div><div><strong>出力：似た数値の人をまとめる</strong><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 285" role="img" aria-label="購入回数と購入金額が近い利用者を二群に分ける"><path d="M42 18 V224 H285" fill="none" stroke="#76877c" stroke-width="1.5"/><text x="42" y="242" text-anchor="middle">0</text><text x="34" y="229" text-anchor="end">0</text><text x="157" y="242" text-anchor="middle">5</text><text x="34" y="134" text-anchor="end">5</text><text x="272" y="242" text-anchor="middle">10</text><text x="34" y="39" text-anchor="end">10</text><text x="160" y="268" text-anchor="middle">月の購入回数（回）</text><text x="42" y="13">1回の金額（千円）</text><ellipse cx="90" cy="80" rx="41" ry="47" fill="#edf3ec" stroke="#35664d" stroke-dasharray="4 3"/><ellipse cx="230" cy="176" rx="42" ry="43" fill="#fcf0e5" stroke="#aa6335" stroke-dasharray="4 3"/><circle cx="65" cy="72" r="5" fill="#35664d"/><circle cx="88" cy="91" r="5" fill="#35664d"/><circle cx="88" cy="53" r="5" fill="#35664d"/><circle cx="111" cy="72" r="5" fill="#35664d"/><circle cx="111" cy="110" r="5" fill="#35664d"/><circle cx="203" cy="186" r="5" fill="#aa6335"/><circle cx="226" cy="205" r="5" fill="#aa6335"/><circle cx="226" cy="167" r="5" fill="#aa6335"/><circle cx="249" cy="186" r="5" fill="#aa6335"/><circle cx="249" cy="148" r="5" fill="#aa6335"/></svg><p>左上は少ない回数で高額、右下は多い回数で少額の人たち。</p></div></div><p class="lf-takeaway">グループはデータから作る。その意味を「まとめ買い」「こまめな買い物」などと解釈するのは人。</p></div>
+
+<p>10人分の架空の購入記録。同じ点を、ラベルなしの状態とグループ分け後で比較しています。</p>
+</details>
+</section>
+<section id="rl">
+<h2>強化学習</h2>
+<p><strong>強化学習</strong>は、行動した結果のよさを表す<strong>報酬</strong>から、行動の選び方を学ぶ方法です。製品検査なら、カメラをどの角度へ動かせば傷を見つけやすいかを、試行の結果から学ぶ例が考えられます。</p>
+<p>行動を選ぶ主体を<strong>エージェント</strong>、選び方のルールを<strong>方策</strong>と呼びます。各場面で正解の行動を教える代わりに、その後の成功も含めて報酬が大きくなる方策を目指します。まだ試していない行動を調べる<strong>探索</strong>と、分かっているよい行動を使うことの両立が課題です。</p>
+<details>
+<summary>別の例：迷路の報酬と行動</summary>
+<h3>迷路での経路探索</h3>
+<p>迷路を進むプログラムを考えます。プログラムは現在の位置を見て、上下左右のどこへ進むかを選びます。学習用のルールとして「出口に着いたら10点」「1歩進むたびに1点減点」と決めておきます。</p>
+<ol>
+<li><strong>まず動いてみる。</strong>最初は出口への行き方が分からないので、いろいろな方向を試します。</li>
+<li><strong>結果を記録する。</strong>選んだ行動、移動先、受け取った報酬を記録します。行き止まりに進むことも、出口にたどり着くこともあります。</li>
+<li><strong>行動の選び方を改善する。</strong>経験を繰り返し集め、最終的な合計点が高くなる行動を選べるように学習します。</li>
+</ol>
+<figure class="learning-figure">
+<div class="lf-demo"><p class="lf-rule">この迷路の報酬：1歩につき −1、出口に着いたら ＋10</p><div class="lf-split"><div><strong>4歩で着く経路</strong><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 270" role="img" aria-label="4歩で出口に着く経路"><rect x="25" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="25" y="74" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="74" width="52" height="52" fill="#718178" stroke="#ced8cf"/><rect x="129" y="74" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="74" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="25" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="25" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="126" width="52" height="52" fill="#d4e7c9"/><text x="155" y="158" text-anchor="middle">出口</text><path d="M51 48 H155 V126" fill="none" stroke="#35664d" stroke-width="5" stroke-linejoin="round"/><path d="M149 116 l6 10 6 -10" fill="none" stroke="#35664d" stroke-width="3"/><circle cx="51" cy="48" r="10" fill="#35664d"/><text x="25" y="252">● スタート　■ 壁</text></svg><p class="lf-score">10 − 4 ＝ <b>6点</b></p></div><div><strong>6歩で着く経路</strong><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 270" role="img" aria-label="6歩で出口に着く経路"><rect x="25" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="22" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="25" y="74" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="74" width="52" height="52" fill="#718178" stroke="#ced8cf"/><rect x="129" y="74" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="74" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="25" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="126" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="25" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="77" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="181" y="178" width="52" height="52" fill="#f6f8f4" stroke="#ced8cf"/><rect x="129" y="126" width="52" height="52" fill="#d4e7c9"/><text x="155" y="158" text-anchor="middle">出口</text><path d="M51 48 V204 H155 V178" fill="none" stroke="#aa6335" stroke-width="5" stroke-linejoin="round"/><path d="M149 188 l6 -10 6 10" fill="none" stroke="#aa6335" stroke-width="3"/><circle cx="51" cy="48" r="10" fill="#aa6335"/><text x="25" y="252">● スタート　■ 壁</text></svg><p class="lf-score">10 − 6 ＝ <b>4点</b></p></div></div><p class="lf-takeaway">試した行動と得られた報酬をもとに、合計点が高くなる行動の選び方を学ぶ。正解の経路をお手本として渡すわけではない。</p></div>
+
+<figcaption>
+<p>同じスタートと出口を結ぶ二つの経路。線は行動の履歴、点数はその結果を評価する報酬の合計。</p>
+</figcaption>
+</figure>
+<p>この採点なら、4歩で出口に着くと合計6点、6歩なら合計4点です。同じ出口でも、短い道の方が高得点になります。出口に向かう途中の1歩は減点でも、その先の到着につながるので、目先の点数だけで判断しないことが大切です。</p>
+<p>教師あり学習のように、各地点で「正解は右」と教えるわけではありません。行動した結果から、どんな選び方が後の成功につながるかを学びます。状況に応じた行動の選び方を<strong>方策（policy）</strong>、行動を選ぶプログラムやロボットを<strong>エージェント</strong>と呼びます。</p>
+<p>報酬の付け方は人が設計します。迷路で出口の10点だけを与える場合と、歩数にも減点を付ける場合では、学習の進み方や望ましい行動が変わります。また、成功した道ばかり使うと、まだ試していない近道を見つけられません。新しい行動を試すことを<strong>探索</strong>と呼び、既に分かったよい行動を使うこととのバランスも課題になります。</p>
+</details>
+</section>
+<p><span id="framework-self-supervised"></span></p>
+<section id="self-supervised">
+<h2>自己教師あり学習</h2>
+<p><strong>自己教師あり学習は、人が一つずつ正解ラベルを付ける代わりに、データ自身から学習の手がかりを作る方法です。</strong>例えば、文章の一部を隠せば、隠す前の内容を正解にして予測の練習ができます。</p>
+<p>「自己教師あり」は、答え合わせをしないという意味ではありません。答えを元のデータから用意できるため、大量の文章や画像を学習に使えます。ラベルのないデータを使うという意味で、教師なし学習に含めることもあります。例えば製品写真の一部を隠し、元の画像を正解にして復元を練習します。そこで学んだ形や模様の特徴を、傷の分類に使うこともできます。</p>
+</section>
+<section id="semi-supervised">
+<h2>半教師あり学習</h2>
+<p><strong>半教師あり学習は、少量のラベル付きデータと、大量のラベルなしデータを一緒に使う方法です。</strong>製品の傷を分類する例では、一部の画像にだけ人が「傷あり／なし」を付け、残りの画像も学習に生かします。図では、その一つである疑似ラベルを使う方法を追います。</p>
+<figure class="learning-figure">
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>少数の正解付き画像で、傷の分類を学ぶ</p>
+<div class="lf-samples"><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のある製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/><path d="M90 52 l13 15 -8 9 25 22 m-25 -29 l25 15" fill="none" stroke="#864c30" stroke-width="3" stroke-linecap="round"/></svg><span class="lf-tag ">人のラベル：傷あり</span></div><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のない製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/></svg><span class="lf-tag ">人のラベル：傷なし</span></div></div>
+<p>製品画像と人が付けたラベルを使い、最初の分類モデルを学習する。</p>
+<p class="lf-step"><span>2</span>ラベルなし画像に、モデルで仮の答えを付ける</p>
+<div class="lf-split"><div><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のある製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/><path d="M98 52 l13 15 -8 9 25 22 m-25 -29 l25 15" fill="none" stroke="#864c30" stroke-width="3" stroke-linecap="round"/></svg><span class="lf-tag ">未ラベルの画像</span></div><p><strong>「傷あり」と強く予測</strong><br><span class="lf-tag lf-pseudo">疑似ラベル：傷あり</span></p></div><div><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のない製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/></svg><span class="lf-tag ">未ラベルの画像</span></div><p><strong>「傷あり／なし」で迷う</strong><br><span class="lf-tag lf-muted">今回は採用しない</span></p></div></div>
+<p class="lf-step"><span>3</span>人のラベルと、採用した疑似ラベルの両方で学ぶ</p>
+<div class="lf-combine"><span class="lf-tag">人が付けた正解</span><b>＋</b><span class="lf-tag lf-pseudo">モデルが付けた仮の答え</span></div>
+<p class="lf-takeaway">疑似ラベルは誤ることもある。仮の答えを採用する基準を決め、人が確認した別のデータで改善を確かめる。</p>
+</div>
+
+<figcaption>
+<p>製品画像での疑似ラベル学習。画像は傷の有無を描いたイラストで、予測・採否は手順を示す例。</p>
+</figcaption>
+</figure>
+<p>モデルの予測を仮の正解として使うことを<strong>疑似ラベル</strong>と呼びます。人が付けた正解は一部にしかありませんが、分類したい対象はどの画像でも同じです。モデルの誤りを仮の正解として覚える恐れもあるので、人が確認した別のデータで改善を確かめます。これは半教師あり学習の一例であり、ラベルなし画像の使い方にはほかの方法もあります。</p>
+</section>
+<section id="weak-supervision">
+<h2>弱教師あり学習</h2>
+<p><strong>弱教師あり学習は、細かく正確な正解を用意しにくいときに、粗いラベルや不確かな手がかりを使う方法です。</strong>例えば傷の場所を見つけたいとき、位置の注釈はなくても、画像全体の「傷あり／なし」なら用意できる場合があります。</p>
+<figure class="learning-figure">
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>同じ画像でも、教える情報の細かさが違う</p>
+<div class="lf-split"><div><strong>この例で用意するラベル</strong><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のある製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/><path d="M90 52 l13 15 -8 9 25 22 m-25 -29 l25 15" fill="none" stroke="#864c30" stroke-width="3" stroke-linecap="round"/></svg><span class="lf-tag ">画像全体：傷あり</span></div><p>「どこに傷があるか」は教えない。</p></div><div><strong>位置まで教える場合</strong><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="製品の傷の位置を枠で注釈"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/><path d="M90 52 l13 15 -8 9 25 22 m-25 -29 l25 15" fill="none" stroke="#864c30" stroke-width="3" stroke-linecap="round"/><rect x="80" y="43" width="63" height="64" rx="8" fill="none" stroke="#35664d" stroke-width="3" stroke-dasharray="5 4"/></svg><span class="lf-tag ">画像全体：傷あり ＋ 傷の位置</span></div><p>枠を描くには、追加の注釈作業が必要。</p></div></div>
+<p class="lf-step"><span>2</span>「傷あり」と「傷なし」の画像を比べて学ぶ</p>
+<div class="lf-samples"><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のある製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/><path d="M98 52 l13 15 -8 9 25 22 m-25 -29 l25 15" fill="none" stroke="#864c30" stroke-width="3" stroke-linecap="round"/></svg><span class="lf-tag ">傷あり</span></div><div class="lf-sample"><svg class="lf-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 150" role="img" aria-label="傷のない製品"><rect x="6" y="6" width="228" height="138" rx="10" fill="#edf1f1"/><rect x="35" y="26" width="170" height="98" rx="18" fill="#d3dce0" stroke="#687e89" stroke-width="2"/><circle cx="54" cy="44" r="4" fill="#8c9da5"/><circle cx="186" cy="106" r="4" fill="#8c9da5"/></svg><span class="lf-tag ">傷なし</span></div></div>
+<p class="lf-takeaway">画像全体の正解を当てる練習から、傷のある場所を捉える手がかりも得たい。ただし、傷の位置が正しく分かるとは限らない。</p>
+</div>
+
+<figcaption>
+<p>製品のイラストで、画像全体のラベルと位置の注釈を比較。緑の枠は人が位置を教える場合の注釈で、モデルの推定結果ではない。</p>
+</figcaption>
+</figure>
+<p>図の「この例で用意するラベル」で得られる正解は、画像全体の「傷あり」だけです。傷を捉える手がかりを学べる可能性はありますが、位置まで直接教えないため、傷の一部や背景に頼ってしまうこともあります。画像全体の分類だけが目的なら通常の教師あり学習であり、ここでは<strong>より細かい位置を知りたいのに、粗い正解しか使えない</strong>点が弱教師ありに当たります。</p>
+</section>
+<h2 id="training-use-boundary">学習時と利用時の情報</h2>
+<p>自己教師ありで隠した画素は、学習前には手元にあるので正解に使えます。しかし予測するときのモデルに隠した答えそのものを渡すと、復元の練習になりません。教師ありの製品検査でも、利用時は傷の正解を渡さず写真だけを渡します。</p>
+<p>研究では、正解付き写真の枚数や計算時間をそろえ、ラベルのない写真がどこまで役に立つかを調べます。自己教師ありで画像を復元できたことと、傷を見落とさず分類できることは別なので、最後は目的の検査でも評価します。</p>
+<h2 id="self-supervised-methods">自己教師あり学習の方法</h2>
+<p>元のデータから何を正解にするかで、練習の内容が変わります。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>学習で行うこと</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>マスク復元</td>
+<td>写真や文章の一部を隠し、元の内容を当てる</td>
+</tr>
+<tr>
+<td>次トークン予測</td>
+<td>文章の途中までを見せ、実際に続いた部分を当てる</td>
+</tr>
+<tr>
+<td>対照学習</td>
+<td>同じ写真の加工違いを近い特徴にし、別の写真と区別する</td>
+</tr>
+<tr>
+<td>自己蒸留</td>
+<td>同じ写真を違う範囲で見せ、モデル同士の出力をそろえる</td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary>補足：四つの方法の図とDINOの仕組み</summary>
+<p>文章の穴埋めと続きの予測、写真の対応付けを図で比べます。</p>
+<section id="masked">
+<h3>マスク復元</h3>
+<p>文章や画像の一部を隠し、残りを手がかりに元の内容を当てます。</p>
+<figure class="learning-figure">
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>元の文章から、入力と正解を作る</p>
+<div class="lf-sentence">猫が <mark>魚を</mark> 食べる</div>
+<div class="lf-split"><div><span class="lf-kicker">モデルに見せる入力</span><div class="lf-sentence">猫が <b class="lf-mask">？</b> 食べる</div><p>隠した場所の前後を見せる</p></div><div><span class="lf-kicker">答え合わせに使う正解</span><div class="lf-sentence"><mark>魚を</mark></div><p>元の文章から取り出しておく</p></div></div>
+<p class="lf-step"><span>2</span>予測を正解と比べて、モデルを更新する</p>
+<div class="lf-answer"><span>予測の例 <b>肉を</b></span><span aria-hidden="true">≠</span><span>正解 <b>魚を</b></span></div>
+<p class="lf-takeaway">この入力で「魚を」の予測確率が高くなるように重みを調整する。</p>
+</div>
+
+<figcaption>
+<p>入力では「魚を」を隠し、答え合わせ用には残しておく。予測「肉を」は誤答の例。</p>
+</figcaption>
+</figure>
+<p>正解の「魚を」は、元の文章から取り出せます。この例では、隠した位置の前後が予測の手がかりになります。画像なら一部の領域を隠して復元し、形や配置の関係を学ぶ方法があります。</p>
+</section>
+<section id="next-token">
+<h3>次トークン予測</h3>
+<p>穴埋めに続いて、文章の続きを正解にする方法を考えます。文章を<strong>トークン</strong>という処理単位に分け、それまでの文脈から次の一つを予測します。トークンは単語や、単語をさらに分けた断片などです。</p>
+<figure class="learning-figure">
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>元の文章から、入力と正解を作る</p>
+<div class="lf-sentence">猫が <mark>魚を</mark> 食べる</div>
+<div class="lf-split"><div><span class="lf-kicker">モデルに見せる入力</span><div class="lf-sentence">猫が <b class="lf-mask">次は？</b></div><p>予測する位置より前だけを見せる</p></div><div><span class="lf-kicker">答え合わせに使う正解</span><div class="lf-sentence"><mark>魚を</mark></div><p>元の文章から取り出しておく</p></div></div>
+<p class="lf-step"><span>2</span>予測を正解と比べて、モデルを更新する</p>
+<div class="lf-answer"><span>予測の例 <b>肉を</b></span><span aria-hidden="true">≠</span><span>正解 <b>魚を</b></span></div>
+<p class="lf-takeaway">この入力で「魚を」の予測確率が高くなるように重みを調整する。</p>
+</div>
+
+<figcaption>
+<p>マスク復元と同じ文章を使い、予測に見せる範囲を比べる。元の文章で次に来た「魚を」が正解。</p>
+</figcaption>
+</figure>
+<p>図では区切り方を単純化しています。マスク復元の例と違い、予測する位置より後の文章は見せません。元の文章で実際に続いていたトークンを正解にするので、これも自己教師あり学習です。大量の文章で繰り返すことで文章を生成する力を学びますが、自然な続きが事実として正しいとは限りません。</p>
+</section>
+<section id="contrastive">
+<h3>対照学習</h3>
+<p>同じ対象から作った二つの見え方を、似た特徴へ変換するように学びます。</p>
+<figure class="learning-figure">
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>同じ写真から二つの見え方を作る</p>
+<div class="lf-photo-pair"><div><div class="lf-photo "><img src="../assets/pet-cat.jpg" alt="猫の元写真" loading="lazy"></div><span>猫の写真 A</span></div><div><div class="lf-photo lf-photo-crop"><img src="../assets/pet-cat.jpg" alt="同じ猫の写真の顔付近を切り抜き" loading="lazy"></div><span>A の切り抜き</span></div></div>
+<p class="lf-relation">この二つの特徴は、<strong>近づける</strong></p>
+<p class="lf-step"><span>2</span>別の写真から作った特徴とは区別する</p>
+<div class="lf-photo-pair"><div><div class="lf-photo lf-photo-crop"><img src="../assets/pet-cat.jpg" alt="同じ猫の写真の顔付近を切り抜き" loading="lazy"></div><span>A の切り抜き</span></div><div><div class="lf-photo "><img src="../assets/pet-dog.jpg" alt="別に撮った犬の写真" loading="lazy"></div><span>別の写真 B</span></div></div>
+<p class="lf-relation lf-apart">この二つの特徴は、<strong>離す</strong></p>
+<p class="lf-takeaway">「猫／犬」のラベルで組を決めるのではなく、元が同じ写真かどうかで決める。別々に撮った猫の写真でも、この方法では離す側になる。</p>
+</div>
+
+<figcaption>
+<p>写真の見た目を直接近づけるのではなく、モデルが取り出す特徴の距離を変える。写真：<a href="https://www.robots.ox.ac.uk/~vgg/data/pets/">Oxford-IIIT Pet</a>（CC BY-SA 4.0、権利は元の写真の権利者に帰属）。表示用に切り抜き。</p>
+</figcaption>
+</figure>
+<p>SimCLRなどで使われる考え方です。「同じ」と扱う加工が重要で、文字を反転するなど意味が変わる加工は向かない場合があります。</p>
+</section>
+<section id="dino">
+<h3>自己蒸留（DINO）</h3>
+<p><strong>DINOは、同じ写真の見える範囲が変わっても、共通する特徴を捉えられるように学ぶ方法です。</strong>例えば、一方には猫と周囲が写った広い範囲、もう一方には顔付近の切り抜きを見せます。二つのモデルを「教師」「生徒」と呼び、生徒の出力を教師の出力に近づけます。</p>
+<figure class="learning-figure">
+<div class="dino-example" role="group" aria-label="同じ猫の写真の広い範囲と顔付近から出力を作り、生徒を教師の出力へ近づける">
+<p class="dino-heading">1枚の写真から、見える範囲を変える</p>
+<div class="dino-views">
+<div class="dino-view"><div class="dino-photo"><img src="../assets/pet-cat.jpg" alt="教師に見せる広い範囲。猫の体と周囲の布が写る"><span class="dino-crop-outline" aria-hidden="true"></span></div><strong>教師に見せる：広い範囲</strong><span>枠は右の切り抜きの位置</span></div>
+<div class="dino-view"><div class="dino-photo dino-close"><img src="../assets/pet-cat.jpg" alt="生徒に見せる同じ写真の切り抜き。猫の顔付近が写る"></div><strong>生徒に見せる：顔付近</strong><span>同じ写真でも、見える範囲が違う</span></div>
+</div>
+<p class="dino-heading">それぞれのモデルで、数値の並びに変換する ↓</p>
+<div class="dino-outputs">
+<div><strong>教師の出力 → 今回のお手本</strong><div class="dino-bars" aria-label="教師の出力の例：0.7、0.2、0.1"><span style="--bar:70%">① <i></i> 0.7</span><span style="--bar:20%">② <i></i> 0.2</span><span style="--bar:10%">③ <i></i> 0.1</span></div><small>この比較では教師を固定</small></div>
+<div><strong>生徒の出力 → お手本に近づける</strong><div class="dino-bars dino-student" aria-label="生徒の出力の例：0.3、0.4、0.3"><span style="--bar:30%">① <i></i> 0.3</span><span style="--bar:40%">② <i></i> 0.4</span><span style="--bar:30%">③ <i></i> 0.3</span></div><small>①を増やし、②③を減らすように生徒を更新</small></div>
+</div>
+<p class="dino-update"><strong>生徒を更新したら、教師にも少しずつ反映</strong><br>教師の重みに、更新後の生徒の重みを少し混ぜる。次の写真でも同じ練習を繰り返す。</p>
+</div>
+
+<figcaption>
+<p>同じ写真から作った二つの切り抜きで、出力を合わせる練習をする。図の数値は流れを示すために置いた例で、モデルの実測値ではありません。写真：<a href="https://www.robots.ox.ac.uk/~vgg/data/pets/">Oxford-IIIT Pet</a>（CC BY-SA 4.0、権利は元の写真の権利者に帰属）。表示範囲を切り抜き。</p>
+</figcaption>
+</figure>
+<p>出力は、画像の特徴を表す数値の並びを、合計が1になるように変換したものです。各成分に「猫」「犬」という名前を人が付けるわけではありません。図では三つの成分だけで表しています。<strong>教師が作った数値の並びが、生徒の学習の目標になります。</strong></p>
+<p>教師は、あらかじめ正解を知っているモデルではありません。生徒を更新した後、その重みを教師の重みに少しずつ取り込みます。このように、自分たちのモデルから作る出力をお手本にするので「自己蒸留」と呼びます。</p>
+<p>ただ出力をそろえるだけでは、どの写真にも同じ出力を返すだけで済んでしまいます。DINOは教師の出力の偏りや鋭さを調整し、この行き詰まりを防ぐ工夫も組み合わせます。多くの写真で学習した特徴は、画像の分類や似た画像の検索に利用できます。<a href="https://arxiv.org/abs/2104.14294">原論文の手法説明</a>では、複数の切り抜きを使う学習と更新方法を示しています。</p>
+<details class="learning-detail">
+<summary>
+<p>DINOの実際の結果を見る</p>
+</summary>
+<div class="compare">
+<figure>
+<p><a href="../content/basics/learning/media/dino-supervised.png"><img src="../content/basics/learning/media/dino-supervised.png" alt="教師ありViTのAttentionから作ったマスク"></a></p>
+<figcaption>
+<p>教師あり ViT-S/8 <a href="../content/basics/learning/media/dino-supervised.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<figure>
+<p><a href="../content/basics/learning/media/dino-self-supervised.png"><img src="../content/basics/learning/media/dino-self-supervised.png" alt="DINOのAttentionから作ったマスク"></a></p>
+<figcaption>
+<p>DINO ViT-S/8 <a href="../content/basics/learning/media/dino-self-supervised.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+</div>
+<p>Caron et al.（2021）Figure 4の抜粋。Attentionの質量の60%を残し、各モデルの最良のheadを表示。</p>
+<p>分割ラベルで直接学習しなくても、物体の領域に沿う情報が現れる例です。選ばれた一例であり、常にこちらが優れることを示す図ではありません。</p>
+</details>
+</section>
+</details>
+<section id="sources">
+<h2>出典・参考資料</h2>
+<ul>
+<li><a href="https://developers.google.com/machine-learning/intro-to-ml/what-is-ml?hl=ja">Google：機械学習の概要 — 教師あり・教師なし・強化学習の入門 ↗</a></li>
+<li><a href="https://cloud.google.com/discover/what-is-reinforcement-learning?hl=ja">Google Cloud：強化学習とは — 行動・報酬・方策の説明 ↗</a></li>
+<li><a href="https://www.ibm.com/jp-ja/think/topics/machine-learning-types">IBM：機械学習の種類 — 自己教師あり学習を含む整理 ↗</a></li>
+</ul>
+</section>
+<section id="learning-sources">
+<h3>自己教師あり学習の研究例</h3>
+<ul>
+<li><a href="https://arxiv.org/abs/2104.14294">DINO 原論文 ↗</a></li>
+<li><a href="https://arxiv.org/abs/2002.05709">SimCLR：対照学習の研究例 ↗</a></li>
+<li><a href="https://arxiv.org/abs/2108.07258">基盤モデルの位置付け ↗</a></li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#learning-signal">教師信号と学習の枠組み</a><a data-level="2" href="#supervised">教師あり学習</a><a data-level="2" href="#unsupervised">教師なし学習</a><a data-level="2" href="#rl">強化学習</a><a data-level="2" href="#self-supervised">自己教師あり学習</a><a data-level="2" href="#semi-supervised">半教師あり学習</a><a data-level="2" href="#weak-supervision">弱教師あり学習</a><a data-level="2" href="#training-use-boundary">学習時と利用時の情報</a><a data-level="2" href="#self-supervised-methods">自己教師あり学習の方法</a><a data-level="2" href="#sources">出典・参考資料</a><a data-level="3" href="#learning-sources">自己教師あり学習の研究例</a></aside></div>
+</body></html>

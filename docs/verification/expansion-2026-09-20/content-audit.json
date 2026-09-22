@@ -1,0 +1,268 @@
+[
+  {
+    "id": "learning",
+    "path": "content/basics/learning/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1292,
+    "preserved_components": 6,
+    "new_components": [],
+    "preserved_section_anchors": 13
+  },
+  {
+    "id": "classical",
+    "path": "content/basics/classical/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1376,
+    "preserved_components": 1,
+    "new_components": [],
+    "preserved_section_anchors": 3
+  },
+  {
+    "id": "generative-overview",
+    "path": "content/models/generative-overview/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1348,
+    "preserved_components": 0,
+    "new_components": [],
+    "preserved_section_anchors": 2
+  },
+  {
+    "id": "vlm",
+    "path": "content/models/vlm/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1150,
+    "preserved_components": 1,
+    "new_components": [],
+    "preserved_section_anchors": 2
+  },
+  {
+    "id": "decision-making",
+    "path": "content/fields/decision-making/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1167,
+    "preserved_components": 3,
+    "new_components": [
+      "exp-decision"
+    ],
+    "preserved_section_anchors": 5
+  },
+  {
+    "id": "robotics",
+    "path": "content/fields/robotics/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1261,
+    "preserved_components": 3,
+    "new_components": [],
+    "preserved_section_anchors": 2
+  },
+  {
+    "id": "science",
+    "path": "content/fields/science/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1534,
+    "preserved_components": 2,
+    "new_components": [],
+    "preserved_section_anchors": 3
+  },
+  {
+    "id": "life-science",
+    "path": "content/fields/life-science/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1324,
+    "preserved_components": 5,
+    "new_components": [],
+    "preserved_section_anchors": 4
+  },
+  {
+    "id": "language",
+    "path": "content/fields/language/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1382,
+    "preserved_components": 2,
+    "new_components": [
+      "exp-rag"
+    ],
+    "preserved_section_anchors": 4
+  },
+  {
+    "id": "combinatorial-optimization",
+    "path": "content/fields/combinatorial-optimization/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1226,
+    "preserved_components": 3,
+    "new_components": [],
+    "preserved_section_anchors": 5
+  },
+  {
+    "id": "multimodal",
+    "path": "content/fields/multimodal/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1088,
+    "preserved_components": 3,
+    "new_components": [],
+    "preserved_section_anchors": 2
+  },
+  {
+    "id": "world-models",
+    "path": "content/fields/world-models/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1054,
+    "preserved_components": 5,
+    "new_components": [
+      "exp-planning"
+    ],
+    "preserved_section_anchors": 3
+  },
+  {
+    "id": "graphs",
+    "path": "content/fields/graphs/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1332,
+    "preserved_components": 1,
+    "new_components": [],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "earth-science",
+    "path": "content/fields/earth-science/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1293,
+    "preserved_components": 1,
+    "new_components": [],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "distributed-systems",
+    "path": "content/questions/distributed-systems/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1454,
+    "preserved_components": 0,
+    "new_components": [
+      "exp-distributed"
+    ],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "robustness",
+    "path": "content/questions/robustness/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1081,
+    "preserved_components": 1,
+    "new_components": [],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "efficiency",
+    "path": "content/questions/efficiency/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1230,
+    "preserved_components": 3,
+    "new_components": [],
+    "preserved_section_anchors": 6
+  },
+  {
+    "id": "foundation-models",
+    "path": "content/questions/foundation-models/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1485,
+    "preserved_components": 0,
+    "new_components": [],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "optimization",
+    "path": "content/questions/optimization/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1592,
+    "preserved_components": 1,
+    "new_components": [
+      "exp-optimization"
+    ],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "datasets",
+    "path": "content/questions/datasets/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1587,
+    "preserved_components": 2,
+    "new_components": [],
+    "preserved_section_anchors": 2
+  },
+  {
+    "id": "transfer-learning",
+    "path": "content/questions/transfer-learning/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1330,
+    "preserved_components": 4,
+    "new_components": [],
+    "preserved_section_anchors": 4
+  },
+  {
+    "id": "continual-learning",
+    "path": "content/questions/continual-learning/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1405,
+    "preserved_components": 2,
+    "new_components": [
+      "exp-continual"
+    ],
+    "preserved_section_anchors": 2
+  },
+  {
+    "id": "representation-learning",
+    "path": "content/questions/representation-learning/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1536,
+    "preserved_components": 1,
+    "new_components": [],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "uncertainty-unknowns",
+    "path": "content/questions/uncertainty-unknowns/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1299,
+    "preserved_components": 0,
+    "new_components": [
+      "exp-abstention"
+    ],
+    "preserved_section_anchors": 1
+  },
+  {
+    "id": "ensembles-experts",
+    "path": "content/questions/ensembles-experts/index.md",
+    "status_before": "partial",
+    "status_after": "ready",
+    "added_characters": 1579,
+    "preserved_components": 0,
+    "new_components": [
+      "exp-moe"
+    ],
+    "preserved_section_anchors": 1
+  }
+]

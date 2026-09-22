@@ -1,0 +1,52 @@
+ref-001:
+  url: https://arxiv.org/abs/2312.00752
+  label: Mamba §3.1 ↗
+  verification: 2026-09-20：原文と掲載図を再確認し、本文の図解を改稿。
+ref-002:
+  url: https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mamba-and-state
+  label: Visual Guideの再帰表現 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://hazyresearch.stanford.edu/blog/2020-12-05-hippo
+  label: HiPPO著者解説のOnline Function Approximation ↗
+  verification: 2026-09-20：原文と掲載図を再確認し、本文の図解を改稿。
+ref-004:
+  url: https://papers.nips.cc/paper_files/paper/2020/file/102f0bb6efb3a6128a3c750dd16729be-Supplemental.pdf
+  label: 出典：HiPPO論文 §2–3・補足D.2 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://arxiv.org/abs/2111.00396
+  label: S4論文 ↗
+  verification: 2026-09-20：原論文の要旨でHiPPO由来の行列構造と計算効率化の位置付けを確認。
+ref-006:
+  url: https://arxiv.org/abs/2008.07669
+  label: HiPPO：Recurrent Memory with Optimal Polynomial Projections ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-007:
+  url: https://github.com/state-spaces/mamba/blob/main/mamba_ssm/modules/mamba_simple.py
+  label: Mamba-1ブロックの著者実装 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-hippo-framework.png:
+  url: content/models/ssm/media/hippo-framework.png
+  label: hippo-framework.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 2026-09-20：掲載画像を目視し、原資料の図説明と本文の対応を確認。画像は無加工で保持。
+media-hippo-measures.png:
+  url: content/models/ssm/media/hippo-measures.png
+  label: hippo-measures.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 2026-09-20：掲載画像を目視し、原資料の図説明と本文の対応を確認。画像は無加工で保持。
+media-mamba-copying.svg:
+  url: content/models/ssm/media/mamba-copying.svg
+  label: mamba-copying.svg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 2026-09-20：掲載画像を目視し、原資料の図説明と本文の対応を確認。画像は無加工で保持。
+media-mamba-selection.svg:
+  url: content/models/ssm/media/mamba-selection.svg
+  label: mamba-selection.svg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 2026-09-20：掲載画像を目視し、原資料の図説明と本文の対応を確認。画像は無加工で保持。

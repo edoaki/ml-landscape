@@ -1,0 +1,20 @@
+ref-001:
+  url: https://arxiv.org/abs/1706.03762
+  label: 原論文：Attention Is All You Need
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1810.04805
+  label: BERT（2018） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://aclanthology.org/N19-1357/
+  label: Attention is not Explanation（Jain・Wallace, 2019）
+  authors: Sarthak Jain; Byron C. Wallace
+  venue: NAACL-HLT 2019
+  verification: 2026-09-20にACL Anthologyの書誌・原論文を確認。図1と第1・2節の反例および主な対象が双方向RNNであることを確認。
+ref-004:
+  url: https://aclanthology.org/D19-1002/
+  label: Attention is not not Explanation（Wiegreffe・Pinter, 2019）
+  authors: Sarah Wiegreffe; Yuval Pinter
+  venue: EMNLP-IJCNLP 2019
+  verification: 2026-09-20にACL Anthologyの書誌・要旨と原論文第2.1節の議論を確認。

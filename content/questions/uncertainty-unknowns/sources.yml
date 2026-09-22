@@ -1,0 +1,9 @@
+inherited-ref-001:
+  url: https://arxiv.org/abs/1612.01474
+  label: Deep Ensembles：予測の不確実性 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+exp-calibration:
+  url: https://arxiv.org/abs/1706.04599
+  label: Guo et al. (2017), On Calibration of Modern Neural Networks
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。

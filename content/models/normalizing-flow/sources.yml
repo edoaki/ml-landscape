@@ -1,0 +1,8 @@
+ref-001:
+  url: https://arxiv.org/abs/1605.08803
+  label: Real NVP：Affine couplingと密度推定 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1912.02762
+  label: Normalizing Flows for Probabilistic Modeling and Inference ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

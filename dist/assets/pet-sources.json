@@ -1,0 +1,22 @@
+[
+  {
+    "file": "pet-cat.jpg",
+    "dataset": "Donghyun99/Oxford-IIIT-Pet",
+    "config": "default",
+    "split": "train",
+    "row": 0,
+    "species": 0,
+    "breed_label": 0,
+    "url": "https://datasets-server.huggingface.co/cached-assets/Donghyun99/Oxford-IIIT-Pet/--/371061c33e62f8df8e3f7fc533bedd7680f5855e/--/default/train/0/image/image.jpg"
+  },
+  {
+    "file": "pet-dog.jpg",
+    "dataset": "Donghyun99/Oxford-IIIT-Pet",
+    "config": "default",
+    "split": "train",
+    "row": 100,
+    "species": 1,
+    "breed_label": 2,
+    "url": "https://datasets-server.huggingface.co/cached-assets/Donghyun99/Oxford-IIIT-Pet/--/371061c33e62f8df8e3f7fc533bedd7680f5855e/--/default/train/100/image/image.jpg"
+  }
+]

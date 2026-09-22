@@ -1,0 +1,3 @@
+.systems-figure svg { display: block; width: 100%; min-width: 620px; height: auto; padding: 8px; }
+.systems-figure .figure-scroll { overflow-x: auto; }
+@media print { .systems-figure svg { min-width: 0; } }

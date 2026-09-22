@@ -1,0 +1,8 @@
+ref-001:
+  url: https://arxiv.org/html/2210.02747v2
+  label: Flow Matching原論文：§3.1の分布と平均速度、§3.2の学習目的の等価性 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/2209.03003
+  label: Rectified Flow：直線ペアの速度回帰と生成の関係 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

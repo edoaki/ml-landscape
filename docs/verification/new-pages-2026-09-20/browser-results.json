@@ -1,0 +1,46 @@
+{
+  "site": "/Users/aki/docs/ml-landscape",
+  "offline": true,
+  "views": [
+    {
+      "javascript": false,
+      "width": 320,
+      "pages": 12
+    },
+    {
+      "javascript": false,
+      "width": 390,
+      "pages": 12
+    },
+    {
+      "javascript": false,
+      "width": 1440,
+      "pages": 12
+    },
+    {
+      "javascript": true,
+      "width": 320,
+      "pages": 12
+    },
+    {
+      "javascript": true,
+      "width": 390,
+      "pages": 12
+    },
+    {
+      "javascript": true,
+      "width": 1440,
+      "pages": 12
+    }
+  ],
+  "interactions": [
+    "Bayes: exact posterior/prediction, undo/reset, keyboard, contrary evidence",
+    "Autoregression: full sequence, EOS stop, reset, alternate context, reduced-motion step",
+    "Agents: alone/together/reset and immediate reduced-motion result",
+    "Federated: four stages, data-weighted mean 2.3, terminal state/reset",
+    "Information geometry: independently computed KL and Fisher, slider keyboard",
+    "Causality: observed mixture and common-population adjustment, reversible toggle",
+    "Timed animation: token play/pause/completion; robots reach target"
+  ],
+  "errors": []
+}

@@ -1,0 +1,13 @@
+<div class="dino-example" role="group" aria-label="同じ猫の写真の広い範囲と顔付近から出力を作り、生徒を教師の出力へ近づける">
+<p class="dino-heading">1枚の写真から、見える範囲を変える</p>
+<div class="dino-views">
+<div class="dino-view"><div class="dino-photo"><img src="assets/pet-cat.jpg" alt="教師に見せる広い範囲。猫の体と周囲の布が写る"><span class="dino-crop-outline" aria-hidden="true"></span></div><strong>教師に見せる：広い範囲</strong><span>枠は右の切り抜きの位置</span></div>
+<div class="dino-view"><div class="dino-photo dino-close"><img src="assets/pet-cat.jpg" alt="生徒に見せる同じ写真の切り抜き。猫の顔付近が写る"></div><strong>生徒に見せる：顔付近</strong><span>同じ写真でも、見える範囲が違う</span></div>
+</div>
+<p class="dino-heading">それぞれのモデルで、数値の並びに変換する ↓</p>
+<div class="dino-outputs">
+<div><strong>教師の出力 → 今回のお手本</strong><div class="dino-bars" aria-label="教師の出力の例：0.7、0.2、0.1"><span style="--bar:70%">① <i></i> 0.7</span><span style="--bar:20%">② <i></i> 0.2</span><span style="--bar:10%">③ <i></i> 0.1</span></div><small>この比較では教師を固定</small></div>
+<div><strong>生徒の出力 → お手本に近づける</strong><div class="dino-bars dino-student" aria-label="生徒の出力の例：0.3、0.4、0.3"><span style="--bar:30%">① <i></i> 0.3</span><span style="--bar:40%">② <i></i> 0.4</span><span style="--bar:30%">③ <i></i> 0.3</span></div><small>①を増やし、②③を減らすように生徒を更新</small></div>
+</div>
+<p class="dino-update"><strong>生徒を更新したら、教師にも少しずつ反映</strong><br>教師の重みに、更新後の生徒の重みを少し混ぜる。次の写真でも同じ練習を繰り返す。</p>
+</div>

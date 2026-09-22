@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="データを持ち出さず、各地で学習したモデルを持ち寄って、共通のモデルを育てます。"><meta name="color-scheme" content="light">
+<title>連合学習 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<link rel="stylesheet" href="../content/questions/federated-learning/components/figures.css">
+</head>
+<body data-page="federated-learning" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details open><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="representation-learning.html">表現学習</a><a href="transfer-learning.html">転移と適応</a><a href="continual-learning.html">継続・オンライン学習</a><a href="foundation-models.html">基盤モデルの学習・適応</a><a href="ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="robustness.html">頑健性とドメイン汎化</a><a href="uncertainty-unknowns.html">不確実性と未知への対応</a><a href="interpretability.html">説明可能性と内部機構</a><a href="safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="efficiency.html">圧縮・軽量な適応</a><a href="distributed-systems.html">分散学習・推論実行</a><a href="federated-learning.html" aria-current="page">連合学習</a><p class="nav-category">理論・推論</p><a href="information-geometry.html">情報幾何</a><a href="causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="datasets.html">データの設計と品質</a><a href="evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">横断的な研究を知る · <span lang="en">Federated Learning</span></p><h1>連合学習</h1><p class="lead">データを持ち出さず、各地で学習したモデルを持ち寄って、共通のモデルを育てます。</p></header>
+<section id="idea">
+<h2>データを持ち出さず、一緒に学習する</h2>
+<p>三つの工場で、設備の温度や振動から「故障しそうか」を予測したいとします。一つの工場の記録だけでは、故障の例が足りません。他の工場の記録も役立ちそうですが、社外には出せません。</p>
+<p>そこで使えるのが<strong>連合学習</strong>です。<strong>各工場で自分の記録を使ってモデルを学習し、学習後のモデルを持ち寄って、一つの共通モデルにまとめます。</strong> モデルとは、温度や振動などの入力から予測を計算する仕組みです。</p>
+<p>こうすれば、記録そのものを交換しなくても、他の工場での学習を自分たちの予測に生かせます。</p>
+<figure class="fed-figure" id="fed-demo" aria-labelledby="fed-round-title">
+  <div class="fed-inner">
+    <strong class="fed-title" id="fed-round-title">記録を残して、モデルを共有</strong>
+    <div class="fed-step fed-server">
+      <h3>① 共通モデルを各工場へ配る</h3>
+      <p>共通モデルを管理するサーバーから、同じモデルを送る。</p>
+    </div>
+    <div class="fed-arrow">↓ モデルを送る</div>
+    <div class="fed-step fed-local">
+      <h3>② それぞれの工場で学習する</h3>
+      <div class="fed-factories">
+        <div class="fed-factory"><strong>工場A</strong><span class="fed-record">Aの設備記録</span><span>↓ 学習に使う</span><b>学習後のモデル</b></div>
+        <div class="fed-factory"><strong>工場B</strong><span class="fed-record">Bの設備記録</span><span>↓ 学習に使う</span><b>学習後のモデル</b></div>
+        <div class="fed-factory"><strong>工場C</strong><span class="fed-record">Cの設備記録</span><span>↓ 学習に使う</span><b>学習後のモデル</b></div>
+      </div>
+      <p><strong>設備記録は、各工場の外へ出さない。</strong></p>
+    </div>
+    <div class="fed-arrow">↓ 学習後のモデルを送る</div>
+    <div class="fed-step fed-server">
+      <h3>③ 学習したモデルをまとめる</h3>
+      <p>サーバーがA・B・Cで調整した数値を平均し、新しい共通モデルを作る。</p>
+    </div>
+    <p class="fed-repeat">↳ 新しい共通モデルを①で配り、繰り返す</p>
+  </div>
+  <figcaption>工場とサーバーの間を移動するのは、モデルの計算に使う数値です。設備記録そのものは移動しません。学習の流れを示した模式図です。</figcaption>
+</figure>
+
+<p>この「配る → 各地で学ぶ → まとめる」を繰り返します。完成したモデルを各工場で使えば、新しい温度や振動のデータから故障を予測できます。</p>
+</section>
+<section id="round">
+<h2>「モデルをまとめる」とは？</h2>
+<p>モデルの中には、予測の計算に使う数値がたくさんあります。この数値を<strong>重み</strong>と呼びます。各工場での学習は、予測と実際の故障記録を比べ、間違いが減るように重みを調整することです。</p>
+<p>代表的な方法の<strong>FedAvg</strong>では、サーバーが各工場から届いた重みを平均します。例えば、同じ出発点から学習した二つのモデルで、ある重みがそれぞれ「1」と「3」になったなら、データ件数が同じなら、平均は「2」です。これを対応する重みごとに行い、次に配るモデルを作ります。実際には、学習に使ったデータ件数が多い工場ほど、平均に大きく反映させます。<a href="https://proceedings.mlr.press/v54/mcmahan17a.html">FedAvg原論文</a></p>
+<p>この数値は仕組みを説明するための例で、重みが大きいほど高性能という意味ではありません。同じ構造・同じ出発点のモデルを使うのも、対応する重みをまとめるためです。</p>
+</section>
+<section id="heterogeneity">
+<h2>一緒に学べば、必ずよくなる？</h2>
+<p>必ずとは限りません。例えば、工場Aには小型設備が多く、工場Bには高温で動く設備が多いとします。工場Bの記録が大半を占めると、共通モデルが工場Bに合う一方、工場Aでは故障をうまく予測できないことがあります。</p>
+<p>そのため、全体の精度だけでなく、工場ごとの精度も確かめます。共通モデルを受け取った後、各工場の記録でさらに学習し、その工場に合わせる方法もあります。これが<strong>個別化</strong>です。</p>
+</section>
+<section id="communication">
+<h2>やり取りを減らす工夫も必要</h2>
+<p>大きなモデルを何度も送り合うと、通信に時間がかかります。各工場で長めに学習してから送れば、通信の回数は減らせます。ただし、その間にそれぞれの工場の記録に合わせた変化が大きくなり、まとめにくくなることがあります。</p>
+<p>通信が遅い工場や、毎回は参加できない工場も含めて、どう効率よく学習するかが研究されています。</p>
+</section>
+<section id="privacy">
+<h2>記録を送らなければ、安全？</h2>
+<p><strong>記録を送らないだけで、情報漏えいを完全に防げるわけではありません。</strong> 学習後の重みには記録の特徴が反映されるため、送った重みから元の情報を推測される可能性があります。</p>
+<p>対策の一つが、サーバーに各工場の重みを個別に見せず、合計だけを渡す<strong>安全な集約</strong>です。連合学習の仕組みに、こうした保護を組み合わせます。<a href="https://research.google/pubs/practical-secure-aggregation-for-privacy-preserving-machine-learning/">安全な集約の研究例</a></p>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#idea">データを持ち出さず、一緒に学習する</a><a data-level="2" href="#round">「モデルをまとめる」とは？</a><a data-level="2" href="#heterogeneity">一緒に学べば、必ずよくなる？</a><a data-level="2" href="#communication">やり取りを減らす工夫も必要</a><a data-level="2" href="#privacy">記録を送らなければ、安全？</a></aside></div>
+</body></html>

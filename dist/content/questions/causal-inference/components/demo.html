@@ -1,0 +1,44 @@
+<figure class="learning-demo" id="causal-demo" aria-labelledby="causal-title">
+ <div class="ld-body">
+  <strong class="ld-title" id="causal-title">比べ方を変えると、合格率の差はどう変わる？</strong>
+  <p>同じ記録を、次の順に見直します。着目するのは<strong>学力別の合格率</strong>と<strong>それぞれの学力の学生が占める割合</strong>です。</p>
+  <div class="ld-controls" hidden aria-label="比較の手順">
+   <button type="button" data-mode="raw" aria-pressed="true">1. 全体で比べる</button>
+   <button type="button" data-mode="strata" aria-pressed="false">2. 学力別に比べる</button>
+   <button type="button" data-mode="adjusted" aria-pressed="false">3. 同じ構成で比べる</button>
+  </div>
+  <p class="causal-step" data-heading>1. 実際の参加者と不参加者を、そのまま比べる</p>
+  <p data-explanation>補習ありには基礎に不安がある学生が80人、なしには20人います。人数の構成が違うまま、全体の合格率を計算しています。</p>
+  <div data-summary>
+   <div class="causal-populations">
+    <div class="causal-card">
+     <strong>補習あり</strong>
+     <p data-count="treated">基礎に不安：80人 ／ 習得済み：20人</p>
+     <div class="causal-mix" aria-hidden="true"><span data-mix="treated" style="width:80%"></span></div>
+     <p class="causal-formula" data-formula="treated">80人 × 50% ＋ 20人 × 90%<br>= 合格58人／100人</p>
+    </div>
+    <div class="causal-card">
+     <strong>補習なし</strong>
+     <p data-count="untreated">基礎に不安：20人 ／ 習得済み：80人</p>
+     <div class="causal-mix" aria-hidden="true"><span data-mix="untreated" style="width:20%"></span></div>
+     <p class="causal-formula" data-formula="untreated">20人 × 30% ＋ 80人 × 80%<br>= 合格70人／100人</p>
+    </div>
+   </div>
+   <p class="ld-legend">人数の帯：<span class="causal-key low"></span>基礎に不安がある学生 ／ <span class="causal-key high"></span>基礎を習得している学生</p>
+   <p><strong data-result-label>実際に観測された合格率</strong></p>
+   <div class="ld-bars">
+    <div><div class="ld-bar-label"><span>補習あり</span><strong data-rate="treated">58%</strong></div><div class="ld-track"><span class="ld-fill" data-bar="treated" style="width:58%"></span></div></div>
+    <div><div class="ld-bar-label"><span>補習なし</span><strong data-rate="untreated">70%</strong></div><div class="ld-track"><span class="ld-fill alt" data-bar="untreated" style="width:70%"></span></div></div>
+   </div>
+  </div>
+  <div data-strata hidden>
+   <div class="causal-populations">
+    <div class="causal-card"><strong>基礎に不安がある学生どうし</strong><p>補習あり：40人／80人 = <b>50%</b></p><p>補習なし：6人／20人 = <b>30%</b></p><p class="causal-formula">50% − 30% = <b>＋20ポイント</b></p></div>
+    <div class="causal-card"><strong>基礎を習得している学生どうし</strong><p>補習あり：18人／20人 = <b>90%</b></p><p>補習なし：64人／80人 = <b>80%</b></p><p class="causal-formula">90% − 80% = <b>＋10ポイント</b></p></div>
+   </div>
+  </div>
+  <p class="ld-status" role="status">58% − 70% = −12ポイント。補習ありのほうが低く見えますが、参加前の学力構成も違います。次に「2. 学力別に比べる」で、同じ学力層どうしを比べます。</p>
+ </div>
+ <figcaption>架空の記録を使った比較。学力別では補習ありが＋20ポイントと＋10ポイント。両グループを各学力層50人ずつとして計算すると、合格率は70%と55%、差は＋15ポイントになります。この差を因果効果とみなす条件は、後の「学力をそろえれば、必ず効果が分かる？」で説明します。</figcaption>
+ <noscript>この図は手順1の比較です。手順2・3の人数と計算は、上の本文と表でも読めます。</noscript>
+</figure>

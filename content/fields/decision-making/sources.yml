@@ -1,0 +1,91 @@
+ref-001:
+  url: https://gymnasium.farama.org/v1.0.0/introduction/basic_usage/
+  label: Gymnasium公式：エージェントと環境のやり取り ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://www.nature.com/articles/nature14236
+  label: DQN原論文・補足動画2
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://deepmind.google/blog/safety-first-ai-for-autonomous-data-centre-cooling-and-industrial-control/
+  label: 冷却制御：公式事例 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://www.nature.com/articles/nature16961
+  label: AlphaGo 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://robotics-transformer2.github.io/
+  label: RT-2 著者ページ ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://arxiv.org/abs/1803.08475
+  label: TSP：Attention, Learn to Solve Routing Problems! ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-decision-breakout-poster.jpg:
+  url: content/fields/decision-making/media/decision-breakout-poster.jpg
+  label: decision-breakout-poster.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-decision-breakout.mp4:
+  url: content/fields/decision-making/media/decision-breakout.mp4
+  label: decision-breakout.mp4
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+logs-imitation:
+  label: Ross, Gordon & Bagnell (2011), A Reduction of Imitation Learning and Structured
+    Prediction to No-Regret Online Learning
+  url: https://proceedings.mlr.press/v15/ross11a.html
+  verified_on: '2026-09-20'
+  verification: 原論文要旨で学習した行動に依存する将来の観測と独立同分布の破れを確認。DAggerの追加問い合わせを、このページの固定記録の設定で実行できるとは主張していない。
+logs-offline:
+  label: 'Levine et al. (2020), Offline Reinforcement Learning: Tutorial, Review,
+    and Perspectives on Open Problems'
+  url: https://arxiv.org/abs/2005.01643
+  verified_on: '2026-09-20'
+  verification: 著者要旨の固定記録からの方策学習という設定を確認。
+logs-irl:
+  label: Ng & Russell (2000), Algorithms for Inverse Reinforcement Learning
+  url: https://ai.stanford.edu/~ang/papers/icml00-irl.pdf
+  verified_on: '2026-09-20'
+  verification: 原論文の問題設定を参照。移動記録は独自例。
+agents-maddpg:
+  label: Lowe et al. (2017), Multi-Agent Actor-Critic for Mixed Cooperative-Competitive
+    Environments
+  url: https://arxiv.org/abs/1706.02275
+  verified_on: '2026-09-20'
+  verification: 原論文要旨の非定常性と集中学習・分散実行の設定を確認。荷物運びは独自模式例。
+robot-ref-001:
+  url: https://isaac-orbit.github.io/
+  label: ORBIT著者ページ：Reinforcement Learning
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+robot-ref-002:
+  url: https://robotics-transformer2.github.io/
+  label: RT-2 著者公開映像
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+robot-media-decision-orbit-poster.jpg:
+  url: content/fields/decision-making/media/decision-orbit-poster.jpg
+  label: decision-orbit-poster.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+robot-media-decision-orbit.mp4:
+  url: content/fields/decision-making/media/decision-orbit.mp4
+  label: decision-orbit.mp4
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+robot-media-rt2-result-poster.jpg:
+  url: content/fields/decision-making/media/rt2-result-poster.jpg
+  label: rt2-result-poster.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+robot-media-rt2-result.mp4:
+  url: content/fields/decision-making/media/rt2-result.mp4
+  label: rt2-result.mp4
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

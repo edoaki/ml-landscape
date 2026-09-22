@@ -1,0 +1,44 @@
+[
+  {
+    "width": 1440,
+    "javascript": true,
+    "figures": 4,
+    "page_overflow": false,
+    "svg_text_out_of_bounds": []
+  },
+  {
+    "width": 1440,
+    "javascript": false,
+    "figures": 4,
+    "page_overflow": false,
+    "svg_text_out_of_bounds": []
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "figures": 4,
+    "page_overflow": false,
+    "svg_text_out_of_bounds": []
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "figures": 4,
+    "page_overflow": false,
+    "svg_text_out_of_bounds": []
+  },
+  {
+    "width": 320,
+    "javascript": true,
+    "figures": 4,
+    "page_overflow": false,
+    "svg_text_out_of_bounds": []
+  },
+  {
+    "width": 320,
+    "javascript": false,
+    "figures": 4,
+    "page_overflow": false,
+    "svg_text_out_of_bounds": []
+  }
+]

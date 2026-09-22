@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="電力需要と設備の温度を例に、未来の予測、異常検知、変化点検出、欠測補完を比べます。時間の順序によって使える情報が変わることも説明します。"><meta name="color-scheme" content="light">
+<title>時系列 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../content/fields/timeseries/components/timeseries.js" defer></script><link rel="stylesheet" href="../content/fields/timeseries/components/page.css">
+</head>
+<body data-page="timeseries" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html">動画理解・生成</a><a href="spatial.html">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html" aria-current="page">時系列</a><a href="graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">Time Series</span></p><h1>時系列</h1><p class="lead">電力需要と設備の温度を例に、未来の予測、異常検知、変化点検出、欠測補完を比べます。時間の順序によって使える情報が変わることも説明します。</p></header>
+<section id="series">
+<h2>時系列のタスク</h2>
+<p>時系列は、時間の順に並ぶデータです。例えば1時間ごとの電力需要や、設備の温度です。同じ温度の記録でも、未来の値を知りたいのか、今の異常に気付きたいのかで、解く問題が変わります。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>タスク</th>
+<th>入力 → 出力</th>
+<th>具体例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="timeseries.html#forecast">将来予測</a></td>
+<td>過去の観測 → 未来の数値</td>
+<td>明日の電力需要を見積もる</td>
+</tr>
+<tr>
+<td><a href="timeseries.html#anomaly">異常検知</a></td>
+<td>観測 → 普段からの外れ具合・警報</td>
+<td>設備の急な温度上昇に気付く</td>
+</tr>
+<tr>
+<td><a href="timeseries.html#change">変化点検出</a></td>
+<td>観測 → 振る舞いが変わった時刻</td>
+<td>運転モードの切り替わりを見つける</td>
+</tr>
+<tr>
+<td><a href="timeseries.html#missing">欠測補完・状態推定</a></td>
+<td>不完全な観測 → 欠けた値・隠れた状態</td>
+<td>センサの通信切れを補う</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="forecast">
+<h2>電力需要の予測</h2>
+<p>入力は昨日の24時間の電力需要、出力は今日の24個の予測値です。夜に下がり、夕方に上がる形があります。まず「昨日の同じ時刻を使う」と「昨日の最後の値を使う」を切り替え、今日の予測線がどう変わるかを見てください。</p>
+<figure class="ts-demo" id="ts-forecast">
+
+<div class="ts-controls" hidden=""><label>予測の方法 <select id="ts-method"><option value="seasonal">昨日の同じ時刻を使う</option><option value="last">昨日の最後の値を使う</option></select></label><button aria-pressed="false" id="ts-reveal" type="button">今日の実測を表示</button></div>
+<svg aria-label="昨日の電力需要と今日の予測" role="img" viewBox="0 0 760 285" xmlns="http://www.w3.org/2000/svg"><title>昨日の電力需要と今日の予測</title><defs><marker id="arrow-1" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path d="M54 222.0H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="226.0">0</text><path d="M54 178.5H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="182.5">25</text><path d="M54 135.0H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="139.0">50</text><path d="M54 91.5H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="95.5">75</text><path d="M54 48.0H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="52.0">100</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="13" text-anchor="start" x="54" y="23">電力需要（kW）</text><path d="M379 40V226" stroke="#738679" stroke-dasharray="4 4"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="13" text-anchor="middle" x="210" y="275">昨日：入力に使える観測</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="13" text-anchor="middle" x="540" y="275">今日：予測してから答え合わせ</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle" x="54.0" y="246">0時</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle" x="219.95744680851064" y="246">12時</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle" x="372.0851063829787" y="246">23時</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle" x="385.9148936170213" y="246">0時</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle" x="551.8723404255319" y="246">12時</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle" x="704.0" y="246">23時</text><polyline data-line="history" fill="none" points="54.00,166.32 67.83,173.28 81.66,176.76 95.49,178.50 109.32,173.28 123.15,155.88 136.98,131.52 150.81,110.64 164.64,100.20 178.47,94.98 192.30,91.50 206.13,93.24 219.96,96.72 233.79,100.20 247.62,101.94 261.45,96.72 275.28,82.80 289.11,68.88 302.94,75.84 316.77,96.72 330.60,115.86 344.43,133.26 358.26,147.18 372.09,159.36" stroke="#4d7897" stroke-width="3"></polyline><polyline data-line="prediction" fill="none" points="385.91,166.32 399.74,173.28 413.57,176.76 427.40,178.50 441.23,173.28 455.06,155.88 468.89,131.52 482.72,110.64 496.55,100.20 510.38,94.98 524.21,91.50 538.04,93.24 551.87,96.72 565.70,100.20 579.53,101.94 593.36,96.72 607.19,82.80 621.02,68.88 634.85,75.84 648.68,96.72 662.51,115.86 676.34,133.26 690.17,147.18 704.00,159.36" stroke="#ba7147" stroke-dasharray="7 5" stroke-width="3"></polyline><polyline data-line="truth" fill="none" points="" stroke="#35664d" stroke-width="3"></polyline><g data-marks=""></g></svg><p class="ts-legend">青の実線：昨日の観測　／　橙の破線：今日の予測　／　緑の実線：今日の実測（答え合わせ時）</p>
+<p class="ts-status" role="status">今日の実測はまだ隠れています。夕方の山を予測できそうでしょうか。</p>
+
+<figcaption>
+<p>教材用の合成データ。2つの単純な基準予測をその場で計算します。学習済みの深層モデルの推論ではありません。JavaScript無効時も、昨日と同じ時刻を使う予測を表示します。</p>
+</figcaption>
+</figure>
+<p>「今日の実測を表示」を押すと、隠していた正解と予測を比べられます。MAE（平均絶対誤差）は、各時刻のずれの大きさを平均した値で、小さいほどよく当たっています。この例では昨日と似た一日の形が続くため、同じ時刻を使う方法が有利です。休日や急な天候変化で形が変われば、同じ方法でも外れます。</p>
+<p>深層学習でも「過去を入力し、未来と比べて学ぶ」という枠組みは共通です。<a href="../models/rnn.html">RNN</a>や<a href="../models/transformer.html">Transformer</a>などで、多数の系列から傾向や周期を学べます。予測時点で分かっている曜日や天気予報を加えることもあります。</p>
+<section id="research-5">
+<h3>TimesFMによる時系列予測</h3>
+<figure>
+<p><a href="../content/fields/timeseries/media/timesfm-result.png"><img src="../content/fields/timeseries/media/timesfm-result.png" alt="TimesFM原論文Figure 4のDartsとMonashの系列の予測例"></a></p>
+<figcaption>
+<p>Das et al.（ICML 2024）, Figure 4を引用。下段は将来の予測区間の拡大。青の正解系列と橙のTimesFM予測が、どこで一致し外れるかを見る。 <a href="../content/fields/timeseries/media/timesfm-result.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<p>2024年のTimesFMは、時系列を短い時間のまとまりに分けて扱うモデルを、多様な系列で事前学習する研究です。目的ごとにゼロから学ぶ場合と比べ、既に得た時系列の知識を新しい系列へ使えるかを問います。図の縦の境界より右は入力に混ぜず、将来の正解と予測を比べます。</p>
+<p><a href="https://arxiv.org/abs/2310.10688">TimesFM：2024年の原論文 ↗</a> · <a href="https://github.com/google-research/timesfm">著者実装（複数の版あり） ↗</a></p>
+</section>
+</section>
+<section id="anomaly">
+<h2>異常検知と閾値</h2>
+<p>設備の温度は普段50℃前後ですが、13時間目だけ急に上がりました。ここでは「50℃との差の絶対値」を異常スコアとし、しきい値を超えた点に赤い丸を付けます。しきい値を1℃、10℃、25℃へ動かしてみてください。</p>
+<figure class="ts-demo" id="ts-sensor">
+<div class="ts-controls" hidden="">
+<label>観測のパターン <select id="ts-event"><option value="spike">一瞬だけ上がる</option><option value="shift">上がったまま続く</option><option value="normal">普段どおり</option></select></label>
+<label>しきい値 <input id="ts-threshold" max="25" min="1" step="1" type="range" value="10"/><output for="ts-threshold" id="ts-threshold-value">10 ℃</output></label></div>
+<svg aria-label="センサの時間ごとの温度" role="img" viewBox="0 0 760 285" xmlns="http://www.w3.org/2000/svg"><title>センサの時間ごとの温度</title><defs><marker id="arrow-2" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path d="M54 222.0H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="226.0">40</text><path d="M54 178.5H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="182.5">50</text><path d="M54 135.0H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="139.0">60</text><path d="M54 91.5H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="95.5">70</text><path d="M54 48.0H704" stroke="#dfe7e1"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="43" y="52.0">80</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="13" text-anchor="start" x="54" y="23">温度（℃）</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="54" y="247">1</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="393" y="247">13</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="12" text-anchor="end" x="704" y="247">24 時間目</text><polyline data-line="baseline" fill="none" points="54.00,178.50 82.26,178.50 110.52,178.50 138.78,178.50 167.04,178.50 195.30,178.50 223.57,178.50 251.83,178.50 280.09,178.50 308.35,178.50 336.61,178.50 364.87,178.50 393.13,178.50 421.39,178.50 449.65,178.50 477.91,178.50 506.17,178.50 534.43,178.50 562.70,178.50 590.96,178.50 619.22,178.50 647.48,178.50 675.74,178.50 704.00,178.50" stroke="#35664d" stroke-dasharray="7 5" stroke-width="3"></polyline><polyline data-line="sensor" fill="none" points="54.00,178.50 82.26,174.15 110.52,182.85 138.78,178.50 167.04,169.80 195.30,178.50 223.57,182.85 251.83,174.15 280.09,178.50 308.35,187.20 336.61,174.15 364.87,178.50 393.13,87.15 421.39,182.85 449.65,178.50 477.91,169.80 506.17,178.50 534.43,174.15 562.70,182.85 590.96,178.50 619.22,174.15 647.48,178.50 675.74,182.85 704.00,174.15" stroke="#4d7897" stroke-width="3"></polyline><g data-marks=""></g></svg>
+<p class="ts-legend">青の実線：観測　／　緑の破線：普段の基準 50℃　／　赤い丸：しきい値を超えた観測</p><p class="ts-status" role="status">13時間目は71℃。基準との差21℃が、しきい値10℃を超えます。</p>
+
+<figcaption>
+<p>教材用の合成温度と、固定した基準からの偏差による検知。故障を診断するモデルではありません。JavaScript無効時は、一瞬の上昇の観測図を表示します。</p>
+</figcaption>
+</figure>
+<p>低くすると小さな揺れにも警報が出ます。高くしすぎると大きな上昇も見逃します。実際の異常検知では、時刻や運転条件に応じた予測からのずれなどを使い、別の検証データでしきい値を決めます。スコアが大きいだけで、故障の原因まで分かるわけではありません。</p>
+<section id="research-6">
+<h3>Merlionによる異常検知</h3>
+<figure>
+<p><a href="../content/fields/timeseries/media/merlion-result.png"><img src="../content/fields/timeseries/media/merlion-result.png" alt="Merlion著者実装の異常検知の出力例"></a></p>
+<figcaption>
+<p>Merlion公式READMEの異常検知図を引用。黒は観測値（左軸）、赤い線は異常スコア（右軸）、赤い帯は異常区間。両軸の尺度が違うことに注意。 <a href="../content/fields/timeseries/media/merlion-result.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<p>Merlionは単一のニューラルネットワーク名ではなく、時系列の異常検知・予測などを扱うフレームワークです。検出した区間が実際の異常と重なるか、遅れや誤警報がないかを見ます。前処理・閾値・評価の統一も研究や検証を支える仕事です。</p>
+<p><a href="https://github.com/salesforce/Merlion">Merlion：著者実装とチュートリアル ↗</a></p>
+</section>
+</section>
+<section id="change">
+<h2>変化点検出</h2>
+<p>上のデモを「上がったまま続く」に切り替えてください。13時間目から温度が約70℃になり、それ以降も高い状態が続きます。異常検知は各観測に警報を出しますが、変化点検出が答えたいのは「いつから普段の状態が変わったか」です。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>同じセンサの例</th>
+<th>異常検知で見るもの</th>
+<th>変化点検出で見るもの</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一瞬だけ上がる</td>
+<td>13時間目の大きなずれ</td>
+<td>すぐ元に戻り、持続する切り替わりとは異なる</td>
+</tr>
+<tr>
+<td>上がったまま続く</td>
+<td>13時間目以降の大きなずれ</td>
+<td>13時間目付近で平均の水準が変わったこと</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>このデモの切り替わりは教材で設定した正解で、変化点を推定するアルゴリズムは実行していません。実際には複数の観測を集めて変化を判断するため、変化した時刻と検知できた時刻はずれることがあります。意図した運転モード変更なら、変化があっても故障ではありません。</p>
+</section>
+<section id="missing">
+<h2>欠測補完</h2>
+<p>通信切れで12時の温度が欠けたとします。前後の値の間を直線でつなぐと、12時を51℃と補えます。これは観測値ではなく推定値です。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>時刻</th>
+<th>11時</th>
+<th>12時</th>
+<th>13時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>入力の記録</td>
+<td>50℃</td>
+<td>欠測</td>
+<td>52℃</td>
+</tr>
+<tr>
+<td>前後を使った補完</td>
+<td>50℃</td>
+<td>51℃（推定）</td>
+<td>52℃</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>13時まで記録した後の補完なら、前後の値を使えます。一方、12時の時点で判断するなら13時の観測はまだ使えません。状態推定では、ノイズのある観測から、直接見えない設備内部の温度などを推定します。<a href="../models/ssm.html">状態空間モデル</a>の「状態を更新する」考え方につながります。</p>
+</section>
+<section id="series-evaluation">
+<h2>時系列の評価設計</h2>
+<p>例えば1〜7月で学習し、8月で方法やしきい値を選び、9月を最後の評価に残します。隣り合う時刻をランダムに混ぜると、実際の未来予測より簡単な条件になる場合があります。正規化の平均なども、学習期間だけから計算します。</p>
+<p>予測では時間帯ごとの誤差や、予測を何時間先まで伸ばすかを見ます。異常検知では誤警報・見逃し・検知の遅れを見ます。ほとんど正常な設備では「すべて正常」と答えても正解率が高くなるため、正解率だけでは評価できません。</p>
+</section>
+<script id="ts-data" type="application/json">{"history": [32, 28, 26, 25, 28, 38, 52, 64, 70, 73, 75, 74, 72, 70, 69, 72, 80, 88, 84, 72, 61, 51, 43, 36], "future": [34, 30, 28, 27, 30, 41, 56, 68, 74, 78, 79, 77, 75, 74, 73, 76, 85, 94, 90, 78, 65, 55, 46, 39], "sensor": [50, 51, 49, 50, 52, 50, 49, 51, 50, 48, 51, 50, 51, 49, 50, 52, 50, 51, 49, 50, 51, 50, 49, 51]}</script>
+<section id="sources">
+<h2>出典・参考資料</h2>
+<ul>
+<li><a href="https://github.com/google-research/timesfm">TimesFM 著者実装 ↗</a></li>
+<li><a href="https://github.com/salesforce/Merlion">Merlion 著者実装・チュートリアル ↗</a></li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#series">時系列のタスク</a><a data-level="2" href="#forecast">電力需要の予測</a><a data-level="3" href="#research-5">TimesFMによる時系列予測</a><a data-level="2" href="#anomaly">異常検知と閾値</a><a data-level="3" href="#research-6">Merlionによる異常検知</a><a data-level="2" href="#change">変化点検出</a><a data-level="2" href="#missing">欠測補完</a><a data-level="2" href="#series-evaluation">時系列の評価設計</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</body></html>

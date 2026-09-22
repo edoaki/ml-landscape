@@ -1,0 +1,10 @@
+<figure class="fm-figure" id="fm-next-token" aria-label="同じ元の文章から、位置ごとに入力と正解の次トークンを作る例">
+<p class="fm-token-source">元の文章：<b>120</b> <b>×</b> <b>3</b> <b>=</b> <b>360</b></p>
+<div class="fm-token-grid">
+<div class="fm-token-row"><span class="fm-eyebrow">ここまでを入力</span><span class="fm-eyebrow">次の正解</span></div>
+<div class="fm-token-row"><span>120</span><strong>×</strong></div>
+<div class="fm-token-row"><span>120 ×</span><strong>3</strong></div>
+<div class="fm-token-row"><span>120 × 3</span><strong>=</strong></div>
+<div class="fm-token-row"><span>120 × 3 =</span><strong>360</strong></div>
+</div>
+<figcaption>「120 × 3 = 360」を各位置で区切った例。右列をその位置の入力には含めず、予測と照合します。見やすさのため、各数値・記号を一つのトークンと仮定しています。</figcaption></figure>

@@ -1,0 +1,885 @@
+{
+  "research_examples": [
+    {
+      "title": "SAM 2｜指定した対象を、動画の中で追う",
+      "destination": "video",
+      "anchor": "sam2"
+    },
+    {
+      "title": "Depth Anything V2｜一枚の画像を奥行きへ",
+      "destination": "vision",
+      "anchor": "depth-v2"
+    },
+    {
+      "title": "MediaPipe Pose｜動きを関節点の列へ",
+      "destination": "vision",
+      "anchor": "mediapipe"
+    },
+    {
+      "title": "NeRF｜撮影していない視点を描く",
+      "destination": "spatial",
+      "anchor": "research-4"
+    },
+    {
+      "title": "TimesFM｜多様な系列で事前学習する",
+      "destination": "timeseries",
+      "anchor": "research-5"
+    },
+    {
+      "title": "Merlion｜異常スコアと評価をつなぐ",
+      "destination": "timeseries",
+      "anchor": "research-6"
+    },
+    {
+      "title": "Demucs｜混合音から音源を取り出す",
+      "destination": "audio",
+      "anchor": "research-7"
+    },
+    {
+      "title": "RAG｜文書を探してから答える",
+      "destination": "language",
+      "anchor": "research-8"
+    },
+    {
+      "title": "RT-2｜視覚と言語の知識を、ロボットの行動へ",
+      "destination": "robotics",
+      "anchor": "research-9"
+    },
+    {
+      "title": "AlphaGo｜方策、価値、探索の組み合わせ",
+      "destination": "world-models",
+      "anchor": "research-10"
+    },
+    {
+      "title": "データセンターの冷却｜センサから設定を選ぶ",
+      "destination": "decision-making",
+      "anchor": "research-11"
+    },
+    {
+      "title": "配送経路｜都市の集合から訪問順序へ",
+      "destination": "combinatorial-optimization",
+      "anchor": "research-12"
+    },
+    {
+      "title": "AlphaFold｜配列から構造を予測する",
+      "destination": "life-science",
+      "anchor": "research-13"
+    }
+  ],
+  "replaced_navigation": [
+    {
+      "origin": "index.html#contents, #reading",
+      "reason": "旧番号・固定件数・旧順序の案内を新しい導入と自動目次へ置換。"
+    },
+    {
+      "origin": "research.html#connections 最終段落",
+      "reason": "06終了・05/A01への案内を除去。"
+    },
+    {
+      "origin": "models.html#architectures",
+      "reason": "旧番号付きモデルカードをnavigation.ymlの構造一覧に置換。モデル本文はすべて保持。"
+    }
+  ],
+  "pages": {
+    "introduction": {
+      "origins": [
+        "research.html#connections"
+      ],
+      "scope": "身近な具体例、教材の範囲、前提知識、標準の読む順序",
+      "path": "content/introduction/introduction/index.md",
+      "status": "ready",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "fundamentals": {
+      "origins": [
+        "reliability.html#generalization",
+        "reliability.html#sources"
+      ],
+      "scope": "ページ。タスク・モデル・損失関数・学習アルゴリズム、特徴・表現、訓練・検証・テスト、過学習・汎化、学習と推論、予測・生成・意思決定",
+      "path": "content/basics/fundamentals/index.md",
+      "status": "ready",
+      "components": 0,
+      "media": 1,
+      "scripts": []
+    },
+    "learning": {
+      "origins": [
+        "foundations.html#supervised",
+        "foundations.html#unsupervised",
+        "foundations.html#rl",
+        "foundations.html#self-supervised",
+        "foundations.html#sources",
+        "learning.html#self-supervised",
+        "learning.html#next-token",
+        "learning.html#masked",
+        "learning.html#contrastive",
+        "learning.html#dino",
+        "learning.html#semi-supervised",
+        "learning.html#weak-supervision",
+        "learning.html#sources",
+        "learning.html / DINOの実際の結果"
+      ],
+      "scope": "ページ。教師あり、教師なし、自己教師あり、半教師あり、弱教師あり、強化学習。教師信号の得方と利用できる情報",
+      "path": "content/basics/learning/index.md",
+      "status": "partial",
+      "components": 6,
+      "media": 2,
+      "scripts": []
+    },
+    "probabilistic-inference": {
+      "origins": [],
+      "scope": "独立ページ。事前分布・尤度・事後分布・予測分布、ベイズ学習、潜在変数、MCMC・変分推論の入口",
+      "path": "content/basics/probabilistic-inference/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "classical": {
+      "origins": [
+        "classics.html#prediction",
+        "classics.html#structure",
+        "classics.html#sources"
+      ],
+      "scope": "ページ内の節：カーネル法、木を使う方法、クラスタリング、行列・テンソル分解",
+      "path": "content/basics/classical/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 0,
+      "scripts": []
+    },
+    "cnn": {
+      "origins": [
+        "cnn.html#why-cnn",
+        "cnn.html#idea",
+        "cnn.html#convolution",
+        "cnn.html#shape",
+        "cnn.html#designs",
+        "cnn.html#training",
+        "cnn.html#sources"
+      ],
+      "scope": "ページ。局所的な処理、重み共有、特徴の階層",
+      "path": "content/models/cnn/index.md",
+      "status": "migrated",
+      "components": 5,
+      "media": 1,
+      "scripts": [
+        "content/models/cnn/components/conv.js"
+      ]
+    },
+    "rnn": {
+      "origins": [
+        "rnn.html#why",
+        "rnn.html#state",
+        "rnn.html#long-memory",
+        "rnn.html#lstm",
+        "rnn.html#gru",
+        "rnn.html#train-use",
+        "rnn.html#sources"
+      ],
+      "scope": "ページ。状態を更新する処理と各方式の違い",
+      "path": "content/models/rnn/index.md",
+      "status": "migrated",
+      "components": 4,
+      "media": 0,
+      "scripts": []
+    },
+    "transformer": {
+      "origins": [
+        "transformer.html#why",
+        "transformer.html#structure",
+        "transformer.html#attention",
+        "transformer.html#block",
+        "transformer.html#masks",
+        "transformer.html#sources"
+      ],
+      "scope": "ページ。注意機構、FFN、残差・正規化、位置情報、マスクとEncoder・Decoderの構造",
+      "path": "content/models/transformer/index.md",
+      "status": "migrated",
+      "components": 9,
+      "media": 0,
+      "scripts": []
+    },
+    "vit": {
+      "origins": [
+        "vit.html#bridge",
+        "vit.html#patches",
+        "vit.html#cls",
+        "vit.html#sources"
+      ],
+      "scope": "独立ページ。画像パッチと処理を説明。目次の親子関係は先行読書を要求しない",
+      "path": "content/models/vit/index.md",
+      "status": "migrated",
+      "components": 2,
+      "media": 0,
+      "scripts": []
+    },
+    "gnn": {
+      "origins": [
+        "gnn.html#basics",
+        "gnn.html#gcn",
+        "gnn.html#gat",
+        "gnn.html#heads",
+        "gnn.html#learning",
+        "gnn.html#sage",
+        "gnn.html#compare",
+        "gnn.html#outputs",
+        "gnn.html#sources"
+      ],
+      "scope": "ページ。グラフ上の情報の集約・更新",
+      "path": "content/models/gnn/index.md",
+      "status": "migrated",
+      "components": 11,
+      "media": 0,
+      "scripts": [
+        "content/models/gnn/components/calculation.js"
+      ]
+    },
+    "ssm": {
+      "origins": [
+        "ssm.html#why",
+        "ssm.html#state",
+        "ssm.html#update",
+        "ssm.html#hippo",
+        "ssm.html#representations",
+        "ssm.html#selective",
+        "ssm.html#block",
+        "ssm.html#train-use",
+        "ssm.html#sources"
+      ],
+      "scope": "ページ。状態空間モデルと選択的な状態更新",
+      "path": "content/models/ssm/index.md",
+      "status": "migrated",
+      "components": 7,
+      "media": 4,
+      "scripts": [
+        "content/models/ssm/components/ssm.js"
+      ]
+    },
+    "generative-overview": {
+      "origins": [
+        "models.html#generative",
+        "models.html#compare"
+      ],
+      "scope": "ページ。分布の学習、条件付き生成、標本の生成、各方式の位置付け",
+      "path": "content/models/generative-overview/index.md",
+      "status": "partial",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "autoregressive": {
+      "origins": [],
+      "scope": "ページ。条件付き確率の積と逐次生成、学習時と利用時",
+      "path": "content/models/autoregressive/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "vae": {
+      "origins": [
+        "vae.html#ae",
+        "vae.html#vae",
+        "vae.html#loss",
+        "vae.html#sampling",
+        "vae.html#sources"
+      ],
+      "scope": "ページ。潜在変数・生成と学習を説明し、比較に必要なAEの構造・計算も残す",
+      "path": "content/models/vae/index.md",
+      "status": "migrated",
+      "components": 3,
+      "media": 0,
+      "scripts": []
+    },
+    "gan": {
+      "origins": [
+        "gan.html#why",
+        "gan.html#two-networks",
+        "gan.html#loss",
+        "gan.html#use",
+        "gan.html#limits",
+        "gan.html#sources"
+      ],
+      "scope": "ページ。生成器・識別器と学習",
+      "path": "content/models/gan/index.md",
+      "status": "migrated",
+      "components": 2,
+      "media": 0,
+      "scripts": []
+    },
+    "normalizing-flow": {
+      "origins": [
+        "normalizing-flow.html#why",
+        "normalizing-flow.html#invertible",
+        "normalizing-flow.html#density",
+        "normalizing-flow.html#coupling",
+        "normalizing-flow.html#train-use",
+        "normalizing-flow.html#sources"
+      ],
+      "scope": "ページ。可逆変換と密度・生成",
+      "path": "content/models/normalizing-flow/index.md",
+      "status": "migrated",
+      "components": 3,
+      "media": 0,
+      "scripts": []
+    },
+    "diffusion": {
+      "origins": [
+        "diffusion.html#why",
+        "diffusion.html#forward",
+        "diffusion.html#training",
+        "diffusion.html#network",
+        "diffusion.html#conditional",
+        "diffusion.html#sampling",
+        "diffusion.html#sources"
+      ],
+      "scope": "ページ。ノイズを使う学習と生成過程",
+      "path": "content/models/diffusion/index.md",
+      "status": "migrated",
+      "components": 8,
+      "media": 1,
+      "scripts": []
+    },
+    "flow-matching": {
+      "origins": [
+        "flow-matching.html#purpose",
+        "flow-matching.html#targets",
+        "flow-matching.html#training",
+        "flow-matching.html#why-average",
+        "flow-matching.html#sampling",
+        "flow-matching.html#compare",
+        "flow-matching.html#sources"
+      ],
+      "scope": "ページ。分布間の流れと速度場の学習",
+      "path": "content/models/flow-matching/index.md",
+      "status": "migrated",
+      "components": 4,
+      "media": 0,
+      "scripts": [
+        "content/models/flow-matching/components/fm.js"
+      ]
+    },
+    "llm": {
+      "origins": [
+        "transformer.html#gpt",
+        "transformer.html#tokens",
+        "transformer.html#representations",
+        "transformer.html#train-use",
+        "language.html#llm"
+      ],
+      "scope": "独立ページ。GPT型を例に文章の入力から次トークンの予測・生成、学習時との違いを説明。構造・計算の詳説はTransformerへリンク",
+      "path": "content/models/llm/index.md",
+      "status": "migrated",
+      "components": 3,
+      "media": 0,
+      "scripts": [
+        "content/models/llm/components/layers.js"
+      ]
+    },
+    "vlm": {
+      "origins": [
+        "vit.html#vlm",
+        "vit.html#compare"
+      ],
+      "scope": "ページ。画像エンコーダ、接続部、言語モデルなどの構成例と情報の流れ。一つの構造をVLM全体の定義にしない",
+      "path": "content/models/vlm/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 0,
+      "scripts": []
+    },
+    "vision": {
+      "origins": [
+        "vision.html#output",
+        "vision.html#classification",
+        "vision.html#regression",
+        "vision.html#detection",
+        "vision.html#segmentation",
+        "vision.html#depth",
+        "vision.html#pose",
+        "vision.html#research-links",
+        "vision.html#sources",
+        "research.html#seeing / Depth Anything V2｜一枚の画像を奥行きへ",
+        "research.html#seeing / MediaPipe Pose｜動きを関節点の列へ"
+      ],
+      "scope": "分類、回帰、検出、領域分割、深度、姿勢",
+      "path": "content/fields/vision/index.md",
+      "status": "migrated",
+      "components": 8,
+      "media": 10,
+      "scripts": []
+    },
+    "video": {
+      "origins": [
+        "spatial.html#video",
+        "spatial.html#optical-flow",
+        "spatial.html#video-generation",
+        "spatial.html#sora",
+        "spatial.html#genie",
+        "research.html#seeing / SAM 2｜指定した対象を、動画の中で追う"
+      ],
+      "scope": "時間的な変化、追跡、フロー、動画生成",
+      "path": "content/fields/video/index.md",
+      "status": "migrated",
+      "components": 6,
+      "media": 0,
+      "scripts": [
+        "content/fields/video/components/spatial.js"
+      ]
+    },
+    "spatial": {
+      "origins": [
+        "spatial.html#slam",
+        "spatial.html#space",
+        "spatial.html#pointcloud",
+        "spatial.html#gaussian-splatting",
+        "spatial.html#novel-view",
+        "spatial.html#sources",
+        "research.html#seeing / NeRF｜撮影していない視点を描く"
+      ],
+      "scope": "SLAM、3D再構成、空間表現、新規視点",
+      "path": "content/fields/spatial/index.md",
+      "status": "migrated",
+      "components": 4,
+      "media": 0,
+      "scripts": []
+    },
+    "language": {
+      "origins": [
+        "language.html#tasks",
+        "language.html#rag",
+        "language.html#sources",
+        "research.html#language-action / RAG｜文書を探してから答える"
+      ],
+      "scope": "認識・分類、翻訳、質問応答、文章生成、LLMの利用例、RAGの設計と評価、言語固有の能力評価",
+      "path": "content/fields/language/index.md",
+      "status": "partial",
+      "components": 2,
+      "media": 0,
+      "scripts": []
+    },
+    "audio": {
+      "origins": [
+        "audio.html#tasks",
+        "audio.html#asr",
+        "audio.html#tts",
+        "audio.html#music",
+        "audio.html#listen",
+        "audio.html#representation",
+        "audio.html#sources",
+        "research.html#signals / Demucs｜混合音から音源を取り出す"
+      ],
+      "scope": "認識、合成、生成、分離",
+      "path": "content/fields/audio/index.md",
+      "status": "migrated",
+      "components": 11,
+      "media": 13,
+      "scripts": [
+        "content/fields/audio/components/audio.js"
+      ]
+    },
+    "multimodal": {
+      "origins": [
+        "language.html#vlm",
+        "language.html#matching"
+      ],
+      "scope": "異種情報の対応付け・統合・生成、CLIP、VLM、音声・動画との組み合わせ",
+      "path": "content/fields/multimodal/index.md",
+      "status": "partial",
+      "components": 3,
+      "media": 0,
+      "scripts": []
+    },
+    "timeseries": {
+      "origins": [
+        "time-graphs.html#series",
+        "time-graphs.html#forecast",
+        "time-graphs.html#anomaly",
+        "time-graphs.html#change",
+        "time-graphs.html#missing",
+        "time-graphs.html#series-evaluation",
+        "time-graphs.html#sources",
+        "research.html#signals / TimesFM｜多様な系列で事前学習する",
+        "research.html#signals / Merlion｜異常スコアと評価をつなぐ"
+      ],
+      "scope": "予測、異常検知、変化点、欠測補完",
+      "path": "content/fields/timeseries/index.md",
+      "status": "migrated",
+      "components": 3,
+      "media": 2,
+      "scripts": [
+        "content/fields/timeseries/components/timeseries.js"
+      ]
+    },
+    "tabular": {
+      "origins": [],
+      "scope": "数値・カテゴリ・欠測の混在、分類・回帰、木とNNの比較、評価条件",
+      "path": "content/fields/tabular/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "retrieval": {
+      "origins": [],
+      "scope": "関連度、疎な検索・密な検索、再ランキング、検索評価",
+      "path": "content/fields/retrieval/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "recommendation": {
+      "origins": [
+        "time-graphs.html#recommendation",
+        "time-graphs.html#rec-netflix",
+        "time-graphs.html#rec-youtube",
+        "time-graphs.html#rec-spotify",
+        "time-graphs.html#rec-shopping",
+        "time-graphs.html#rec-more",
+        "time-graphs.html#rec-how",
+        "time-graphs.html#rec-evaluation"
+      ],
+      "scope": "候補生成、ランキング、フィードバック、評価、バンディットとの接点",
+      "path": "content/fields/recommendation/index.md",
+      "status": "migrated",
+      "components": 5,
+      "media": 0,
+      "scripts": []
+    },
+    "graphs": {
+      "origins": [
+        "time-graphs.html#graphs"
+      ],
+      "scope": "ノード・辺・グラフ全体の問い、GNN以外の方法",
+      "path": "content/fields/graphs/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 0,
+      "scripts": []
+    },
+    "decision-making": {
+      "origins": [
+        "decision-science.html#decision",
+        "decision-science.html#rl",
+        "decision-science.html#games",
+        "decision-science.html#sources",
+        "research.html#design-control / データセンターの冷却｜センサから設定を選ぶ"
+      ],
+      "scope": "状態・行動・報酬、方策・価値、探索と活用、バンディット",
+      "path": "content/fields/decision-making/index.md",
+      "status": "partial",
+      "components": 3,
+      "media": 2,
+      "scripts": []
+    },
+    "learning-from-logs": {
+      "origins": [],
+      "scope": "オフラインRL、模倣学習、逆強化学習。記録に含まれる状態・行動・報酬の違い",
+      "path": "content/fields/learning-from-logs/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "world-models": {
+      "origins": [
+        "decision-science.html#planning",
+        "decision-science.html#world-model",
+        "research.html#language-action / AlphaGo｜方策、価値、探索の組み合わせ"
+      ],
+      "scope": "行動に応じた環境変化の予測、候補行動の比較、モデルの誤差",
+      "path": "content/fields/world-models/index.md",
+      "status": "partial",
+      "components": 5,
+      "media": 2,
+      "scripts": []
+    },
+    "multi-agent-learning": {
+      "origins": [],
+      "scope": "協調・競争、相手の変化、役割分担、観測・通信、個別・共同の評価",
+      "path": "content/fields/multi-agent-learning/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "robotics": {
+      "origins": [
+        "decision-science.html#robotics",
+        "research.html#language-action / RT-2｜視覚と言語の知識を、ロボットの行動へ"
+      ],
+      "scope": "認識と行動、模倣・強化学習、実環境への移行",
+      "path": "content/fields/robotics/index.md",
+      "status": "partial",
+      "components": 3,
+      "media": 4,
+      "scripts": []
+    },
+    "combinatorial-optimization": {
+      "origins": [
+        "decision-science.html#problem",
+        "research.html#design-control / 配送経路｜都市の集合から訪問順序へ"
+      ],
+      "scope": "経路、割り当て、スケジューリング",
+      "path": "content/fields/combinatorial-optimization/index.md",
+      "status": "partial",
+      "components": 3,
+      "media": 1,
+      "scripts": []
+    },
+    "life-science": {
+      "origins": [
+        "science.html#protein",
+        "science.html#cells",
+        "science.html#design",
+        "research.html#design-control / AlphaFold｜配列から構造を予測する",
+        "science.html / 科学の三例の接続説明"
+      ],
+      "scope": "タンパク質、細胞、分子の構造・機能・相互作用、設計",
+      "path": "content/fields/life-science/index.md",
+      "status": "partial",
+      "components": 5,
+      "media": 2,
+      "scripts": [
+        "assets/protein-data.js",
+        "content/fields/life-science/components/protein.js"
+      ]
+    },
+    "science": {
+      "origins": [
+        "science.html#science",
+        "science.html#simulation",
+        "science.html#inverse"
+      ],
+      "scope": "物理法則の組み込み、逆問題、PINNs、代理モデル、ニューラルオペレーター",
+      "path": "content/fields/science/index.md",
+      "status": "partial",
+      "components": 2,
+      "media": 1,
+      "scripts": [
+        "content/fields/science/components/science.js"
+      ]
+    },
+    "earth-science": {
+      "origins": [
+        "science.html#weather"
+      ],
+      "scope": "空間と時間を持つ観測、気象予測、予測期間・地域別の評価",
+      "path": "content/fields/earth-science/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 2,
+      "scripts": []
+    },
+    "representation-learning": {
+      "origins": [
+        "learning.html#representation"
+      ],
+      "scope": "どんな特徴を獲得するか。埋め込み、対比学習、AE・再構成、転用可能な表現、帰納バイアス・対称性",
+      "path": "content/questions/representation-learning/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 0,
+      "scripts": []
+    },
+    "transfer-learning": {
+      "origins": [
+        "learning.html#transfer",
+        "learning.html#few-shot",
+        "learning.html#meta-learning",
+        "learning.html#multitask"
+      ],
+      "scope": "得た知識を別の課題・環境にどう使うか。転移、少数例、メタ学習、マルチタスク、ドメイン適応、テスト時適応",
+      "path": "content/questions/transfer-learning/index.md",
+      "status": "partial",
+      "components": 4,
+      "media": 0,
+      "scripts": []
+    },
+    "continual-learning": {
+      "origins": [
+        "learning.html#continual",
+        "learning.html#online"
+      ],
+      "scope": "順次入る情報をどう学ぶか。更新、過去データへのアクセス、忘却",
+      "path": "content/questions/continual-learning/index.md",
+      "status": "partial",
+      "components": 2,
+      "media": 0,
+      "scripts": []
+    },
+    "foundation-models": {
+      "origins": [
+        "foundations.html#combination"
+      ],
+      "scope": "広い用途に使うモデルをどう学び適応させるか。事前学習、追加学習、指示・選好データ、RLHF・DPO、文脈内学習（ICL）",
+      "path": "content/questions/foundation-models/index.md",
+      "status": "partial",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "robustness": {
+      "origins": [
+        "reliability.html#robustness"
+      ],
+      "scope": "条件が変わっても性能を保てるか。自然な変化・摂動、未知の環境、ドメイン汎化",
+      "path": "content/questions/robustness/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 1,
+      "scripts": []
+    },
+    "uncertainty-unknowns": {
+      "origins": [
+        "reliability.html#uncertainty"
+      ],
+      "scope": "予測をどこまで信頼できるか。不確実性、校正、未知クラス・分布外の検出、判断の保留",
+      "path": "content/questions/uncertainty-unknowns/index.md",
+      "status": "partial",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "interpretability": {
+      "origins": [
+        "xai-advanced.html#start",
+        "xai-advanced.html#shapley",
+        "xai-advanced.html#contributions",
+        "xai-advanced.html#gradcam",
+        "xai-advanced.html#counterfactual",
+        "xai-advanced.html#dice",
+        "xai-advanced.html#llm",
+        "xai-advanced.html#arithmetic",
+        "xai-advanced.html#planning",
+        "xai-advanced.html#concepts",
+        "xai-advanced.html#sources"
+      ],
+      "scope": "判断と内部をどう説明するか。寄与度、反実仮想、内部機構の理解",
+      "path": "content/questions/interpretability/index.md",
+      "status": "migrated",
+      "components": 8,
+      "media": 0,
+      "scripts": []
+    },
+    "safety": {
+      "origins": [],
+      "scope": "人に関わるモデルの影響をどう評価し抑えるか。失敗の影響と人への引き継ぎ、集団別の誤りや不利益、データの情報漏洩と保護",
+      "path": "content/questions/safety/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "efficiency": {
+      "origins": [
+        "efficiency.html#cost",
+        "efficiency.html#distillation",
+        "efficiency.html#quantization",
+        "efficiency.html#lora",
+        "efficiency.html#sources",
+        "efficiency.html#systems (枝刈り)"
+      ],
+      "scope": "計算・保存・更新の費用をどう減らすか。蒸留、量子化、枝刈り、PEFT",
+      "path": "content/questions/efficiency/index.md",
+      "status": "partial",
+      "components": 3,
+      "media": 0,
+      "scripts": []
+    },
+    "distributed-systems": {
+      "origins": [
+        "efficiency.html#systems"
+      ],
+      "scope": "大きな学習・推論をどう実行するか。計算の分担、通信、メモリ、遅延・処理量",
+      "path": "content/questions/distributed-systems/index.md",
+      "status": "partial",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "federated-learning": {
+      "origins": [],
+      "scope": "データを各端末・組織に置いてどう協力するか。通信、データの違い、個別化",
+      "path": "content/questions/federated-learning/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "ensembles-experts": {
+      "origins": [
+        "efficiency.html#systems (MoE)"
+      ],
+      "scope": "複数のモデル・専門家をどう組み合わせるか。アンサンブル、バギング、Deep Ensembles、MoE",
+      "path": "content/questions/ensembles-experts/index.md",
+      "status": "partial",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "learning-theory": {
+      "origins": [],
+      "scope": "学習はなぜ成立するか。汎化、標本数、容量、表現、最適化との関係",
+      "path": "content/questions/learning-theory/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "optimization": {
+      "origins": [
+        "reliability.html#optimization"
+      ],
+      "scope": "どうパラメータを更新するか。学習率、更新法、安定性、収束と汎化",
+      "path": "content/questions/optimization/index.md",
+      "status": "partial",
+      "components": 1,
+      "media": 1,
+      "scripts": []
+    },
+    "information-geometry": {
+      "origins": [],
+      "scope": "分布や学習を幾何としてどう捉えるか。分布の空間、Fisher情報、自然勾配",
+      "path": "content/questions/information-geometry/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "causal-inference": {
+      "origins": [],
+      "scope": "介入すると結果はどう変わるか。予測と介入、交絡、因果構造、識別に必要な仮定",
+      "path": "content/questions/causal-inference/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    },
+    "datasets": {
+      "origins": [
+        "learning.html#active-learning",
+        "learning.html#data-centric"
+      ],
+      "scope": "何を学び測るために、どんなデータを用意するか。設計・収集・注釈、能動学習と費用、ラベルノイズ・不均衡・欠測、品質・範囲・更新、データ拡張・合成データ",
+      "path": "content/questions/datasets/index.md",
+      "status": "partial",
+      "components": 2,
+      "media": 0,
+      "scripts": []
+    },
+    "evaluation": {
+      "origins": [],
+      "scope": "能力や改善をどう測るか。指標、比較条件、データ分割、モデル選択・ハイパーパラメータ探索、汚染・漏洩、ばらつき、再現性、ベンチマークの限界",
+      "path": "content/questions/evaluation/index.md",
+      "status": "planned",
+      "components": 0,
+      "media": 0,
+      "scripts": []
+    }
+  }
+}

@@ -1,0 +1,30 @@
+/* Video and 3D: readable paper figures and opt-in external playback. */
+body[data-page="spatial"] #orb-slam3 figure img{max-height:660px;width:auto;max-width:100%;margin:0 auto;display:block;object-fit:contain}
+.spatial-video-load{font:inherit;padding:14px 18px;color:var(--green);background:var(--tint);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.spatial-video-player iframe{display:block;width:100%;aspect-ratio:16/9;border:0;margin-top:16px}
+@media print{.spatial-video{display:none}}
+body[data-page="spatial"] .task-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px}
+body[data-page="spatial"] .task-pair>svg{display:block;width:100%;min-width:0;max-width:100%;height:auto;padding:0}
+@media(max-width:620px){body[data-page="spatial"] .task-pair{grid-template-columns:minmax(0,1fr);padding:8px}}
+
+body[data-page="spatial"] video{display:block;width:100%;max-width:100%;height:auto}
+
+/* Spatial result frames: preserve the original notebook images. */
+body[data-page="spatial"] .spatial-result-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+body[data-page="spatial"] .spatial-result-frames figure{margin:0}
+@media(max-width:650px){body[data-page="spatial"] .spatial-result-frames{grid-template-columns:1fr}}
+
+body[data-page="spatial"] .spatial-frame-viewer figure{margin-bottom:12px}
+body[data-page="spatial"] .spatial-frame-controls{display:flex;align-items:center;justify-content:center;gap:24px}
+body[data-page="spatial"] .spatial-frame-controls button{min-width:48px;min-height:44px;border:1px solid #a2b5a4;border-radius:8px;background:#fff;color:#294a39;font-size:24px;cursor:pointer}
+body[data-page="spatial"] .spatial-frame-controls button:disabled{opacity:.35;cursor:default}
+body[data-page="spatial"] .spatial-raft-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body[data-page="spatial"] .spatial-raft-pair figure{margin:16px 0}
+@media(max-width:650px){body[data-page="spatial"] .spatial-raft-pair{grid-template-columns:1fr;gap:0}}
+
+body[data-page="spatial"] .spatial-frame-viewer{max-width:100%}
+body[data-page="spatial"] .spatial-sam-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body[data-page="spatial"] .spatial-sam-pair figure img{height:280px;object-fit:contain}
+@media(max-width:650px){body[data-page="spatial"] .spatial-sam-pair{grid-template-columns:1fr;gap:0}body[data-page="spatial"] .spatial-sam-pair figure img{height:210px}}
+
+body[data-page="spatial"] .spatial-slam-output{max-width:560px;margin:24px auto}

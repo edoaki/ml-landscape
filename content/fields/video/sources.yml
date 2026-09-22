@@ -1,0 +1,28 @@
+ref-001:
+  url: https://github.com/facebookresearch/sam2/blob/main/notebooks/video_predictor_example.ipynb
+  label: SAM 2公式ノートブックの複数対象の追跡結果 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/2003.12039v3
+  label: RAFT, Figure 4（PDF p.10） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://openai.com/index/sora/
+  label: Sora：Tokyo walk（2024） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://deepmind.google/models/genie/
+  label: Genie 3：Backyard racetrack ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://github.com/facebookresearch/sam2
+  label: SAM 2：著者実装・結果 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://sam2.metademolab.com/
+  label: 外部の操作デモ ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+inherited-ref-007:
+  url: https://github.com/princeton-vl/RAFT
+  label: RAFT 著者実装 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

@@ -1,0 +1,8 @@
+/* Audio lesson: input/output listening cards and synchronized source selection. */
+.audio-sample{min-width:0;padding:18px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.audio-sample h3{margin:0 0 12px}.audio-sample p{font-size:14px}.audio-sample audio,.audio-switch audio{display:block;width:100%;max-width:100%;margin:16px 0 4px}
+.audio-transcript{font-size:20px!important;font-weight:600;color:var(--green)}
+.audio-switch{padding:20px;background:var(--tint);border:1px solid var(--line);border-radius:8px}.audio-switch>p:first-child{margin-top:0}
+.audio-options{display:flex;flex-wrap:wrap;gap:8px}.audio-options button{padding:10px 16px;border:1px solid var(--green);border-radius:6px;background:white;color:var(--green)}.audio-options button[aria-pressed=true]{background:var(--green);color:white}.audio-status{font-size:14px;min-height:2em}
+
+body[data-page="spatial"] .spatial-frame-viewer{max-width:680px;margin:24px auto}

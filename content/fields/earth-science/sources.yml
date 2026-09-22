@@ -1,0 +1,20 @@
+ref-001:
+  url: https://deepmind.google/blog/nowcasting-the-next-hour-of-rain/
+  label: DeepMind・Met Officeの研究公開映像（2021）
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://www.nature.com/articles/s41586-021-03854-z
+  label: DGMRの論文
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-dgmr-rain-poster.jpg:
+  url: content/fields/earth-science/media/dgmr-rain-poster.jpg
+  label: dgmr-rain-poster.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-dgmr-rain.mp4:
+  url: content/fields/earth-science/media/dgmr-rain.mp4
+  label: dgmr-rain.mp4
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

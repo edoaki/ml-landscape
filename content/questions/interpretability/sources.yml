@@ -1,0 +1,36 @@
+ref-001:
+  url: https://arxiv.org/abs/1705.07874
+  label: Lundberg & Lee（2017）：SHAP ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1602.04938
+  label: LIMEの原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/1610.02391
+  label: Grad-CAMの原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html
+  label: モデル出典 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://github.com/annahdo/counterfactuals
+  label: Dombrowski et al.：著者実装・結果 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://interpret.ml/DiCE/readme.html
+  label: DiCE：著者解説 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-007:
+  url: https://transformer-circuits.pub/2025/attribution-graphs/biology.html#addition
+  label: Lindsey et al.（2025）：Addition ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-008:
+  url: https://www.anthropic.com/research/tracing-thoughts-language-model
+  label: Anthropic（2025）：Claude 3.5 Haikuの詩の計画 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-009:
+  url: https://transformer-circuits.pub/2025/attribution-graphs/biology.html
+  label: Lindsey et al.（2025）：Claude 3.5 Haikuの多言語回路 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

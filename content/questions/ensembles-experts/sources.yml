@@ -1,0 +1,45 @@
+exp-ensemble:
+  url: https://scikit-learn.org/stable/modules/ensemble.html
+  label: scikit-learn：アンサンブルの公式解説
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+exp-deep-ensembles:
+  url: https://arxiv.org/abs/1612.01474
+  label: Lakshminarayanan et al. (2017), Deep Ensembles
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+exp-switch:
+  url: https://arxiv.org/abs/2101.03961
+  label: Fedus et al. (2021), Switch Transformers
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+bagging:
+  url: https://www.stat.berkeley.edu/~breiman/bagging.pdf
+  label: Breiman, Bagging Predictors（技術報告）
+  verified_on: '2026-09-20'
+  verification: 重複を許す同数の標本抽出と予測の集約を原文で確認。図は教材独自の例。
+sparse-moe:
+  url: https://arxiv.org/abs/1701.06538
+  label: Shazeer et al. (2017), Sparsely-Gated Mixture-of-Experts Layer
+  verified_on: '2026-09-20'
+  verification: ゲートによる入力依存の選択と専門家出力の加重和を原文で確認。top-2図の数値は独自例。
+moe-task:
+  url: https://aclanthology.org/2021.findings-emnlp.304/
+  label: Kudugunta et al. (2021), Beyond Distillation — Task-level Mixture-of-Experts
+  verified_on: '2026-09-20'
+  verification: トークン・文・タスク単位の比較とタスク別サブネットワークの利用を原論文で確認。図は独自の模式例。
+moe-attention:
+  url: https://arxiv.org/abs/2210.05144
+  label: Zhang et al. (2022), Mixture of Attention Heads
+  verified_on: '2026-09-20'
+  verification: トークンごとにAttentionヘッドを選ぶ構成を原論文要旨で確認。
+moe-deepseek:
+  url: https://arxiv.org/abs/2401.06066
+  label: Dai et al. (2024), DeepSeekMoE
+  verified_on: '2026-09-20'
+  verification: 細粒度専門家と共有専門家の併用を原論文要旨で確認。
+moe-expert-choice:
+  url: https://arxiv.org/abs/2202.09368
+  label: Zhou et al. (2022), Mixture-of-Experts with Expert Choice Routing
+  verified_on: '2026-09-20'
+  verification: 専門家が固定数のトークンを選び、トークンごとの担当専門家数が変わる方式を原論文要旨で確認。

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="話し声から文字へ、文章から音声や音楽へ、混ざった曲から一つの音へ。入力と出力を、短い試聴デモで比べます。"><meta name="color-scheme" content="light">
+<title>音声・音楽 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../content/fields/audio/components/audio.js" defer></script><link rel="stylesheet" href="../content/fields/audio/components/page.css">
+</head>
+<body data-page="audio" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html">動画理解・生成</a><a href="spatial.html">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html" aria-current="page">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html">時系列</a><a href="graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">Speech, Audio and Music</span></p><h1>音声・音楽</h1><p class="lead">話し声から文字へ、文章から音声や音楽へ、混ざった曲から一つの音へ。入力と出力を、短い試聴デモで比べます。</p></header>
+<section id="tasks">
+<h2>音声・音楽のタスク</h2>
+<p>音声・音楽の研究には、言葉の認識、音の生成、音源の分離などがあります。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>タスク</th>
+<th>入力 → 出力</th>
+<th>身近な用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="audio.html#asr">音声認識（ASR）</a></td>
+<td>話し声 → 文字列</td>
+<td>会議の文字起こし・字幕</td>
+</tr>
+<tr>
+<td><a href="audio.html#tts">音声合成（TTS）</a></td>
+<td>文章 → 話し声</td>
+<td>案内の読み上げ</td>
+</tr>
+<tr>
+<td><a href="audio.html#music">音楽生成</a></td>
+<td>曲の説明・旋律 → 音楽</td>
+<td>映像に合うBGM</td>
+</tr>
+<tr>
+<td><a href="audio.html#listen">音源分離</a></td>
+<td>混ざった音 → 音源ごとの波形</td>
+<td>歌声と伴奏を取り出す</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="asr">
+<h2>音声認識</h2>
+<p>音声認識（ASR）は、話された言葉を文字にします。会議の文字起こしや字幕に使われます。</p>
+<div class="compare">
+<div class="audio-sample">
+<h3>入力：短い案内</h3>
+<audio aria-label="入力：短い案内" controls="" preload="none" src="../content/fields/audio/media/audio-tts-normal.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-tts-normal.wav">音声ファイルを開く</a></audio>
+</div>
+<div class="audio-sample">
+<h3>対応する文章（例）</h3>
+<p class="audio-transcript">明日の会議は、午後三時からです。</p>
+</div>
+</div>
+<p>Whisperなどが代表例です。雑音の中でも正確に聞き取ることや、多言語への対応が研究されています。</p>
+<p><a href="https://openai.com/index/whisper/">Whisperの研究紹介・公開例 ↗</a></p>
+</section>
+<section id="tts">
+<h2>音声合成</h2>
+<p>音声合成（TTS）は、文章から話し声を作ります。発音だけでなく、抑揚や間の取り方も自然にすることが研究されています。Tacotron 2の合成音声と、同じ文章を人が読んだ録音の例です。</p>
+<p>入力：George Washington was the first President of the United States.<br>
+（ジョージ・ワシントンはアメリカ合衆国の初代大統領でした。）</p>
+<div class="compare">
+<div class="audio-sample">
+<h3>合成音声：Tacotron 2</h3>
+<audio aria-label="合成音声：Tacotron 2" controls="" preload="none" src="../content/fields/audio/media/audio-tacotron2-generated.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-tacotron2-generated.wav">音声ファイルを開く</a></audio>
+</div>
+<div class="audio-sample">
+<h3>人の音声：録音</h3>
+<audio aria-label="人の音声：録音" controls="" preload="none" src="../content/fields/audio/media/audio-tacotron2-human.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-tacotron2-human.wav">音声ファイルを開く</a></audio>
+</div>
+</div>
+<p>出典：<a href="https://google.github.io/tacotron/publications/tacotron2/">Tacotron 2 著者公開サンプル ↗</a></p>
+</section>
+<section id="music">
+<h2>音楽生成</h2>
+<p>音楽生成は、楽器や雰囲気の説明から曲を作ります。以下はMusicGenの生成例です。</p>
+<div class="compare">
+<div class="audio-sample">
+<h3>① ダンス系の曲</h3>
+<p>指示（要約）：南国風の打楽器と、覚えやすい旋律を持つ明るいダンスポップ。</p>
+<audio aria-label="① ダンス系の曲" controls="" preload="none" src="../content/fields/audio/media/audio-musicgen-dance.mp3">音声を再生できません。<a href="../content/fields/audio/media/audio-musicgen-dance.mp3">音声ファイルを開く</a></audio>
+</div>
+<div class="audio-sample">
+<h3>② オーケストラの曲</h3>
+<p>指示（要約）：力強い打楽器、金管と弦楽器を使った、英雄的な戦いを思わせる壮大な曲。</p>
+<audio aria-label="② オーケストラの曲" controls="" preload="none" src="../content/fields/audio/media/audio-musicgen-orchestra.mp3">音声を再生できません。<a href="../content/fields/audio/media/audio-musicgen-orchestra.mp3">音声ファイルを開く</a></audio>
+</div>
+</div>
+<p>指示に合う曲を作ることや、長い曲の展開を自然につなぐことが研究されています。</p>
+<p>出典：<a href="https://ai.honu.io/papers/musicgen/">MusicGen著者試聴ページ ↗</a></p>
+</section>
+<section id="listen">
+<h2>音源分離</h2>
+<p>音源分離は、混ざった音から歌声や楽器を取り出します。下のデモは、曲全体・旋律・伴奏の対応を示しています。</p>
+<figure>
+<div class="figure-scroll" tabindex="0">
+<p><img src="../content/fields/audio/media/audio-score.svg" alt="8秒の旋律と伴奏。旋律は上下し、伴奏は低い位置で反復する。" class="diagram-image"></p>
+</div>
+<figcaption>
+<p>旋律と伴奏の音の配置。</p>
+</figcaption>
+</figure>
+<div class="audio-switch" data-audio-switch=""><p><strong>聞き比べ：</strong>再生中に切り替えると、同じ位置から別の音を聞けます。</p><div aria-label="聞く音を選ぶ" class="audio-options" role="group"><button aria-pressed="true" data-track="mix" type="button">曲全体</button><button aria-pressed="false" data-track="melody" type="button">旋律だけ</button><button aria-pressed="false" data-track="backing" type="button">伴奏だけ</button></div><audio aria-label="切り替え試聴：曲全体" controls="" preload="none" src="../content/fields/audio/media/audio-score-mix.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-score-mix.wav">音声ファイルを開く</a></audio><p class="audio-status" role="status">曲全体：旋律と伴奏が重なっています。</p></div>
+<noscript><p>旋律と伴奏を個別に聞けます。</p><audio aria-label="旋律だけ" controls="" preload="none" src="../content/fields/audio/media/audio-score-melody.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-score-melody.wav">音声ファイルを開く</a></audio><audio aria-label="伴奏だけ" controls="" preload="none" src="../content/fields/audio/media/audio-score-backing.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-score-backing.wav">音声ファイルを開く</a></audio></noscript>
+<p>分離の目標を聞くデモ：混合前の旋律・伴奏を切り替えています。</p>
+<p>Demucsなどは、重なった歌声や楽器を推定して分けます。他の音の混入や、取り出した音の欠けを減らすことが研究されています。</p>
+<p><a href="https://ai.honu.io/papers/demucs/">Demucsの実際の分離結果を聞く（著者公開デモ） ↗</a></p>
+<details>
+<summary>研究例：Demucsの分離結果</summary>
+<p>Demucsの研究では、波形とスペクトログラムを組み合わせるなどして楽曲を分離します。教材の切り替えデモと違い、混合音だけから各音源を推定した結果です。著者の試聴例では、他音源の漏れと、取り出した音の歪みに耳を向けます。</p>
+<p><a href="https://github.com/facebookresearch/demucs">Demucs：著者実装・試聴先</a></p>
+</details>
+</section>
+<section id="representation">
+<h2>波形とスペクトログラム</h2>
+<p>音声認識や音源分離のモデルは、音を数値として扱います。その代表的な表し方が波形とスペクトログラムです。下の図は、同じ8秒の曲をそれぞれの形式で表したものです。</p>
+<audio aria-label="波形・スペクトログラムと対応する8秒の曲" controls="" preload="none" src="../content/fields/audio/media/audio-score-mix.wav">音声を再生できません。<a href="../content/fields/audio/media/audio-score-mix.wav">音声ファイルを開く</a></audio>
+<h3>波形</h3>
+<p>音を時間ごとの振幅で表したものです。音が強く出るタイミングや、振動の様子が分かります。</p>
+<figure>
+<p><a href="../content/fields/audio/media/audio-waveform.png"><img src="../content/fields/audio/media/audio-waveform.png" alt="上は8秒の混合曲の波形。下は1.02秒から1.06秒の振動を拡大。横軸は時間、縦軸は振幅。"></a></p>
+<figcaption>
+<p>上：曲全体の波形。下：40ミリ秒の拡大。 <a href="../content/fields/audio/media/audio-waveform.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<h3>スペクトログラム</h3>
+<p>音を短く区切って周波数成分を調べ、強さを色で表します。横は時間、縦は周波数で、明るいほどその成分が強いことを示します。</p>
+<figure>
+<p><a href="../content/fields/audio/media/audio-spectrogram.png"><img src="../content/fields/audio/media/audio-spectrogram.png" alt="同じ8秒の曲のスペクトログラム。下部に低い伴奏、中央に上下する旋律、その上に倍音が見える。"></a></p>
+<figcaption>
+<p>同じ曲から計算。低い位置に伴奏、中央に上下する旋律、その上に倍音が見える。 <a href="../content/fields/audio/media/audio-spectrogram.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<p>波形では重なって見える音も、周波数ごとに分けると高さや音色の特徴を捉えやすくなります。そのため、音声認識や音源分離などのモデルへの入力に使われます。</p>
+</section>
+<section id="sources">
+<h2>出典・参考資料</h2>
+<ul>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.ShortTimeFFT.html">短時間フーリエ変換とスペクトログラム（SciPy公式資料） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1712.05884">Tacotron 2 原論文 ↗</a></li>
+<li><a href="https://arxiv.org/abs/2212.04356">Whisper 原論文 ↗</a></li>
+<li><a href="https://arxiv.org/abs/2306.05284">MusicGen 原論文 ↗</a></li>
+<li><a href="https://github.com/facebookresearch/demucs">Demucs 著者実装 ↗</a></li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#tasks">音声・音楽のタスク</a><a data-level="2" href="#asr">音声認識</a><a data-level="2" href="#tts">音声合成</a><a data-level="2" href="#music">音楽生成</a><a data-level="2" href="#listen">音源分離</a><a data-level="2" href="#representation">波形とスペクトログラム</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</body></html>

@@ -1,0 +1,36 @@
+ref-001:
+  url: https://alphafold.ebi.ac.uk/entry/P69905
+  label: AlphaFold DB：P69905 / v6
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://www.nobelprize.org/prizes/chemistry/2024/jumper/facts/
+  label: ノーベル賞公式
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://www.nature.com/articles/s41592-019-0494-8
+  label: 研究例：scGen
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://www.nature.com/articles/s41586-023-06415-8/figures/1
+  label: Watson et al. (2023), Fig. 1b
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://www.nature.com/articles/s41586-023-06415-8
+  label: RFdiffusionの論文
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://alphafold.ebi.ac.uk/
+  label: AlphaFold DB：構造を回転して閲覧 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-protein.svg:
+  url: content/fields/life-science/media/protein.svg
+  label: protein.svg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-rfdiffusion-binder.png:
+  url: content/fields/life-science/media/rfdiffusion-binder.png
+  label: rfdiffusion-binder.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

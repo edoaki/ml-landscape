@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="動画では、一枚の画像の内容に加えて、時間に沿った変化を扱います。対象の追跡、画素の動き、動画の生成を、既存の研究結果と映像で見ていきます。"><meta name="color-scheme" content="light">
+<title>動画理解・生成 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../content/fields/video/components/spatial.js" defer></script><link rel="stylesheet" href="../content/fields/video/components/page.css">
+</head>
+<body data-page="video" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html" aria-current="page">動画理解・生成</a><a href="spatial.html">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html">時系列</a><a href="graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">Video Understanding and Generation</span></p><h1>動画理解・生成</h1><p class="lead">動画では、一枚の画像の内容に加えて、時間に沿った変化を扱います。対象の追跡、画素の動き、動画の生成を、既存の研究結果と映像で見ていきます。</p></header>
+<section id="video">
+<p><span id="sam2"></span></p>
+<h2>対象の追跡</h2>
+<p><strong>追跡</strong>では、動いたり隠れたりする対象を、動画の中で引き続き見つけます。SAM 2はその一例で、指定した対象の領域を各フレームで推定します。元画像と、2人の服にマスクを付けた結果です。</p>
+<div class="spatial-frame-viewer" role="region" aria-label="SAM 2のフレーム切り替え" tabindex="0">
+<div class="spatial-sam-pair">
+<div data-frame-kind="input"><figure><a href="../assets/sam2-input-0.jpg" rel="noopener" target="_blank"><img alt="SAM 2の元画像、frame 0。" loading="lazy" src="../assets/sam2-input-0.jpg"/></a><figcaption>元画像 · <span class="frame-caption">frame 0</span> <a href="../assets/sam2-input-0.jpg" rel="noopener" target="_blank">画像を拡大 ↗</a></figcaption></figure></div>
+<div data-frame-kind="track"><figure><a href="../assets/sam2-track-0.png" rel="noopener" target="_blank"><img alt="SAM 2の推論結果、frame 0。" loading="lazy" src="../assets/sam2-track-0.png"/></a><figcaption>SAM 2の結果 · <span class="frame-caption">frame 0</span> <a href="../assets/sam2-track-0.png" rel="noopener" target="_blank">画像を拡大 ↗</a></figcaption></figure></div>
+</div>
+<div class="spatial-frame-controls">
+<button aria-label="前のフレーム" data-frame-step="-1" disabled="" type="button">←</button>
+<p><span class="frame-status">1 / 7 · frame 0</span></p>
+<button aria-label="次のフレーム" data-frame-step="1" type="button">→</button>
+</div>
+</div>
+<p>左右の矢印で、元画像と結果が同時に切り替わります。赤と緑が追跡対象の服の領域です。動いたり一部が隠れたりしても、対象の見えている部分にマスクを付けるタスクです。</p>
+<p>出典：<a href="https://github.com/facebookresearch/sam2/blob/main/notebooks/video_predictor_example.ipynb">SAM 2公式ノートブックの複数対象の追跡結果 ↗</a>。保存済み出力を無加工で引用。</p>
+<p>SAM 2は過去のフレームの情報を使って、指定した対象の領域を追います。</p>
+<figure>
+<p><a href="../assets/sam2-result.jpg"><img src="../assets/sam2-result.jpg" alt="SAM 2の著者が公開したSA-Vデータセットの動画フレームと物体マスクの例"></a></p>
+<figcaption>
+<p>著者実装のSA-Vデータセット紹介図。色は対象のマスク。データセットの例示であり、この図全体をモデルの予測精度の証拠とは扱わない。 <a href="../assets/sam2-result.jpg">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<p><a href="https://github.com/facebookresearch/sam2">SAM 2：著者実装・結果 ↗</a> · <a href="https://sam2.metademolab.com/">外部の操作デモ ↗</a></p>
+</section>
+<section id="optical-flow">
+<p><span id="raft"></span></p>
+<h2>画素の動きの推定</h2>
+<p><strong>オプティカルフロー</strong>は、画像の各位置が次の画像でどちらへどれだけ動いたかを表します。RAFT（ECCV 2020）は、2枚の画像からその動きを推定する研究例です。下はKITTIテストセットでの入力画像と推定結果です。</p>
+<div class="spatial-raft-pair">
+<figure>
+<p><a href="../assets/raft-input.png"><img src="../assets/raft-input.png" alt="RAFTへの入力画像。道路上を車が走る場面。"></a></p>
+<figcaption>
+<p>元画像 <a href="../assets/raft-input.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<figure>
+<p><a href="../assets/raft-output.png"><img src="../assets/raft-output.png" alt="同じ場面のRAFTによるオプティカルフロー。"></a></p>
+<figcaption>
+<p>RAFTの結果 <a href="../assets/raft-output.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+</div>
+<p>出典：Teed &amp; Deng, <a href="https://arxiv.org/abs/2003.12039v3">RAFT, Figure 4（PDF p.10） ↗</a>の左下の例。前方の車と背景の動きが、異なる色で表されています。</p>
+<p>色は画素の動きの方向と大きさを表します。同じ色でも「同じ人物」という意味ではありません。人物だけでなく背景にも色が付くのは、カメラの動きでも画面上の位置が変わるためです。</p>
+</section>
+<section id="video-generation">
+<h2>動画生成</h2>
+<p>動画を作るには、1枚の画像の見た目だけでなく、<strong>ものがどう動き、場面が時間とともにどう変わるか</strong>も学ぶ必要があります。人が歩くと姿勢が変わり、車が進むと周囲の景色も変わります。動画生成モデルは、多くの映像からこうした変化のパターンを学習します。</p>
+<p>Soraは文章に合った映像を生成し、Genie 3はユーザーの操作に応じて、その先の映像を生成します。後者のような<strong>行動に応じた環境変化を予測する世界モデル</strong>は、候補行動の結果を考える手がかりにもなります。ただし、映像を生成できるだけで、行動の結果や物理法則を正確に予測できるとは限りません。</p>
+</section>
+<section id="sora">
+<h3>文章からの動画生成：Sora</h3>
+<figure>
+<video controls="" playsinline="" preload="metadata"><source src="../assets/sora-tokyo-clip.mp4" type="video/mp4"/></video>
+<figcaption>
+<p><a href="https://openai.com/index/sora/">Sora：Tokyo walk（2024） ↗</a>。公式の生成映像から冒頭15秒を抜粋。</p>
+</figcaption>
+</figure>
+<p>「ネオンが光る夜の東京を、黒いジャケットと赤いドレスの女性が歩く」という文章から生成。人物の歩行と、移り変わる街並みを一つの映像にしています。</p>
+</section>
+<section id="genie">
+<h3>操作に応じた生成：Genie 3</h3>
+<p><strong>ユーザーの入力に合わせて、次の画面を予測し続ける。</strong></p>
+<figure>
+<video controls="" playsinline="" poster="../assets/genie3-racetrack-poster.jpg" preload="metadata"><source src="../assets/genie3-racetrack.mp4" type="video/mp4"/></video>
+<figcaption>
+<p><a href="https://deepmind.google/models/genie/">Genie 3：Backyard racetrack ↗</a>。公式の操作デモ映像。</p>
+</figcaption>
+</figure>
+<p>今の画面と操作、それまでの履歴から次の画面を生成します。例えば、車を右に曲げる操作をすると、車の向きと周囲の景色が変わります。生成した画面をもとに次の操作へ応答することを繰り返すので、ゲームのように動かせます。</p>
+<p>あらかじめ用意した3D物体を物理エンジンで動かす方式とは異なり、操作に応じた映像そのものを生成しています。ここに掲載しているのは、その操作結果を記録した動画です。</p>
+</section>
+<h2 id="inherited-sources">参考資料</h2>
+<ul>
+<li><a href="https://github.com/princeton-vl/RAFT">RAFT 著者実装 ↗</a></li>
+</ul>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#video">対象の追跡</a><a data-level="2" href="#optical-flow">画素の動きの推定</a><a data-level="2" href="#video-generation">動画生成</a><a data-level="3" href="#sora">文章からの動画生成：Sora</a><a data-level="3" href="#genie">操作に応じた生成：Genie 3</a><a data-level="2" href="#inherited-sources">参考資料</a></aside></div>
+</body></html>

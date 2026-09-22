@@ -1,0 +1,30 @@
+<div class="figure-scroll" tabindex="0" aria-label="映像と発話の時間軸。狭い画面では横にスクロールできます">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" role="img" aria-labelledby="time-title time-desc">
+<title id="time-title">7秒の発話が指すのは、5秒で火を止めた動作</title>
+<desc id="time-desc">同じ時間軸で映像と音声を並べる。3秒は加熱中、5秒に火を止め、7秒は火が消えた後。7秒の「火を止めました」という発話から5秒の動作へ曲線を引く。</desc>
+<defs>
+<marker id="time-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10" fill="#35664d"/></marker>
+<g id="time-pan"><rect x="-28" y="-18" width="56" height="24" rx="5" fill="#8b9a94"/><path d="M-40 -12H-28M28 -12H40" stroke="#536b60" stroke-width="5" stroke-linecap="round"/><path d="M-38 26H38" stroke="#536b60" stroke-width="4" stroke-linecap="round"/></g>
+</defs>
+<g font-family="system-ui,sans-serif" fill="#294337" font-size="17">
+<text x="32" y="35" font-size="20" font-weight="600">動作と、その説明は同時とは限らない</text>
+<path d="M140 78H754" stroke="#8b9a94" stroke-width="2"/>
+<g text-anchor="middle"><text x="230" y="65">3秒</text><text x="440" y="65">5秒</text><text x="650" y="65">7秒</text></g>
+<g stroke="#dfe5da" stroke-dasharray="5 5"><path d="M230 80V362"/><path d="M440 80V362"/><path d="M650 80V362"/></g>
+<text x="32" y="150" font-weight="600">映像</text>
+<g fill="#f4f6ef" stroke="#cdd8c8"><rect x="145" y="99" width="170" height="138" rx="10"/><rect x="355" y="99" width="170" height="138" rx="10"/><rect x="565" y="99" width="170" height="138" rx="10"/></g>
+<use href="#time-pan" transform="translate(230 153)"/><use href="#time-pan" transform="translate(440 153)"/><use href="#time-pan" transform="translate(650 153)"/>
+<g fill="#ba7147"><path d="M214 173Q203 164 217 152Q219 163 223 165Q228 170 222 175Z"/><path d="M235 174Q226 163 239 152Q240 163 245 166Q248 174 235 174Z"/></g>
+<path d="M422 168L433 179M433 168L422 179M448 168L459 179M459 168L448 179" stroke="#8b9a94" stroke-width="2"/>
+<g text-anchor="middle"><text x="230" y="218">加熱中</text><text x="440" y="218" font-weight="600">火を止める</text><text x="650" y="218">火が消えた後</text></g>
+<text x="32" y="336" font-weight="600">音声</text>
+<path d="M145 331H510" stroke="#d9c1ad" stroke-width="2"/>
+<rect x="535" y="304" width="230" height="54" rx="10" fill="#faf0e7" stroke="#ba7147"/>
+<text x="650" y="338" text-anchor="middle" fill="#855329">「火を止めました」</text>
+<path d="M640 297Q630 259 515 259Q440 259 440 243" fill="none" stroke="#35664d" stroke-width="2.5" marker-end="url(#time-arrow)"/>
+<text x="420" y="291" text-anchor="middle" fill="#35664d" font-size="15">発話が指す動作</text>
+<rect x="145" y="382" width="590" height="36" rx="5" fill="#eef3e7"/>
+<text x="440" y="406" text-anchor="middle" font-size="16">同じ時刻を比べるだけでなく、前後の動作との対応を見る</text>
+</g>
+</svg>
+</div>

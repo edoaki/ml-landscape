@@ -1,0 +1,10 @@
+amari:
+  label: Amari (1998), Natural Gradient Works Efficiently in Learning
+  url: https://doi.org/10.1162/089976698300017746
+  verified_on: '2026-09-20'
+  verification: 出版社の原論文要旨で分布の幾何に基づく勾配の位置付けを確認。
+nielsen:
+  label: Nielsen (2020), An elementary introduction to information geometry
+  url: https://arxiv.org/html/1808.08271v2
+  verified_on: '2026-09-20'
+  verification: 著者の概説の2.2節（計量）、式80〜83（Fisher情報と正規分布）、3.11節（Fisher–Rao距離）を確認。観測値と分布の座標の対応、中心差と見分けやすさ、Fisher計量の局所楕円、正規分布の測地線を独自作図。観測値の模式図には正規分布の分位点を使い、実測データとは区別する。局所楕円は有限距離の球の厳密な境界ではなく各点の計量を固定した近似。原論文図の転載はしていない。

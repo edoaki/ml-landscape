@@ -1,0 +1,17 @@
+<div class="demo conv-demo" data-demo="conv">
+ <h3>フィルタの位置を変えて計算を見る</h3>
+ <p>入力の2×2の範囲とフィルタを掛けて足すと、出力の1マスになります。位置を動かして、対応する入力と出力を見比べてください。入力・重みは説明用の固定値で、バイアスは0です。</p>
+ <div class="conv-controls">
+ <label>padding（外側に補う0の幅）<select class="conv-padding"><option value="0">0：補わない</option><option value="1">1：周囲に1マス</option></select></label>
+ <label>stride（フィルタの歩幅）<select class="conv-stride"><option selected="" value="1">1：1マスずつ</option><option value="2">2：2マスずつ</option><option value="3">3：3マスずつ</option></select></label>
+ <label>畳み込み後のpooling<select class="conv-pool"><option value="none">なし</option><option value="max">Max：最大値</option><option value="avg">Average：平均値</option></select></label></div>
+ <p class="conv-settings">stride=1、padding=0 → 出力は3×3。</p>
+ <label class="conv-position">フィルタの位置 <input aria-label="畳み込みの出力位置" max="8" min="0" type="range" value="0"/><output class="conv-position-value">出力 (0, 0)</output></label>
+ <div class="conv-grids"><div><strong class="conv-input-title">入力 4 × 4</strong><div class="matrix conv-input" style="--cols:4"><span class="cell">1</span><span class="cell">2</span><span class="cell">0</span><span class="cell">1</span><span class="cell">0</span><span class="cell">1</span><span class="cell">3</span><span class="cell">2</span><span class="cell">2</span><span class="cell">0</span><span class="cell">1</span><span class="cell">0</span><span class="cell">1</span><span class="cell">2</span><span class="cell">0</span><span class="cell">2</span></div></div><div class="conv-kernel-panel"><strong>フィルタ 2 × 2</strong><div class="matrix conv-kernel" style="--cols:2"><span class="cell">1</span><span class="cell">0</span><span class="cell">0</span><span class="cell">-1</span></div><small>全ての位置で同じ重み</small></div><div><strong class="conv-output-title">出力 3 × 3</strong><div class="matrix conv-output" style="--cols:3"><span class="cell">0</span><span class="cell">-1</span><span class="cell">-2</span><span class="cell">0</span><span class="cell">0</span><span class="cell">3</span><span class="cell">0</span><span class="cell">0</span><span class="cell">-1</span></div></div><div class="conv-pool-panel" hidden=""><strong class="conv-pool-title">pooling後</strong><div class="matrix conv-pooled"></div></div></div>
+ <p class="conv-legend">緑：フィルタが重なる入力　橙の枠：対応する出力。出力のマスを押しても位置を選べます。</p>
+ <p aria-live="polite" class="result">左上の出力：1×1 + 2×0 + 0×0 + 1×(−1) = 0。</p>
+ <p aria-live="polite" class="conv-pool-result"></p>
+ <p>paddingは画像の周囲に値を補う操作です。ここでは0を使います。strideはフィルタを一度に何マス動かすかで、2にすると出力のマス数が減ります。</p>
+ <p>poolingは近い位置の値をまとめます。ここでは畳み込みの出力を2×2ずつ、歩幅2で区切り、最大値または平均値に置き換えます。端に2×2で収まらない行や列があれば使いません。ReLUは挟まず、負の出力もそのまま集約します。</p>
+ <noscript><p>上の図はstride=1・padding=0・poolingなしの計算です。操作にはJavaScriptを有効にしてください。</p></noscript>
+ </div>

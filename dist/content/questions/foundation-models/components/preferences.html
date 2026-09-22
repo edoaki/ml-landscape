@@ -1,0 +1,5 @@
+<figure class="fm-figure" id="fm-preference-routes" aria-label="同じ選好データから、報酬モデルを使うRLHFと直接更新するDPOの手順を比較">
+<div class="fm-choice"><span class="fm-eyebrow">質問：ノート3冊と鉛筆1本の合計は？ 途中の計算も説明して。</span><div class="fm-choice-pair"><div><b>選ばれた回答</b><br>120 × 3 = 360円。<br>360 + 80 = 440円です。</div><div><b>選ばれなかった回答</b><br>440円です。</div></div></div>
+<div class="fm-preferences-grid"><div class="fm-route"><h3>典型的なRLHF</h3><div class="fm-paper">人が選んだ回答の組</div><div class="fm-down">↓ 比較から採点器を学ぶ</div><div class="fm-model"><strong>報酬モデル</strong><span>質問と回答を受け取り採点</span></div><div class="fm-down">↓ 新しく生成した回答を採点</div><div class="fm-output"><b>回答モデルを強化学習</b><br>生成 → 採点 → 更新を反復</div></div>
+<div class="fm-route"><h3>標準的なオフラインDPO</h3><div class="fm-paper">人が選んだ回答の組</div><div class="fm-down">↓ 組を直接使って学習</div><div class="fm-output">参照モデルとの比較を使い<br>選好に沿う方向へ<br><b>回答モデルを更新</b></div><p class="fm-note">別の報酬モデルの学習と<br>生成・採点を繰り返すループを省く</p></div></div>
+<figcaption>同じ合計金額でも、途中の計算を求める指示に応えた回答を選ぶ例。RLHFでは選好をいったん採点器へ学ばせ、DPOでは選好の組を回答モデルの学習に直接使います。</figcaption></figure>

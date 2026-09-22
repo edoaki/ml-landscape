@@ -1,0 +1,170 @@
+[
+  [
+    "basics/learning",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/fundamentals",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/decision-making",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/language",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/efficiency",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/representation-learning",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/science",
+    true,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/learning",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/fundamentals",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/decision-making",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/language",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/efficiency",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/representation-learning",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/science",
+    true,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/learning",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/fundamentals",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/decision-making",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/language",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/efficiency",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/representation-learning",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/science",
+    false,
+    1440,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/learning",
+    false,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "basics/fundamentals",
+    false,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/decision-making",
+    false,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/language",
+    false,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/efficiency",
+    false,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "questions/representation-learning",
+    false,
+    390,
+    "details open; no page overflow"
+  ],
+  [
+    "fields/science",
+    false,
+    390,
+    "details open; no page overflow"
+  ]
+]

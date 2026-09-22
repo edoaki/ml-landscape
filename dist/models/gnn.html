@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="同じグラフでGCN・GAT・GraphSAGEを比較。近隣の選び方、重み付け、自己情報の混ぜ方を図と計算で追います。"><meta name="color-scheme" content="light">
+<title>GNN | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../content/models/gnn/components/calculation.js" defer></script><link rel="stylesheet" href="../content/models/gnn/components/page.css">
+</head>
+<body data-page="gnn" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details open><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="cnn.html">CNN</a><a href="rnn.html">RNN・LSTM・GRU</a><a href="transformer.html">Transformer</a><a href="vit.html" data-parent="transformer">ViT</a><a href="gnn.html" aria-current="page">GNN</a><a href="ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="generative-overview.html">生成モデルの全体像</a><a href="vae.html">VAE</a><a href="gan.html">GAN</a><a href="normalizing-flow.html">Normalizing Flow</a><a href="diffusion.html">Diffusion</a><a href="flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="clip.html">CLIP</a><a href="vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">モデルの仕組みを知る · <span lang="en">Graph Neural Networks</span></p><h1>GNN</h1><p class="lead">同じグラフでGCN・GAT・GraphSAGEを比較。近隣の選び方、重み付け、自己情報の混ぜ方を図と計算で追います。</p></header>
+<section id="basics">
+<h2>GNNの集約と更新</h2>
+<h3>GNNの目的</h3>
+<p>分子の性質は原子の種類だけでなく、どの原子がどの原子と結合しているかで変わります。画像用CNNのような一定の格子を前提にすると、点ごとに隣の数が違うデータをそのまま扱えません。また、原子に付けた番号を変えただけで分子の予測が変わっても困ります。そこで、辺でつながる相手から情報を集め、近隣を並べる順序によらず表現を更新する仕組みを使います。</p>
+<p>グラフは点（ノード）と関係（辺）で表すデータです。分子なら原子と結合、文献なら論文と引用に対応します。GNNはグラフを使うニューラルネットワークの総称。ここでは同じ6ノードで、GCN・GAT・GraphSAGEの計算方法を比べます。</p>
+<div class="gnn-calc">
+<h3>近隣ノードからの情報集約</h3>
+<p class="gnn-purpose">自分の特徴だけでは分からない関係の情報を、隣の特徴から取り込みます。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。B・C・DからAへ" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。B・C・DからAへ</title><defs><marker id="arrow-1" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><g class="gnn-node"><rect fill="#eef5e9" height="86" rx="18" stroke="#35664d" stroke-width="2.5" width="154" x="103" y="192"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="180" y="246">(1, 0)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(0, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(2, 1)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(0, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 0)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">B・C・DからAへ</text></svg>
+</div>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<p>ノード内の2個の数が特徴ベクトルです。線がある相手の特徴を集め、Aの数値を新しい表現へ更新します。</p>
+<p>同じ層では、全ノードが一つ前の層の特徴を参照します。更新済みのAをすぐBの同じ層の計算に使うわけではありません。</p>
+<p>2層にすると、E → C → A、F → D → Aと、遠くの情報も届きます。以下ではAの1回の更新を拡大します。</p>
+</aside>
+</div>
+</div>
+</section>
+<section id="gcn">
+<h2>GCNの集約係数</h2>
+<h3>GCNの設計</h3>
+<p>例えば論文の分野を分類するとき、本文の特徴に加えて引用関係も手がかりにできれば、ラベルが少ない論文集合でも学習を助けられます。ここで扱うKipfとWellingのGCNは、グラフ上の畳み込みを近似し、近隣の特徴を混ぜて共通の重みで変換する簡潔な層にしました。辺に沿った局所計算を使い、特徴とグラフ構造を効率よく組み合わせることが狙いです。</p>
+<div class="gnn-calc">
+<h3>次数による正規化</h3>
+<p class="gnn-purpose">接続数によって集約の規模が偏りすぎないように、受け手と送り手の次数で重みを調整します。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。線上の値が集約係数" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。線上の値が集約係数</title><defs><marker id="arrow-2" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="85.5" y="137.0"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="132.5" y="155.0">1/√8</text><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="225.5" y="144.5"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="162.5">1/√12</text><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="225.5" y="297.0"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="315.0">1/√12</text><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path d="M115 215 C35 140 35 325 115 270" fill="none" stroke="#35664d" stroke-width="2"></path><rect fill="#fff0df" height="28" rx="8" stroke="#b6531d" stroke-width="2.5" width="88" x="9" y="229"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="53" y="248">¼</text><g class="gnn-node"><rect fill="#eef5e9" height="86" rx="18" stroke="#35664d" stroke-width="2.5" width="154" x="103" y="192"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="180" y="246">(1, 0)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(0, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(2, 1)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(0, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 0)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">線上の値が集約係数</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+辺のスコア・係数を追加または変更</p>
+</div>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<p>自己ループを加え、自分も参照先にします。自己ループ込みの次数はA=4、B=2、C=D=3、E=F=2。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>c</mi><mrow><mi>A</mi><mi>u</mi></mrow></msub><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><msub><mover accent="true"><mi>d</mi><mo>~</mo></mover><mi>A</mi></msub><msub><mover accent="true"><mi>d</mi><mo>~</mo></mover><mi>u</mi></msub></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">c_{Au}=\frac{1}{\sqrt{\tilde d_A\tilde d_u}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight">u</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4514em;vertical-align:-1.13em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.11em;"><span class="pstrut" style="height:3.0756em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0756em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9313em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">d</span></span><span style="top:-3.6134em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.0833em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9313em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">d</span></span><span style="top:-3.6134em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.0833em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.0356em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119
+c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120
+c340,-704.7,510.7,-1060.3,512,-1067
+l0 -0
+c4.7,-7.3,11,-11,19,-11
+H40000v40H1012.3
+s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,232
+c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1
+s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26
+c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60z
+M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1644em;"><span></span></span></span></span></span></span></span><span style="top:-3.3056em;"><span class="pstrut" style="height:3.0756em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7527em;"><span class="pstrut" style="height:3.0756em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.13em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+<p>例：B → Aは1/√(4×2) ≈ 0.354。</p>
+<p>図のAの左側の線は、自分を集める係数1/4です。係数は特徴値ではなく接続数から決まります。係数の合計は約1.181で、合計1の平均とは異なります。</p>
+</aside>
+</div>
+</div>
+<div class="gnn-calc">
+<h3>ノードAの特徴更新</h3>
+<p class="gnn-purpose">次数で重み付けした特徴を足し、近隣の情報を含む新しいAの表現を作ります。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。上：入力 ／ 下：更新後" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。上：入力 ／ 下：更新後</title><defs><marker id="arrow-4" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff" height="26" rx="8" stroke="#dde5d7" stroke-width="1" width="94" x="85.5" y="137.0"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="132.5" y="155.0">1/√8</text><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff" height="26" rx="8" stroke="#dde5d7" stroke-width="1" width="94" x="225.5" y="144.5"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="162.5">1/√12</text><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff" height="26" rx="8" stroke="#dde5d7" stroke-width="1" width="94" x="225.5" y="297.0"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="315.0">1/√12</text><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path d="M115 215 C35 140 35 325 115 270" fill="none" stroke="#35664d" stroke-width="2"></path><rect fill="#fff" height="28" rx="8" stroke="#dde5d7" stroke-width="1" width="88" x="9" y="229"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="53" y="248">¼</text><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="103" y="192"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="180" y="233">(1, 0) →</text><text data-end="1.1160254037844388,1.2844570503761732" data-from="(1, 0)" data-start="1,0" data-to="(1.116, 1.284)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="180" y="258">(1.116, 1.284)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(0, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(2, 1)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(0, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 0)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">上：入力 ／ 下：更新後</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+ノードの数値を更新</p>
+</div>
+<p><button class="gnn-replay" hidden type="button">数値の変化を見る ↻</button></p>
+<p class="gnn-animation-note">動きは変更前後をつなぐ表示です。途中の値は追加の演算や学習を表しません。</p>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>送り手</th>
+<th>係数 × 特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>0.250 × (1, 0) = (0.25, 0)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>0.354 × (0, 2) = (0, 0.707)</td>
+</tr>
+<tr>
+<td>C</td>
+<td>0.289 × (2, 1) = (0.577, 0.289)</td>
+</tr>
+<tr>
+<td>D</td>
+<td>0.289 × (1, 1) = (0.289, 0.289)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>成分ごとに足すと <strong>(1.116, 1.284)</strong>。この例ではW=Iなので変換後も同じで、ReLU後も変わりません。通常は共有Wを学習します。</p>
+</aside>
+</div>
+</div>
+<p>全ノードの更新を一括して計算するために、同じ近隣集約を行列の積で表します。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>H</mi><mrow><mo stretchy="false">(</mo><mi mathvariant="normal">ℓ</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><mi>σ</mi><mo stretchy="false">(</mo><msup><mover accent="true"><mi>D</mi><mo>~</mo></mover><mrow><mo>−</mo><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup><mover accent="true"><mi>A</mi><mo>~</mo></mover><msup><mover accent="true"><mi>D</mi><mo>~</mo></mover><mrow><mo>−</mo><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup><msup><mi>H</mi><mrow><mo stretchy="false">(</mo><mi mathvariant="normal">ℓ</mi><mo stretchy="false">)</mo></mrow></msup><msup><mi>W</mi><mrow><mo stretchy="false">(</mo><mi mathvariant="normal">ℓ</mi><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H^{(\ell+1)}=\sigma(\tilde D^{-1/2}\tilde A\tilde D^{-1/2}H^{(\ell)}W^{(\ell)})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.938em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">ℓ</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.188em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mopen">(</span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9202em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span><span style="top:-3.6023em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1/2</span></span></span></span></span></span></span></span></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9202em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">A</span></span><span style="top:-3.6023em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1111em;"><span class="mord">~</span></span></span></span></span></span></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9202em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span><span style="top:-3.6023em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1/2</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">ℓ</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">ℓ</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></div>
+<p>全ノードをまとめた式。Hの各行がノード特徴、Ãは自己ループを追加した隣接行列、D̃はその次数を並べた対角行列です。上の局所計算を全ノードについて行います。</p>
+</section>
+<section id="gat">
+<h2>GATのAttention係数</h2>
+<h3>GATの設計</h3>
+<p>つながっている相手が、どれも同じように予測に役立つとは限りません。GCNの次数に基づく係数だけでは、隣の特徴に応じて重みを付け分けられません。GATは近隣へのAttentionを使い、どの相手の情報を強く取り込むかを学習可能にしました。グラフ全体の複雑な行列分解を必要とせず、近隣ごとに重みを計算する設計です。</p>
+<p>GCNの係数はグラフの次数から決まりました。GATは特徴を変換し、受け手・送り手のペアからスコアを作って係数を計算します。以下は原型GATの加法的Attentionです。TransformerのQ・Kの内積とは式が異なります。</p>
+<aside class="note">
+<p><strong>数値例の条件</strong></p>
+<p>2次元特徴、1 head、自己ループあり、dropoutなし。Wとaは計算を見せるために固定した値で、学習済みモデルの結果ではありません。</p>
+</aside>
+<div class="gnn-calc">
+<h3>特徴の線形変換</h3>
+<p class="gnn-purpose">元の特徴をそのまま使う代わりに、学習するWで予測に役立つ成分の組み合わせを作ります。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。上：h ／ 下：z = Wh" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。上：h ／ 下：z = Wh</title><defs><marker id="arrow-5" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#4d7897" stroke-width="3"></path><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="103" y="192"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="180" y="233">(1, 0) →</text><text data-end="1,1" data-from="(1, 0)" data-start="1,0" data-to="(1, 1)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="180" y="258">(1, 1)</text></g><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="8" y="22"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="85" y="63">(0, 2) →</text><text data-end="-2,2" data-from="(0, 2)" data-start="0,2" data-to="(-2, 2)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="85" y="88">(-2, 2)</text></g><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="288" y="37"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="365" y="78">(2, 1) →</text><text data-end="1,3" data-from="(2, 1)" data-start="2,1" data-to="(1, 3)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="365" y="103">(1, 3)</text></g><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="288" y="342"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="365" y="383">(1, 1) →</text><text data-end="0,2" data-from="(1, 1)" data-start="1,1" data-to="(0, 2)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="365" y="408">(0, 2)</text></g><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="438" y="142"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="515" y="183">(0, 1) →</text><text data-end="-1,1" data-from="(0, 1)" data-start="0,1" data-to="(-1, 1)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="515" y="208">(-1, 1)</text></g><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="438" y="252"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="515" y="293">(2, 0) →</text><text data-end="2,2" data-from="(2, 0)" data-start="2,0" data-to="(2, 2)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="515" y="318">(2, 2)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">上：h ／ 下：z = Wh</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+ノードの数値を更新</p>
+</div>
+<p><button class="gnn-replay" hidden type="button">数値の変化を見る ↻</button></p>
+<p class="gnn-animation-note">動きは変更前後をつなぐ表示です。途中の値は追加の演算や学習を表しません。</p>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>W</mi><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo>−</mo><mn>1</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow><mo separator="true">,</mo><mspace width="1em"/><msub><mi>z</mi><mi>u</mi></msub><mo>=</mo><mi>W</mi><msub><mi>h</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">W=\begin{pmatrix}1&amp;-1\\1&amp;1\end{pmatrix},\quad z_u=Wh_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">−</span><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></div>
+<p>Wは全ノードで共有する2×2行列。特徴は列ベクトルとして掛けます。</p>
+<p><strong>Bの中の数値：</strong><br>
+(0, 2) → (1×0 − 1×2, 1×0 + 1×2)<br>
+→ <strong>(−2, 2)</strong></p>
+<p>Aは(1, 1)、Cは(1, 3)、Dは(0, 2)になります。このzをスコア作りにも、最後の集約にも使います。</p>
+</aside>
+</div>
+</div>
+<div class="gnn-calc">
+<h3>Attentionスコアの計算</h3>
+<p class="gnn-purpose">どの隣を強く取り込むかを決めるために、Aと各送り手の特徴を一つの数へまとめます。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="変換後の特徴zをノード内に表示したグラフ。線：LeakyReLU後のスコア" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>変換後の特徴zをノード内に表示したグラフ。線：LeakyReLU後のスコア</title><defs><marker id="arrow-6" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="85.5" y="137.0"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="132.5" y="155.0">-0.4</text><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="225.5" y="144.5"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="162.5">1.5</text><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="225.5" y="297.0"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="315.0">0.0</text><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path d="M115 215 C35 140 35 325 115 270" fill="none" stroke="#35664d" stroke-width="2"></path><rect fill="#fff0df" height="28" rx="8" stroke="#b6531d" stroke-width="2.5" width="88" x="9" y="229"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="53" y="248">0.5</text><g class="gnn-node"><rect fill="#eef5e9" height="86" rx="18" stroke="#35664d" stroke-width="2.5" width="154" x="103" y="192"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="180" y="246">(1, 1)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(-2, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(1, 3)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(0, 2)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(-1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 2)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">線：LeakyReLU後のスコア</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+辺のスコア・係数を追加または変更</p>
+</div>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>s</mi><mrow><mi>A</mi><mi>u</mi></mrow></msub><mo>=</mo><msup><mi>a</mi><mi mathvariant="sans-serif">T</mi></msup><mo stretchy="false">[</mo><msub><mi>z</mi><mi>A</mi></msub><mi mathvariant="normal">∥</mi><msub><mi>z</mi><mi>u</mi></msub><mo stretchy="false">]</mo><mo separator="true">,</mo><mspace width="1em"/><mi>a</mi><mo>=</mo><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo separator="true">,</mo><mn>0.5</mn><msup><mo stretchy="false">)</mo><mi mathvariant="sans-serif">T</mi></msup></mrow><annotation encoding="application/x-tex">s_{Au}=a^{\mathsf T}[z_A\Vert z_u],\quad a=(-1,0,1,0.5)^{\mathsf T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight">u</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1491em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathsf mtight">T</span></span></span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∥</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">]</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1491em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0.5</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathsf mtight">T</span></span></span></span></span></span></span></span></span></span></span></span></span></div>
+<p>連結∥は2次元＋2次元を並べる操作。足し算ではありません。</p>
+<p><strong>A ← B：</strong><br>
+[z_A ∥ z_B] = [1, 1, −2, 2]<br>
+s_AB = −1×1 + 0×1 + 1×(−2) + 0.5×2 = <strong>−2</strong></p>
+<p>負のスコアにも小さな傾きを残すため、LeakyReLUを使います。この例では負なら0.2倍し、非負ならそのままです。Bの−2は<strong>−0.4</strong>になります。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>送り手</th>
+<th>内積 s</th>
+<th>LeakyReLU後 e</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>0.5</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>B</td>
+<td>-2</td>
+<td>-0.4</td>
+</tr>
+<tr>
+<td>C</td>
+<td>1.5</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>D</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</aside>
+</div>
+</div>
+<div class="gnn-calc">
+<h3>スコアの正規化</h3>
+<p class="gnn-purpose">参照先どうしのスコアを比較できるように、指数を取り、同じ受け手の参照先内で正規化します。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="変換後の特徴zをノード内に表示したグラフ。線：softmax後の係数α" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>変換後の特徴zをノード内に表示したグラフ。線：softmax後の係数α</title><defs><marker id="arrow-7" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="85.5" y="137.0"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="132.5" y="155.0">0.086</text><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="225.5" y="144.5"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="162.5">0.575</text><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff0df" height="26" rx="8" stroke="#b6531d" stroke-width="2.5" width="94" x="225.5" y="297.0"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="315.0">0.128</text><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path d="M115 215 C35 140 35 325 115 270" fill="none" stroke="#35664d" stroke-width="2"></path><rect fill="#fff0df" height="28" rx="8" stroke="#b6531d" stroke-width="2.5" width="88" x="9" y="229"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="53" y="248">0.211</text><g class="gnn-node"><rect fill="#eef5e9" height="86" rx="18" stroke="#35664d" stroke-width="2.5" width="154" x="103" y="192"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="180" y="246">(1, 1)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(-2, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(1, 3)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(0, 2)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(-1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 2)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">線：softmax後の係数α</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+辺のスコア・係数を追加または変更</p>
+</div>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>α</mi><mrow><mi>A</mi><mi>u</mi></mrow></msub><mo>=</mo><mfrac><mrow><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>e</mi><mrow><mi>A</mi><mi>u</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><munder><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><mo stretchy="false">{</mo><mi>A</mi><mo separator="true">,</mo><mi>B</mi><mo separator="true">,</mo><mi>C</mi><mo separator="true">,</mo><mi>D</mi><mo stretchy="false">}</mo></mrow></munder><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>e</mi><mrow><mi>A</mi><mi>k</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\alpha_{Au}=\frac{\exp(e_{Au})}{\sum_{k\in\{A,B,C,D\}}\exp(e_{Ak})}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight">u</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.5877em;vertical-align:-1.1607em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2253em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mrel mtight">∈</span><span class="mopen mtight">{</span><span class="mord mathnormal mtight">A</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">D</span><span class="mclose mtight">}</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4747em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop">exp</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight">u</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.1607em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+<p>分母はA自身と直接の隣B・C・Dだけです。E・Fは含みません。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>送り手</th>
+<th>e → exp(e)</th>
+<th>α</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>0.5 → 1.649</td>
+<td>0.211</td>
+</tr>
+<tr>
+<td>B</td>
+<td>-0.4 → 0.670</td>
+<td>0.086</td>
+</tr>
+<tr>
+<td>C</td>
+<td>1.5 → 4.482</td>
+<td>0.575</td>
+</tr>
+<tr>
+<td>D</td>
+<td>0 → 1.000</td>
+<td>0.128</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>分母 = 1.649 + 0.670 + 4.482 + 1.000 ≈ <strong>7.801</strong>。係数の合計は1です。Bのスコアは負でしたが、係数は0にはなりません。</p>
+</aside>
+</div>
+</div>
+<div class="gnn-calc">
+<h3>重み付き集約による更新</h3>
+<p class="gnn-purpose">強く参照する相手ほど大きく寄与するように、変換後の特徴zにαを掛けて足します。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="変換後の特徴と更新後の特徴をノード内に表示したグラフ。上：z_A ／ 下：新しいh_A" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>変換後の特徴と更新後の特徴をノード内に表示したグラフ。上：z_A ／ 下：新しいh_A</title><defs><marker id="arrow-8" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff" height="26" rx="8" stroke="#dde5d7" stroke-width="1" width="94" x="85.5" y="137.0"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="132.5" y="155.0">0.086</text><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff" height="26" rx="8" stroke="#dde5d7" stroke-width="1" width="94" x="225.5" y="144.5"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="162.5">0.575</text><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><rect fill="#fff" height="26" rx="8" stroke="#dde5d7" stroke-width="1" width="94" x="225.5" y="297.0"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="272.5" y="315.0">0.128</text><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path d="M115 215 C35 140 35 325 115 270" fill="none" stroke="#35664d" stroke-width="2"></path><rect fill="#fff" height="28" rx="8" stroke="#dde5d7" stroke-width="1" width="88" x="9" y="229"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="53" y="248">0.211</text><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="103" y="192"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="180" y="233">(1, 1) →</text><text data-end="0.6140156128077164,2.363166993225698" data-from="(1, 1)" data-start="1,1" data-to="(0.614, 2.363)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="180" y="258">(0.614, 2.363)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(-2, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(1, 3)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(0, 2)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(-1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 2)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">上：z_A ／ 下：新しいh_A</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+ノードの数値を更新</p>
+</div>
+<p><button class="gnn-replay" hidden type="button">数値の変化を見る ↻</button></p>
+<p class="gnn-animation-note">動きは変更前後をつなぐ表示です。途中の値は追加の演算や学習を表しません。</p>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>送り手</th>
+<th>α × z</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>0.211 × (1, 1) = (0.211, 0.211)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>0.086 × (-2, 2) = (-0.172, 0.172)</td>
+</tr>
+<tr>
+<td>C</td>
+<td>0.575 × (1, 3) = (0.575, 1.724)</td>
+</tr>
+<tr>
+<td>D</td>
+<td>0.128 × (0, 2) = (0, 0.256)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>第1成分：(0.211) + (-0.172) + (0.575) + (0.000) = <strong>0.614</strong><br>
+第2成分：0.211 + 0.172 + 1.724 + 0.256 = <strong>2.363</strong></p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>h</mi><mi>A</mi><mo mathvariant="normal">′</mo></msubsup><mo>=</mo><mi mathvariant="normal">ReLU</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><munder><mo>∑</mo><mi>u</mi></munder><msub><mi>α</mi><mrow><mi>A</mi><mi>u</mi></mrow></msub><msub><mi>z</mi><mi>u</mi></msub><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">h_A^\prime=\operatorname{ReLU}\left(\sum_u\alpha_{Au}z_u\right)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0489em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">′</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mop"><span class="mord mathrm">ReLU</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">(</span></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.9em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">A</span><span class="mord mathnormal mtight">u</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size4">)</span></span></span></span></span></span></span></div>
+<p>この例は中間層の活性化としてReLUを選択。両成分が正なので値は変わりません。</p>
+<p>Aの元の特徴(1, 0)が、変換を経て最終的に<strong>(0.614, 2.363)</strong>に更新されました。</p>
+</aside>
+</div>
+</div>
+</section>
+<section id="heads">
+<h2>複数headの連結</h2>
+<div class="gnn-calc">
+<h3>ノードAの表現の連結</h3>
+<p class="gnn-purpose">異なるW・aで集めた複数の表現を残すため、headごとの出力を連結します。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-pipeline">
+<div>
+<p><strong>head 1のA</strong>(0.614, 2.363)</p>
+</div>
+<div>
+<p><strong>head 2のA</strong>(0.618, 1.367)</p>
+</div>
+<div>
+<p><strong>連結後のA：4次元</strong>(0.614, 2.363, 0.618, 1.367)</p>
+</div>
+</div>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<p>head 1は上の計算。head 2はW₂=I、a₂=(0, 1, −1, 0.5)です。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>head 2</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内積</td>
+<td>-1.000</td>
+<td>1.000</td>
+<td>-1.500</td>
+<td>-0.500</td>
+</tr>
+<tr>
+<td>LeakyReLU</td>
+<td>-0.200</td>
+<td>1.000</td>
+<td>-0.300</td>
+<td>-0.100</td>
+</tr>
+<tr>
+<td>softmax</td>
+<td>0.158</td>
+<td>0.524</td>
+<td>0.143</td>
+<td>0.175</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>中間層では連結します。原論文の最終分類層ではheadの出力を平均してから出力の活性化を適用します。</p>
+</aside>
+</div>
+</div>
+</section>
+<section id="learning">
+<h2>GATの学習パラメータ</h2>
+<p>予測を正解へ近づけるため、損失から逆伝播して特徴変換とスコアのパラメータを更新します。</p>
+<div class="gnn-pipeline">
+<div>
+<p><strong>入力から計算</strong>W・a → スコア → α → 表現</p>
+</div>
+<div>
+<p><strong>予測と正解を比較</strong>出力ヘッド → 損失</p>
+</div>
+<div>
+<p><strong>逆伝播</strong>W・aなどを更新</p>
+</div>
+</div>
+<p>Wとaはデータから学ぶパラメータです。αそのものを辺ごとの固定パラメータとして保存するのではなく、その時の特徴とW・aから計算します。利用時には学んだW・aを固定し、新しい入力に対してαと表現を計算します。</p>
+<aside class="note">
+<p><strong>係数の読み方</strong></p>
+<p>大きなαは、その集約で強く重み付けしたことを示します。予測全体の重要性や因果関係を直接示すものではありません。原型GATでは、受け手を変えれば近隣の順位が自由に入れ替わるとは限りません。</p>
+</aside>
+</section>
+<section id="sage">
+<h2>GraphSAGEの集約と更新</h2>
+<h3>GraphSAGEの設計</h3>
+<p>利用者や論文が増えるグラフでは、学習時には存在しなかった点にも予測したくなります。各ノード専用のベクトルを覚える方法だけでは、そのまま新しい点の表現を作れません。GraphSAGEは、ノードの特徴と近隣から表現を作る共通の関数を学びます。さらに近隣をサンプリングし、大きなグラフでも計算対象を抑えます。未知のノードやグラフへ適用するには、入力の特徴が同じ意味で使えることが前提です。</p>
+<p>近隣を何層も展開すると計算対象が増えます。GraphSAGEは近隣をサンプリングして集約する枠組みです。ここでは自己特徴と近隣平均を連結するmean集約を扱います。</p>
+<div class="gnn-calc">
+<h3>近隣のサンプリングと平均</h3>
+<p class="gnn-purpose">大きなグラフで計算対象が増えすぎないように、近隣をサンプリングして代表的な特徴をまとめます。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。B・Cを採用 ／ Dは今回は不使用" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。B・Cを採用 ／ Dは今回は不使用</title><defs><marker id="arrow-9" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#b6531d" stroke-width="4"></path><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#b6531d" stroke-width="4"></path><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#b6531d" stroke-dasharray="6 6" stroke-width="4"></path><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><g class="gnn-node"><rect fill="#eef5e9" height="86" rx="18" stroke="#35664d" stroke-width="2.5" width="154" x="103" y="192"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="180" y="246">(1, 0)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(0, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(2, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(0, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 0)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">B・Cを採用 ／ Dは今回は不使用</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+参照する近隣を選択（点線は不採用）</p>
+</div>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<p>Aの近隣B・C・Dから、今回はB・Cの2個を選びます。点線のDはグラフから削除したわけではありません。</p>
+<div class="gnn-pipeline">
+<div>
+<p><strong>Bの特徴</strong>(0, 2)</p>
+</div>
+<div>
+<p><strong>Cの特徴</strong>(2, 1)</p>
+</div>
+<div>
+<p><strong>近隣平均 m_A</strong>((0, 2) + (2, 1)) / 2 = (1, 1.5)</p>
+</div>
+</div>
+<p>平均にはAを入れません。自己情報はこの後、別に合わせます。B・Dを選んだ場合の平均は(0.5, 1.5)となります。</p>
+</aside>
+</div>
+</div>
+<div class="gnn-calc">
+<h3>自己特徴と近隣特徴の統合</h3>
+<p class="gnn-purpose">自分の特徴と周囲の特徴を両方残してから、共有Wで新しい表現へ変換します。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。上：入力 ／ 下：変換・ReLU後" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。上：入力 ／ 下：変換・ReLU後</title><defs><marker id="arrow-10" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#4d7897" stroke-width="3"></path><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#c4ccc1" stroke-dasharray="6 6" stroke-width="1.5"></path><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="103" y="192"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="180" y="233">(1, 0) →</text><text data-end="2,1.5" data-from="(1, 0)" data-start="1,0" data-to="(2, 1.5)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="180" y="258">(2, 1.5)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(0, 2)</text></g><g class="gnn-node"><rect fill="#f3f7fb" height="86" rx="18" stroke="#4d7897" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(2, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(0, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 0)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">上：入力 ／ 下：変換・ReLU後</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+ノードの数値を更新</p>
+</div>
+<p><button class="gnn-replay" hidden type="button">数値の変化を見る ↻</button></p>
+<p class="gnn-animation-note">動きは変更前後をつなぐ表示です。途中の値は追加の演算や学習を表しません。</p>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<p><strong>連結：</strong><br>
+[h_A ∥ m_A] = [1, 0, 1, 1.5]<br>
+2次元と2次元を並べ、4次元にします。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>W</mi><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center center center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">W=\begin{pmatrix}1&amp;0&amp;1&amp;0\\0&amp;1&amp;0&amp;1\end{pmatrix}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span></span></div>
+<p>2×4の例示用Wで、4次元を2次元へ変換します。</p>
+<p>第1成分：1×1 + 0×0 + 1×1 + 0×1.5 = <strong>2</strong><br>
+第2成分：0×1 + 1×0 + 0×1 + 1×1.5 = <strong>1.5</strong></p>
+<p>ReLU後は<strong>(2, 1.5)</strong>。この値を次の図で正規化します。</p>
+</aside>
+</div>
+</div>
+<div class="gnn-calc">
+<h3>ベクトルの正規化</h3>
+<p class="gnn-purpose">表現の方向を保ちながら大きさをそろえるために、ベクトルを自分の長さで割ります。</p>
+<div class="gnn-calc-layout">
+<div class="gnn-graph-panel">
+<div class="gnn-value-graph">
+<svg aria-label="特徴をノード内に表示したグラフ。上：正規化前 ／ 下：正規化後" role="img" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg"><title>特徴をノード内に表示したグラフ。上：正規化前 ／ 下：正規化後</title><defs><marker id="arrow-11" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><path class="gnn-edge" d="M85 65 L180 235" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M365 80 L180 235" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M365 385 L180 235" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 185 L365 80" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><path class="gnn-edge" d="M515 295 L365 385" fill="none" stroke="#c4ccc1" stroke-width="1.5"></path><g class="gnn-node"><rect fill="#fff0df" height="86" rx="18" stroke="#b6531d" stroke-width="3.5" width="154" x="103" y="192"></rect><text fill="#b6531d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="180" y="212">A</text><text fill="#73816e" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="180" y="233">(2, 1.5) →</text><text data-end="0.8,0.6" data-from="(2, 1.5)" data-start="2,1.5" data-to="(0.8, 0.6)" fill="#b6531d" font-size="19" font-weight="650" text-anchor="middle" x="180" y="258">(0.8, 0.6)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="8" y="22"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="85" y="42">B</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="85" y="76">(0, 2)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="288" y="37"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="57">C</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="91">(2, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="288" y="342"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="365" y="362">D</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="365" y="396">(1, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="142"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="162">E</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="196">(0, 1)</text></g><g class="gnn-node"><rect fill="#f4f4f0" height="86" rx="18" stroke="#7e8d79" stroke-width="1.3" width="154" x="438" y="252"></rect><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="515" y="272">F</text><text fill="#7e8d79" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="515" y="306">(2, 0)</text></g><text fill="#35664d" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="300" y="463">上：正規化前 ／ 下：正規化後</text></svg>
+<p class="gnn-change-legend"><strong>橙・太枠：今回変わった部分</strong><br>
+ノードの数値を更新</p>
+</div>
+<p><button class="gnn-replay" hidden type="button">数値の変化を見る ↻</button></p>
+<p class="gnn-animation-note">動きは変更前後をつなぐ表示です。途中の値は追加の演算や学習を表しません。</p>
+</div>
+<aside class="gnn-working" aria-label="計算過程">
+<p>長さ = √(2² + 1.5²) = <strong>2.5</strong><br>
+(2, 1.5) / 2.5 = <strong>(0.8, 0.6)</strong></p>
+<p>元のAの(1, 0)が、近隣平均との連結・変換を経て、最終的に(0.8, 0.6)へ更新されました。</p>
+<p>ここでは原論文のL2正規化に従います。ゼロベクトルの扱いは実装で定めます。</p>
+</aside>
+</div>
+</div>
+</section>
+<section id="compare">
+<h2>GCN・GAT・GraphSAGEの比較</h2>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>モデル</th>
+<th>係数・対象の決め方</th>
+<th>自己情報</th>
+<th>学ぶもの</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GCN</td>
+<td>次数 → 係数 → 集約</td>
+<td>自己ループとして含む</td>
+<td>共有W</td>
+</tr>
+<tr>
+<td>GAT</td>
+<td>特徴変換 → スコア → softmax → 集約</td>
+<td>自己へのAttention</td>
+<td>headごとの共有W・a</td>
+</tr>
+<tr>
+<td>GraphSAGE（mean）</td>
+<td>近隣を選択 → 平均 → 連結 → 変換</td>
+<td>近隣平均と別に連結</td>
+<td>共有Wなど</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>同じグラフでも計算の設計は異なります。出力の値の大小はモデル性能の比較にはなりません。和や平均で集めるため、近隣を列挙する順序を入れ替えても結果は同じです。</p>
+</section>
+<section id="outputs">
+<h2>ノード・辺・グラフの予測</h2>
+<figure>
+<div aria-label="図（狭い画面では横にスクロールできます）" class="figure-scroll" tabindex="0"><svg aria-label="同じGNNの表現を、異なるタスクの出力へ変える。" role="img" viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg"><title>同じGNNの表現を、異なるタスクの出力へ変える。</title><defs><marker id="arrow-12" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><rect fill="#4d7897" fill-opacity=".08" height="76" rx="9" stroke="#4d7897" stroke-opacity=".45" width="236.0" x="20.0" y="42"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="138.0" y="76.0">GNN層を反復</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="138.0" y="100.0">全ノードの表現</text><path d="M259.0 80 L279.0 80" fill="none" marker-end="url(#arrow-12)" stroke="#738679" stroke-width="2"></path><rect fill="#35664d" fill-opacity=".08" height="76" rx="9" stroke="#35664d" stroke-opacity=".45" width="236.0" x="282.0" y="42"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="400.0" y="76.0">出力の集め方</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="400.0" y="100.0">1点 / 2点 / 全体</text><path d="M521.0 80 L541.0 80" fill="none" marker-end="url(#arrow-12)" stroke="#738679" stroke-width="2"></path><rect fill="#ba7147" fill-opacity=".08" height="76" rx="9" stroke="#ba7147" stroke-opacity=".45" width="236.0" x="544.0" y="42"></rect><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="662.0" y="76.0">出力ヘッド</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="662.0" y="100.0">分類や回帰</text></svg></div>
+<figcaption>
+<p>同じGNNの表現を、異なるタスクの出力へ変える。</p>
+</figcaption>
+</figure>
+<ul>
+<li>ノード分類：各ノードの特徴を分類器へ。例えば論文の研究分野。</li>
+<li>リンク予測：二つのノード表現の内積やMLPから関係のスコアを作る。評価時に予測対象の辺を入力へ漏らさない。</li>
+<li>グラフ全体の予測：全ノードの和・平均などのreadoutから分子の性質を予測する。</li>
+</ul>
+<p>層を増やすと遠くまで届く一方、表現が似通うover-smoothingや、多数の遠方情報を小さなベクトルへ押し込むover-squashingが問題になります。ここで示した原型は結合の種類などの辺特徴をすべて直接使うわけではありません。分子では辺特徴や3Dの回転・並進の対称性を扱う拡張が重要です。</p>
+</section>
+<section id="sources">
+<h2>出典・参考資料</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1609.02907">GCN：Kipf &amp; Welling ↗</a></li>
+<li><a href="https://arxiv.org/abs/1710.10903">GAT：Veličković et al. ↗</a></li>
+<li><a href="https://arxiv.org/abs/1706.02216">GraphSAGE：Hamilton et al. ↗</a></li>
+<li><a href="https://proceedings.mlr.press/v70/gilmer17a.html">Message Passing Neural Networks ↗</a></li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#basics">GNNの集約と更新</a><a data-level="2" href="#gcn">GCNの集約係数</a><a data-level="2" href="#gat">GATのAttention係数</a><a data-level="2" href="#heads">複数headの連結</a><a data-level="2" href="#learning">GATの学習パラメータ</a><a data-level="2" href="#sage">GraphSAGEの集約と更新</a><a data-level="2" href="#compare">GCN・GAT・GraphSAGEの比較</a><a data-level="2" href="#outputs">ノード・辺・グラフの予測</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</body></html>

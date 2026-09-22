@@ -1,0 +1,54 @@
+/* Science: compact input/output pairs and bounded, expandable paper figures. */
+body[data-page="earth-science"] .task-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:12px;max-width:720px;margin:auto}
+body[data-page="earth-science"] .task-pair>svg{display:block;width:100%;max-width:340px;min-width:0;height:auto;padding:0;margin:auto}
+body[data-page="earth-science"] figure>p>a>img{display:block;width:auto;max-width:100%;max-height:480px;object-fit:contain;margin:auto;padding:16px}
+body[data-page="earth-science"] .figure-scroll>svg{display:block;width:100%;min-width:0;max-width:760px;max-height:260px;margin:auto}
+@media(max-width:600px){body[data-page="earth-science"] .task-pair{grid-template-columns:minmax(0,1fr);padding:8px}body[data-page="earth-science"] figure>p>a>img{padding:8px}body[data-page="earth-science"] #inverse .figure-scroll>svg{min-width:600px}}
+
+/* Science examples emphasize only the input and output. */
+body[data-page="earth-science"] .science-io{display:grid;grid-template-columns:minmax(0,1fr) 110px minmax(0,1fr);align-items:center;gap:10px;margin:24px 0 12px}
+body[data-page="earth-science"] .science-io>div:not(.science-arrow){padding:14px 18px;background:#f0f4ee;border-radius:8px;min-height:96px;display:flex;flex-direction:column;justify-content:center}
+body[data-page="earth-science"] .science-io span{font-size:11px;letter-spacing:.12em;color:#627c6d;margin-bottom:8px}
+body[data-page="earth-science"] .science-io strong{font-size:17px;line-height:1.65}
+body[data-page="earth-science"] .science-arrow{text-align:center}.science-arrow small{font-size:12px}.science-arrow b{display:block;font-size:28px;font-weight:400}
+body[data-page="earth-science"] .science-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:20px;align-items:center}
+body[data-page="earth-science"] .science-pair svg{display:block;width:100%;height:auto;max-height:210px;min-width:0;padding:0}
+.science-sequence{display:block;overflow-wrap:anywhere;font-size:15px;line-height:1.9;letter-spacing:.08em;color:#4d7897;background:transparent}
+body[data-page="earth-science"] .science-example{margin-top:12px}
+body[data-page="earth-science"] .science-video{max-width:700px;margin:20px auto}
+body[data-page="earth-science"] .science-video video{display:block;width:100%;max-height:390px;background:#17271f}
+.science-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;padding:0 20px 16px}.science-controls[hidden]{display:none}.science-controls label{display:flex;align-items:center;gap:10px;font-size:12px}.science-controls input{width:130px}.science-controls button,.science-embed button{font:inherit;font-size:13px;padding:9px 14px;background:white;border:1px solid #a7baaa;border-radius:6px;color:#294337;cursor:pointer}
+.science-real-video{margin-top:20px}.science-real-video summary{cursor:pointer;font-size:14px}.science-embed{margin-top:16px}.science-embed iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+@media(max-width:600px){body[data-page="earth-science"] .science-io{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);gap:5px}body[data-page="earth-science"] .science-io>div:not(.science-arrow){padding:12px 9px;min-height:120px}body[data-page="earth-science"] .science-io strong{font-size:14px}.science-arrow small{font-size:10px}body[data-page="earth-science"] .science-pair{gap:10px;padding:12px}.science-sequence{font-size:10px;line-height:1.6;letter-spacing:0}}
+@media print{.science-controls,.science-real-video{display:none}}
+
+/* Put each diagram inside its own labelled input/output column. */
+body[data-page="earth-science"] .science-explained{display:grid;grid-template-columns:minmax(0,1fr) 100px minmax(0,1fr);gap:14px;padding:20px;align-items:center}
+body[data-page="earth-science"] .science-explained>div{min-width:0;text-align:center}
+body[data-page="earth-science"] .science-explained strong,body[data-page="earth-science"] .science-seismic strong{font-size:15px}
+body[data-page="earth-science"] .science-explained svg,body[data-page="earth-science"] .science-seismic svg{display:block;width:100%;min-width:0;height:auto;max-height:190px;padding:0;margin:10px auto}
+body[data-page="earth-science"] .science-explained p{font-size:14px;line-height:1.7;margin:0}
+.science-between{font-size:12px;line-height:1.7}.science-between b{display:block;font-size:28px}
+.science-seismic{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:20px;text-align:center}
+body[data-page="earth-science"] .science-motion-status{padding:0 20px;font-size:14px;min-height:3em}
+@media(max-width:650px){body[data-page="earth-science"] .science-explained{grid-template-columns:1fr;padding:16px;gap:8px}body[data-page="earth-science"] .science-explained svg{max-width:280px;max-height:160px}.science-between b{transform:rotate(90deg)}.science-seismic{grid-template-columns:1fr}.science-seismic svg{max-width:300px}}
+
+/* Science: real structures and compact, aligned data panels. */
+body[data-page="earth-science"] .science-explained{grid-template-columns:minmax(0,1fr) 82px minmax(0,1fr);gap:12px;padding:22px 18px}
+body[data-page="earth-science"] .science-explained>div:first-child,body[data-page="earth-science"] .science-explained>div:last-child{align-self:stretch;display:flex;flex-direction:column}
+body[data-page="earth-science"] .science-explained strong{font-size:13px;line-height:1.7;text-align:left;border-bottom:1px solid #e5ebe5;padding-bottom:10px}
+body[data-page="earth-science"] .science-explained p{font-size:12px;text-align:left;margin-top:auto;line-height:1.8}
+body[data-page="earth-science"] .science-between{font-size:11px;color:#47675a;font-weight:600;letter-spacing:.02em}
+body[data-page="earth-science"] .science-between b{font-size:0;height:1px;background:#91a69b;margin:14px 6px;position:relative}
+body[data-page="earth-science"] .science-between b:after{content:"";position:absolute;right:0;top:-3px;width:6px;height:6px;border-top:1px solid #91a69b;border-right:1px solid #91a69b;transform:rotate(45deg)}
+body[data-page="earth-science"] .science-explained svg{max-height:240px;margin:12px auto}
+.science-structure{display:flex;align-items:center;justify-content:center;min-height:245px}
+body[data-page="earth-science"] .science-structure svg{height:225px;width:100%;padding:0}
+.science-seq-panel{display:flex;flex-direction:column;justify-content:center;min-height:245px;text-align:left}
+.science-seq-panel>div{display:flex;align-items:baseline;gap:10px;line-height:2}
+.science-seq-panel span{font:9px ui-monospace,monospace;color:#99aaa0}
+body[data-page="earth-science"] .science-seq-panel code{font:13px ui-monospace,monospace;color:#326f74;background:transparent;padding:0;letter-spacing:.01em}
+.science-condition{font-size:12px;padding:10px 14px;background:#eef3ef;border-left:2px solid #719485;margin-top:20px}.science-condition strong{margin-left:14px}
+.science-key{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.science-key.target{background:#53b3ad}.science-key.binder{background:#e9a6bc}
+@media(max-width:650px){body[data-page="earth-science"] .science-explained{grid-template-columns:1fr;gap:14px;padding:18px}body[data-page="earth-science"] .science-explained>div{width:100%;max-width:320px;margin:auto}body[data-page="earth-science"] .science-between{width:100px;min-height:28px}body[data-page="earth-science"] .science-between b{display:none}.science-seq-panel{min-height:205px}.science-structure{min-height:225px}body[data-page="earth-science"] .science-seq-panel code{font-size:13px}}
+

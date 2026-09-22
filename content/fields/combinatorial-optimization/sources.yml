@@ -1,0 +1,22 @@
+ref-001:
+  url: https://arxiv.org/abs/1803.08475
+  label: Koolら（ICLR 2019）
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://papers.nips.cc/paper/2020/hash/11958dfee29b6709f48a9ba0387a2431-Abstract.html
+  label: 研究例：Zhangら（2020）
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/pdf/1803.08475#page=4
+  label: Figure 2, p.4
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://github.com/wouterkool/attention-learn-to-route
+  label: 著者実装と原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-kool2019-tsp-decoder.png:
+  url: content/fields/combinatorial-optimization/media/kool2019-tsp-decoder.png
+  label: kool2019-tsp-decoder.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

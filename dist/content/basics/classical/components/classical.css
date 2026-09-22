@@ -1,0 +1,18 @@
+/* Scope layout to this lesson's explanatory figures. */
+.classical-figure .classical-panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.classical-figure .classical-steps { display: block; }
+.classical-figure .classical-steps .classical-panel { display: grid; grid-template-columns: 1fr 1.2fr; column-gap: 18px; align-items: center; }
+.classical-figure .classical-steps svg { grid-column: 2; grid-row: 1 / 3; }
+.classical-figure .classical-steps .classical-panel-note { grid-column: 1; align-self: start; }
+.classical-figure .classical-panel { padding: 14px 12px; min-width: 0; }
+.classical-figure .classical-panel + .classical-panel { border-left: 1px solid var(--line); }
+.classical-figure .classical-steps .classical-panel + .classical-panel { border-left: 0; border-top: 1px solid var(--line); }
+.classical-figure svg { width: 100%; min-width: 0; height: auto; }
+.classical-figure .classical-panel-title { margin: 0 0 12px; font-size: 14px; font-weight: 650; line-height: 1.7; }
+.classical-figure .classical-panel-note { font-size: 13px; margin: 8px 0 0; }
+.classical-figure .classical-legend { margin: 0; padding: 14px 16px; background: #f4f6f0; font-size: 13px; line-height: 1.9; }
+@media (max-width: 680px) {
+  .classical-figure .classical-steps .classical-panel { display: block; }
+  .classical-figure .classical-panels, .classical-figure .classical-steps { grid-template-columns: 1fr; }
+  .classical-figure .classical-panel + .classical-panel { border-left: 0; border-top: 1px solid var(--line); }
+}

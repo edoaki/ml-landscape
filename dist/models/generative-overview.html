@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="手書き数字を例に、分布を学ぶこと、条件を付けること、新しい例を作ることの違いを説明します。各生成方式をその手順から比べます。"><meta name="color-scheme" content="light">
+<title>生成モデルの全体像 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+
+</head>
+<body data-page="generative-overview" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details open><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="cnn.html">CNN</a><a href="rnn.html">RNN・LSTM・GRU</a><a href="transformer.html">Transformer</a><a href="vit.html" data-parent="transformer">ViT</a><a href="gnn.html">GNN</a><a href="ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="generative-overview.html" aria-current="page">生成モデルの全体像</a><a href="vae.html">VAE</a><a href="gan.html">GAN</a><a href="normalizing-flow.html">Normalizing Flow</a><a href="diffusion.html">Diffusion</a><a href="flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="clip.html">CLIP</a><a href="vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">モデルの仕組みを知る · <span lang="en">Generative Models</span></p><h1>生成モデルの全体像</h1><p class="lead">手書き数字を例に、分布を学ぶこと、条件を付けること、新しい例を作ることの違いを説明します。各生成方式をその手順から比べます。</p></header>
+<h2 id="distribution-example">生成モデルと確率分布</h2>
+<p><strong>生成モデル</strong>は、学習データに見られる傾向を捉え、新しい文章や画像などを作るモデルです。例えば手書きの「3」にも、丸いものや角張ったものがあります。生成では、決まった一枚だけを答えるのでなく、いろいろな書き方の「3」を出せることが望まれます。</p>
+<p>どんな例がどれくらい現れやすいかを表すものが<strong>確率分布</strong>です。生成モデルは、その分布を明示的な確率式や生成手順によって表します。そこから一つの例を取り出す操作を<strong>サンプリング（標本の生成）</strong>と呼びます。訓練画像を順に表示する操作とは異なりますが、学習した画像を記憶してしまう可能性がなくなるわけではありません。</p>
+<p>数字画像だけを学んで自由に一枚作るのが条件なし生成、「3を描いて」という指定を使うのが<strong>条件付き生成</strong>です。条件を固定しても、乱数を変えると異なる筆跡を作れる場合があります。以下では、同じ数字画像をどんな手順で作るかを比べます。</p>
+<section id="generative">
+<h2>生成モデルの枠組み</h2>
+<p>生成の枠組みは、ネットワークの接続だけでなく、学習の目的や生成の手順でも区別します。例えばDiffusionの予測器にはCNNのU-NetもTransformerも使えます。二つの分類は重なります。</p>
+<div class="cards">
+<p><a href="vae.html">VAE</a> — 潜在変数の分布を使って生成する。比較に必要なAEの再構成も説明する。</p>
+<p><a href="gan.html">GAN</a> — 生成と識別を交互に改善する。</p>
+<p><a href="normalizing-flow.html">Normalizing Flow</a> — 可逆な変換で分布を結ぶ。</p>
+<p><a href="diffusion.html">Diffusion</a> — ノイズを除く過程を学び、反復して生成。</p>
+<p><a href="flow-matching.html">Flow Matching</a> — ノイズをデータへ運ぶ速度を学ぶ。</p>
+</div>
+</section>
+<section id="compare">
+<h2>モデル構造と生成方式</h2>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>名前</th>
+<th>何を指す？</th>
+<th>関係</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Attention</td>
+<td>重み付きで情報を集める部品</td>
+<td>TransformerやGATなどで使う</td>
+</tr>
+<tr>
+<td>ResNet・U-Net</td>
+<td>残差や解像度の変化を組む設計</td>
+<td>CNNなどの部品を組み合わせる</td>
+</tr>
+<tr>
+<td>LLM・VLM</td>
+<td>扱うデータと能力を表すモデルの呼び方</td>
+<td>Transformerなどで実現する</td>
+</tr>
+<tr>
+<td>基盤モデル</td>
+<td>広いデータで学び、多様な用途へ使う位置付け</td>
+<td>言語・画像・音声などにある</td>
+</tr>
+<tr>
+<td>生成AI</td>
+<td>文章・画像などを作るシステムや用途</td>
+<td>自己回帰・GAN・Diffusionなどを含む</td>
+</tr>
+</tbody>
+</table>
+</div>
+<aside class="note">
+<p><strong>式の共通記号</strong></p>
+<p>x：入力、h：中間の特徴、z：潜在変数、W・b：重みとバイアス、θ：パラメータ全体。σは文脈により活性化関数、または標準偏差を表すため、その都度説明します。shape（形状）は「何個の要素が、何個の数を持つか」です。</p>
+</aside>
+</section>
+<h2 id="generation-methods">生成方式の比較</h2>
+<table>
+<thead>
+<tr>
+<th>枠組み</th>
+<th>この例で行うこと</th>
+<th>学習で身に付けること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自己回帰</td>
+<td>画素などを順番に選び、既に選んだ部分から続きを作る</td>
+<td>途中まで分かったときの、次の要素の分布</td>
+</tr>
+<tr>
+<td>VAE</td>
+<td>小さな数の並びである潜在変数を選び、画像へ変換</td>
+<td>画像を潜在変数と対応付け、画像を再構成することなど</td>
+</tr>
+<tr>
+<td>GAN</td>
+<td>乱数から画像を作る生成器を使う</td>
+<td>本物と生成物を区別する識別器の指摘を使った改善</td>
+</tr>
+<tr>
+<td>Normalizing Flow</td>
+<td>簡単な分布の乱数を、逆にも戻せる変換に通す</td>
+<td>データの分布と簡単な分布を結ぶ変換</td>
+</tr>
+<tr>
+<td>Diffusion</td>
+<td>ノイズから出発し、少しずつ画像を整える</td>
+<td>ノイズを加えた画像から元の情報を推定すること</td>
+</tr>
+<tr>
+<td>Flow Matching</td>
+<td>乱数の点を速度に従って動かし、画像の分布へ運ぶ</td>
+<td>各時刻・位置でどちらへ動かすかという速度</td>
+</tr>
+</tbody>
+</table>
+<p>実際は画素ではなく圧縮された表現を生成する構成もあります。この表は基本の発想の比較で、どの方法が必ず速い・高画質かの順位ではありません。</p>
+<h2 id="autoregressive">自己回帰による生成</h2>
+<p><strong>自己回帰生成</strong>は、すでに決めた要素を使って次の要素の確率を求め、一つ選んで付け足す方法です。例えば手書き数字の画像なら、画素に順番を決め、左上から一つずつ値を選びます。次の画素を決めるときには、それまでに選んだ画素を手がかりにします。</p>
+<p>学習では実際の画像の前半を与え、次の画素の値に高い確率を付けるようモデルを更新します。生成時には自分が選んだ画素を手がかりに、残りを作ります。画像全体の確率は、こうした各段階の条件付き確率を掛け合わせて表せます。</p>
+<p>文章なら画素の代わりにトークンを並べ、音声でも要素の列として同じ考え方を使えます。自己回帰はネットワーク構造の名前ではなく、次の確率を計算するモデルにはRNNやTransformerなどを使えます。<a href="llm.html#autoregressive">LLMの自己回帰生成</a>では、文章を使って候補の選び方と系列全体の確率を説明します。</p>
+<h2 id="learning-and-sampling">学習とサンプリング</h2>
+<p>例えばDiffusionでは、訓練画像に加えたノイズが分かるため、それを予測の正解にできます。利用時には、完成した「3」の画像を渡さず、ノイズと必要なら「3」という条件から生成します。「学習で元画像を使った」ことと「利用時にも元画像が必要」なことを分けてください。</p>
+<p>画像を圧縮して戻すだけのAE（オートエンコーダ）では、うまく復元できても、新しく作るためにどの潜在変数を選べばよいかは自動的に定まりません。VAEはその選び方につながる分布も扱う枠組みです。</p>
+<p>研究では、読める「3」ができるかという品質、筆跡に幅があるかという多様性、指定した数字に従うか、何回の計算が必要かを調べます。同じ一枚をきれいに繰り返すだけなら、多様な例を作る目的を満たしません。</p>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#distribution-example">生成モデルと確率分布</a><a data-level="2" href="#generative">生成モデルの枠組み</a><a data-level="2" href="#compare">モデル構造と生成方式</a><a data-level="2" href="#generation-methods">生成方式の比較</a><a data-level="2" href="#autoregressive">自己回帰による生成</a><a data-level="2" href="#learning-and-sampling">学習とサンプリング</a></aside></div>
+</body></html>

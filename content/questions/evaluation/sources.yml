@@ -1,0 +1,11 @@
+selection:
+  label: Cawley & Talbot (2010), On Over-fitting in Model Selection and Subsequent
+    Selection Bias in Performance Evaluation
+  url: https://www.jmlr.org/papers/v11/cawley10a.html
+  verified_on: '2026-09-20'
+  verification: 原論文要旨でモデル選択の過学習と選択バイアスを確認。
+pitfalls:
+  label: 'scikit-learn: Common pitfalls and recommended practices'
+  url: https://scikit-learn.org/stable/common_pitfalls.html
+  verified_on: '2026-09-20'
+  verification: 公式資料で訓練側のみの前処理とデータ漏洩を確認。道路画像と成績は独自例。

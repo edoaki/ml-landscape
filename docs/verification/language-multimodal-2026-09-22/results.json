@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "language: 1440px, JS=True, offline, figures visible, no overflow, RAG steps verified",
+    "multimodal: 1440px, JS=True, offline, figures visible, no overflow",
+    "language: 390px, JS=True, offline, figures visible, no overflow, RAG steps verified",
+    "multimodal: 390px, JS=True, offline, figures visible, no overflow",
+    "language: 390px, JS=False, offline, figures visible, no overflow, RAG steps verified",
+    "multimodal: 390px, JS=False, offline, figures visible, no overflow",
+    "language: 1440px, JS=False, offline, figures visible, no overflow, RAG steps verified",
+    "multimodal: 1440px, JS=False, offline, figures visible, no overflow"
+  ],
+  "errors": []
+}

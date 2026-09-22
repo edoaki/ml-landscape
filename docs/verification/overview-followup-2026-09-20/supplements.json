@@ -1,0 +1,149 @@
+{
+  "checks": [
+    [
+      "questions/safety",
+      true,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/science",
+      true,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/world-models",
+      true,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/timeseries",
+      true,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/science",
+      true,
+      1440,
+      "pinn-diagram direct link visible"
+    ],
+    [
+      "fields/science",
+      true,
+      1440,
+      "operator-kernel-diagram direct link visible"
+    ],
+    [
+      "fields/timeseries",
+      true,
+      1440,
+      "research-5 direct link visible"
+    ],
+    [
+      "fields/timeseries",
+      true,
+      1440,
+      "research-6 direct link visible"
+    ],
+    [
+      "questions/safety",
+      true,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/science",
+      true,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/world-models",
+      true,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/timeseries",
+      true,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/science",
+      true,
+      390,
+      "pinn-diagram direct link visible"
+    ],
+    [
+      "fields/science",
+      true,
+      390,
+      "operator-kernel-diagram direct link visible"
+    ],
+    [
+      "fields/timeseries",
+      true,
+      390,
+      "research-5 direct link visible"
+    ],
+    [
+      "fields/timeseries",
+      true,
+      390,
+      "research-6 direct link visible"
+    ],
+    [
+      "questions/safety",
+      false,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/science",
+      false,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/world-models",
+      false,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/timeseries",
+      false,
+      1440,
+      "open and closed: no page overflow"
+    ],
+    [
+      "questions/safety",
+      false,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/science",
+      false,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/world-models",
+      false,
+      390,
+      "open and closed: no page overflow"
+    ],
+    [
+      "fields/timeseries",
+      false,
+      390,
+      "open and closed: no page overflow"
+    ]
+  ],
+  "errors": []
+}

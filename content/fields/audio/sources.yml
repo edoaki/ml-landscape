@@ -1,0 +1,114 @@
+ref-001:
+  url: https://openai.com/index/whisper/
+  label: Whisperの研究紹介・公開例 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://google.github.io/tacotron/publications/tacotron2/
+  label: Tacotron 2 著者公開サンプル ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://ai.honu.io/papers/musicgen/
+  label: MusicGen著者試聴ページ ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://ai.honu.io/papers/demucs/
+  label: Demucsの実際の分離結果を聞く（著者公開デモ） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://github.com/facebookresearch/demucs
+  label: Demucs：著者実装・試聴先へのリンク ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.ShortTimeFFT.html
+  label: 短時間フーリエ変換とスペクトログラム（SciPy公式資料） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-007:
+  url: https://arxiv.org/abs/1712.05884
+  label: Tacotron 2 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-008:
+  url: https://arxiv.org/abs/2212.04356
+  label: Whisper 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-009:
+  url: https://arxiv.org/abs/2306.05284
+  label: MusicGen 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-audio-score.svg:
+  url: content/fields/audio/media/audio-score.svg
+  label: audio-score.svg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-waveform.png:
+  url: content/fields/audio/media/audio-waveform.png
+  label: audio-waveform.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-spectrogram.png:
+  url: content/fields/audio/media/audio-spectrogram.png
+  label: audio-spectrogram.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-score-melody.wav:
+  url: content/fields/audio/media/audio-score-melody.wav
+  label: audio-score-melody.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-score-backing.wav:
+  url: content/fields/audio/media/audio-score-backing.wav
+  label: audio-score-backing.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-low.wav:
+  url: content/fields/audio/media/low.wav
+  label: low.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-mix.wav:
+  url: content/fields/audio/media/mix.wav
+  label: mix.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-score-mix.wav:
+  url: content/fields/audio/media/audio-score-mix.wav
+  label: audio-score-mix.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-tts-normal.wav:
+  url: content/fields/audio/media/audio-tts-normal.wav
+  label: audio-tts-normal.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-tacotron2-human.wav:
+  url: content/fields/audio/media/audio-tacotron2-human.wav
+  label: audio-tacotron2-human.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-tacotron2-generated.wav:
+  url: content/fields/audio/media/audio-tacotron2-generated.wav
+  label: audio-tacotron2-generated.wav
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-musicgen-orchestra.mp3:
+  url: content/fields/audio/media/audio-musicgen-orchestra.mp3
+  label: audio-musicgen-orchestra.mp3
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-audio-musicgen-dance.mp3:
+  url: content/fields/audio/media/audio-musicgen-dance.mp3
+  label: audio-musicgen-dance.mp3
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

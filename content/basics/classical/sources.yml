@@ -1,0 +1,63 @@
+ref-001:
+  url: https://scikit-learn.org/stable/supervised_learning.html
+  label: scikit-learn：教師あり学習の公式ガイド ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://scikit-learn.org/stable/unsupervised_learning.html
+  label: scikit-learn：教師なし学習の公式ガイド ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+exp-decomposition:
+  url: https://scikit-learn.org/stable/modules/decomposition.html
+  label: scikit-learn：行列分解の公式解説
+  verified_on: '2026-09-20'
+  verification: 中心化、分散を最大にする軸、寄与率、PCAとSVDの関係、非負行列分解を公式解説で再確認。PCAの投影と復元の計算は教材独自の例。
+exp-tensor:
+  url: https://tensorly.org/stable/user_guide/tensor_decomposition.html
+  label: TensorLy：テンソル分解の公式解説
+  verified_on: '2026-09-20'
+  verification: CP分解で各軸の要因を掛けて足す構造を公式解説で再確認。利用者×商品×月の数値は教材独自の架空例。
+linear:
+  url: https://scikit-learn.org/stable/modules/linear_model.html
+  label: scikit-learn：線形モデル
+  verified_on: '2026-09-20'
+  verification: 最小二乗、Ridgeの重みへの罰則、ロジスティック回帰のシグモイドと対数損失を公式解説で再確認。係数と計算例は教材独自の架空値。
+trees:
+  url: https://scikit-learn.org/stable/modules/tree.html
+  label: scikit-learn：決定木
+  verified_on: '2026-09-20'
+  verification: 回帰と分類、分割、過学習と深さの制限を確認。 図・数値例は教材独自の架空例。
+ensembles:
+  url: https://scikit-learn.org/stable/modules/ensemble.html
+  label: scikit-learn：アンサンブル
+  verified_on: '2026-09-20'
+  verification: ランダムフォレストの抽出・特徴選択と、二乗誤差での勾配ブースティングの残差学習を確認。 図・数値例は教材独自の架空例。
+svm:
+  url: https://scikit-learn.org/stable/modules/svm.html
+  label: scikit-learn：SVM
+  verified_on: '2026-09-20'
+  verification: 線形・非線形SVM、ソフトマージンとC、サポートベクトル、カーネルトリック、RBF、標準化を公式解説で再確認。図のφ(x)=(x,x²)は教材独自の変換例で、SVMの学習結果ではない。
+clustering:
+  url: https://scikit-learn.org/stable/modules/clustering.html
+  label: scikit-learn：クラスタリング
+  verified_on: '2026-09-20'
+  verification: k-meansの二乗距離、割り当てと平均の交互更新、初期化依存、DBSCANと階層的クラスタリングを公式解説で再確認。図は5点と指定した初期中心による更新を正確に計算。
+pitfalls:
+  url: https://scikit-learn.org/stable/common_pitfalls.html
+  label: scikit-learn：前処理とデータ漏洩
+  verified_on: '2026-09-20'
+  verification: 訓練データで前処理を学習し、評価用データに適用する手順を確認。 図・数値例は教材独自の架空例。
+tensor-review:
+  url: https://www.kolda.net/publication/TensorReview.pdf
+  label: 'Kolda & Bader (2009): Tensor Decompositions and Applications'
+  authors: Tamara G. Kolda; Brett W. Bader
+  year: 2009
+  verified_on: '2026-09-20'
+  verification: 著者公開の総説を確認。CP分解、低ランク近似、分解の一意性の位置付けを参照。図の転載なし。
+matrix-recommendation:
+  url: https://doi.org/10.1109/MC.2009.263
+  label: 'Koren, Bell & Volinsky (2009): Matrix Factorization Techniques for Recommender Systems'
+  authors: Yehuda Koren; Robert Bell; Chris Volinsky
+  year: 2009
+  verified_on: '2026-09-20'
+  verification: 原論文本文の要因の内積、観測済み評価に対する正則化付き二乗誤差、欠測・新規利用者の問題を確認。評価表と要因の計算値は教材独自の架空例で、学習結果ではない。
+  accessed_text: https://datajobs.com/data-science-repo/Recommender-Systems-%5BNetflix%5D.pdf

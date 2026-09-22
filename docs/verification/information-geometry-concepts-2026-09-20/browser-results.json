@@ -1,0 +1,50 @@
+[
+  {
+    "javascript": false,
+    "width": 320,
+    "svg_labels_and_panels_fit": true,
+    "minimum_svg_font_px": 13.87,
+    "no_collapsed_content": true,
+    "errors": []
+  },
+  {
+    "javascript": false,
+    "width": 390,
+    "svg_labels_and_panels_fit": true,
+    "minimum_svg_font_px": 17.6,
+    "no_collapsed_content": true,
+    "errors": []
+  },
+  {
+    "javascript": false,
+    "width": 1440,
+    "svg_labels_and_panels_fit": true,
+    "minimum_svg_font_px": 20.27,
+    "no_collapsed_content": true,
+    "errors": []
+  },
+  {
+    "javascript": true,
+    "width": 320,
+    "svg_labels_and_panels_fit": true,
+    "minimum_svg_font_px": 13.87,
+    "no_collapsed_content": true,
+    "errors": []
+  },
+  {
+    "javascript": true,
+    "width": 390,
+    "svg_labels_and_panels_fit": true,
+    "minimum_svg_font_px": 17.6,
+    "no_collapsed_content": true,
+    "errors": []
+  },
+  {
+    "javascript": true,
+    "width": 1440,
+    "svg_labels_and_panels_fit": true,
+    "minimum_svg_font_px": 20.27,
+    "no_collapsed_content": true,
+    "errors": []
+  }
+]

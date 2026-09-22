@@ -1,0 +1,43 @@
+{
+  "views": [
+    {
+      "page": "fields/multimodal.html",
+      "width": 390,
+      "horizontal_overflow": false,
+      "svg_text_outside_viewbox": []
+    },
+    {
+      "page": "models/clip.html",
+      "width": 390,
+      "horizontal_overflow": false,
+      "svg_text_outside_viewbox": []
+    },
+    {
+      "page": "models/vlm.html",
+      "width": 390,
+      "horizontal_overflow": false,
+      "svg_text_outside_viewbox": []
+    },
+    {
+      "page": "fields/multimodal.html",
+      "width": 1440,
+      "horizontal_overflow": false,
+      "svg_text_outside_viewbox": []
+    },
+    {
+      "page": "models/clip.html",
+      "width": 1440,
+      "horizontal_overflow": false,
+      "svg_text_outside_viewbox": []
+    },
+    {
+      "page": "models/vlm.html",
+      "width": 1440,
+      "horizontal_overflow": false,
+      "svg_text_outside_viewbox": []
+    }
+  ],
+  "offline": true,
+  "javascript_disabled": "all three pages retain figures",
+  "errors": []
+}

@@ -1,0 +1,27 @@
+/* Shared navigation layout, kept separate from lesson illustrations. */
+.brand-group{display:flex;align-items:center;gap:14px;min-width:0}
+.mobile-menu{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:36px;height:36px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted)}
+.mobile-menu:hover{background:var(--tint);color:var(--green)}
+.mobile-menu svg{display:block}
+.mobile-menu[aria-expanded=false] .nav-chevron{transform:translateX(27px) scaleX(-1)}
+.sidenav[hidden]{display:none!important}
+@media(min-width:821px){
+  .layout{grid-template-areas:"nav article toc"}
+  .sidenav{grid-area:nav}
+  .article{grid-area:article}
+  .toc{grid-area:toc}
+  .layout.nav-collapsed{grid-template-areas:"article toc";grid-template-columns:minmax(0,900px) 190px;justify-content:center}
+}
+@media(min-width:821px) and (max-width:1200px){
+  .layout{grid-template-areas:"nav article"}
+  .layout.nav-collapsed{grid-template-areas:"article";grid-template-columns:minmax(0,900px)}
+}
+@media(max-width:820px){.layout.nav-collapsed{display:block}.brand-group{gap:8px}}
+@media(max-width:520px){.mobile-menu{width:30px;height:34px}.brand-group{gap:5px}}
+@media(hover:hover) and (pointer:fine){
+  .toc>*{opacity:0;transition:opacity .18s ease}
+  .toc:hover>*,.toc:focus-within>*{opacity:1}
+}
+.toc a[data-level="3"]{padding-left:10px;font-size:10px}
+@media(prefers-reduced-motion:reduce){.toc>*{transition:none}}
+@media print{.mobile-menu{display:none}.layout.nav-collapsed{display:block}}

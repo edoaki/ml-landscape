@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="来客数の予測と購入履歴の分析を例に、線形モデル・木・カーネル・クラスタリング・分解が何を学び、どう答えを出すかを説明します。"><meta name="color-scheme" content="light">
+<title>古典的な機械学習 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<link rel="stylesheet" href="../content/basics/classical/components/classical.css">
+</head>
+<body data-page="classical" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details open><summary>基礎と代表的な機械学習手法</summary><a href="fundamentals.html">学習・最適化の基本概念</a><a href="learning.html">学習の枠組み</a><a href="probabilistic-inference.html">確率モデルとベイズ推論</a><a href="classical.html" aria-current="page">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">基礎と代表的な機械学習手法 · <span lang="en">Classical Machine Learning</span></p><h1>古典的な機械学習</h1><p class="lead">来客数の予測と購入履歴の分析を例に、線形モデル・木・カーネル・クラスタリング・分解が何を学び、どう答えを出すかを説明します。</p></header>
+<section id="classical-intro">
+<h2>同じデータでも、知りたいことによって方法が変わる</h2>
+<p><strong>古典的な機械学習</strong>では、特徴の足し合わせ、条件分岐、データ同士の近さ、少数の要因への分解などを使って、予測やデータの分析を行います。ここでの「古典的」は、深層ニューラルネットワーク以外の代表的な方法をまとめる呼び方です。過去にしか使われない方法という意味ではありません。</p>
+<p>小売店を例に考えます。「明日の来客数を知る」なら、過去の気温・休日かどうか・来客数から予測の規則を学びます。一方、「似た買い方をする利用者を見つける」なら、購入履歴にどんなまとまりがあるかを調べます。前者には予測したい正解があり、後者では正解のグループをあらかじめ与えません。</p>
+<p>モデルに入力する気温や購入額などの項目を<strong>特徴量</strong>、予測したい来客数などを<strong>目的変数</strong>と呼びます。正解の付いたデータで規則を学ぶのが<strong>教師あり学習</strong>、正解を与えずにデータの構造を調べるのが<strong>教師なし学習</strong>です。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="目的と手法の対応">
+<table>
+<thead>
+<tr>
+<th>知りたいこと</th>
+<th>このページで使う方法</th>
+<th>中心となる考え方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>来客数はいくつか、混雑するか</td>
+<td>線形・ロジスティック回帰</td>
+<td>特徴ごとの寄与を足す</td>
+</tr>
+<tr>
+<td>休日と平日で予測の規則を変えたい</td>
+<td>決定木、木の組み合わせ</td>
+<td>条件で分け、各領域で予測する</td>
+</tr>
+<tr>
+<td>単純な直線ではクラスを分けられない</td>
+<td>カーネルを使うSVM</td>
+<td>特徴の表し方を変えて境界を学ぶ</td>
+</tr>
+<tr>
+<td>似た買い方をする利用者は誰か</td>
+<td>クラスタリング</td>
+<td>データ同士の近さでまとめる</td>
+</tr>
+<tr>
+<td>多くの購入項目を少ない値で表したい</td>
+<td>PCA</td>
+<td>大きなばらつきを残す軸を探す</td>
+</tr>
+<tr>
+<td>利用者と商品の組み合わせを推定したい</td>
+<td>行列・テンソル分解</td>
+<td>少数の共通要因で表を近似する</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>以下の数値と図は仕組みを説明するための架空例です。手法間の性能を比較した実験結果ではありません。</p>
+</section>
+<section id="prediction">
+<h2>線形モデル：特徴ごとの寄与を足し合わせる</h2>
+<p><strong>線形回帰</strong>は、入力の各特徴に重みを掛けて足し、数値を予測するモデルです。来客数なら、気温による増減と休日による増減を合計します。どの特徴をどれだけ重視するかを表す重みと、予測の基準値を、過去のデータから学びます。</p>
+<p>数値を予測することを<strong>回帰</strong>、混雑する・しないのようなクラスを予測することを<strong>分類</strong>と呼びます。まず回帰で、学習と利用の違いを見てみましょう。</p>
+<h3>学習するのは、足し合わせ方を決める重み</h3>
+<p>気温をT、休日なら1・平日なら0となる特徴をH、来客数の予測をŷと書きます。気温は20℃との差を使うと、基準値の意味が分かりやすくなります。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mover accent="true"><mi>y</mi><mo>^</mo></mover><mo>=</mo><mi>b</mi><mo>+</mo><msub><mi>w</mi><mi>T</mi></msub><mo stretchy="false">(</mo><mi>T</mi><mo>−</mo><mn>20</mn><mo stretchy="false">)</mo><mo>+</mo><msub><mi>w</mi><mi>H</mi></msub><mi>H</mi></mrow><annotation encoding="application/x-tex">\hat y=b+w_T(T-20)+w_H H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">20</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span></span></div>
+<p>bは20℃の平日の予測、w<sub>T</sub>は気温が1℃高くなったときの予測の増分、w<sub>H</sub>は休日であることによる増分です。例えば、学習でb=60、w<sub>T</sub>=2、w<sub>H</sub>=40という値を得たとします。26℃の休日なら、予測は60 + 2×6 + 40 = <strong>112人</strong>です。この重みは計算の説明用に置いた値です。</p>
+<p>学習時には、過去の各日の入力を式に入れ、予測と実際の来客数の差を調べます。通常の線形回帰では、<strong>差を二乗して全訓練データについて足した値</strong>が小さくなるように重みを決めます。二乗するのは、過大予測と過小予測の差が打ち消し合うのを防ぎ、大きなずれを強く数えるためです。こうした、予測の悪さを測る値を<strong>損失</strong>と呼びます。</p>
+<p>利用時には重みを固定し、新しい日のTとHを代入します。この段階で、その日の本当の来客数は必要ありません。ただし翌日の予測なら、実測された翌日の気温はまだ分からないので、天気予報など、予測時点で使える情報を入力にする必要があります。</p>
+<h3>どこまで表せるか、どう複雑さを抑えるか</h3>
+<p>この式では、気温1℃の効果が平日でも休日でも同じです。「休日にだけ暑さの影響が強い」なら、(T−20)×Hという特徴を追加して表せます。<strong>特徴の作り方によって、線形モデルが表せる関係は変わります。</strong> 入力の二乗や積を使っても、用意した特徴に対して重み付きの和を取るという構造は同じです。</p>
+<p>一方、特徴を増やしすぎると、過去の偶然の変動まで拾うことがあります。訓練データではよく当たるのに、新しいデータでは当たらない状態が<strong>過学習</strong>です。例えば<strong>Ridge回帰</strong>は、予測誤差に加えて重みの二乗和にも罰則を与え、大きな重みに頼りすぎるのを抑えます。このようにモデルの複雑さを抑える工夫を<strong>正則化</strong>と呼びます。</p>
+<p>重みは予測上の関係を表します。「気温を1℃上げれば必ず来客が2人増える」という因果関係を、それだけで示すものではありません。<a href="https://scikit-learn.org/stable/modules/linear_model.html">線形回帰・Ridgeの公式解説</a></p>
+<h3>ロジスティック回帰：合計をクラスの確率に変える</h3>
+<p>混雑するかを知りたい場合は、過去の来客数が120人以上の日を1、それ以外を0とするなど、分類の正解を用意します。<strong>ロジスティック回帰</strong>は、特徴の重み付き合計zを、0から1の確率に変換するモデルです。名前に「回帰」が含まれますが、ここでは分類に使います。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>z</mi><mo>=</mo><mi>b</mi><mo>+</mo><msub><mi>w</mi><mi>T</mi></msub><mo stretchy="false">(</mo><mi>T</mi><mo>−</mo><mn>20</mn><mo stretchy="false">)</mo><mo>+</mo><msub><mi>w</mi><mi>H</mi></msub><mi>H</mi><mo separator="true">,</mo><mspace width="2em"/><mi>p</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">z=b+w_T(T-20)+w_HH,\qquad p=\frac{1}{1+e^{-z}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">20</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0908em;vertical-align:-0.7693em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6973em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.04398em;">z</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7693em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div>
+<p>pは「混雑する」確率の予測です。右の変換を<strong>シグモイド関数</strong>と呼び、z=0ならp=0.5、zが正に大きくなるほどpは1に近づきます。eは自然対数の底で約2.718です。例えばz≈1.10ならp≈0.75なので、判定のしきい値を0.5と決めていれば「混雑する」と答えます。</p>
+<p>この重みは、来客数を予測する回帰とは別に、0・1の正解から学びます。基本の損失は、実際に起きたクラスに低い確率を付けるほど大きくなる<strong>対数損失</strong>です。確率0.75は混雑の確約ではなく、また0.5というしきい値も固定の規則ではありません。混雑の見逃しを減らしたいなら、しきい値を下げたときに誤警報がどれだけ増えるかを確かめます。<a href="https://scikit-learn.org/stable/modules/linear_model.html">ロジスティック回帰の公式解説</a></p>
+</section>
+<section id="trees-and-kernels">
+<h2>木を使う方法：条件で分けてから予測する</h2>
+<p><strong>決定木</strong>は、「休日か」「気温が25℃以上か」といった条件を順にたどり、行き着いたグループで予測を出すモデルです。分岐する条件と、各グループの予測値をデータから学びます。条件の組み合わせに応じて、予測の仕方を変えられます。</p>
+<h3>分岐は、分けた後の予測誤差を見て選ぶ</h3>
+<p>次の6日間の記録から来客数を予測するとします。ここでは予測時に使える気温の情報が表の値だったと考えます。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="決定木の説明に使う6日間の訓練データ">
+<table>
+<thead>
+<tr>
+<th>日</th>
+<th>平日・休日</th>
+<th style="text-align:right">気温</th>
+<th style="text-align:right">来客数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>平日</td>
+<td style="text-align:right">18℃</td>
+<td style="text-align:right">50人</td>
+</tr>
+<tr>
+<td>B</td>
+<td>平日</td>
+<td style="text-align:right">28℃</td>
+<td style="text-align:right">70人</td>
+</tr>
+<tr>
+<td>C</td>
+<td>休日</td>
+<td style="text-align:right">20℃</td>
+<td style="text-align:right">90人</td>
+</tr>
+<tr>
+<td>D</td>
+<td>休日</td>
+<td style="text-align:right">24℃</td>
+<td style="text-align:right">110人</td>
+</tr>
+<tr>
+<td>E</td>
+<td>休日</td>
+<td style="text-align:right">26℃</td>
+<td style="text-align:right">130人</td>
+</tr>
+<tr>
+<td>F</td>
+<td>休日</td>
+<td style="text-align:right">30℃</td>
+<td style="text-align:right">150人</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>何も分けなければ、全日の平均100人を毎回予測します。「休日か」で分ければ、平日は平均60人、休日は平均120人です。二乗誤差の合計は、分割前の7,000から分割後の2,200へ小さくなります。</p>
+<p>学習では、このように特徴としきい値の候補を比較し、分けた後の誤差が小さくなる分岐を選びます。さらに分けられた先でも同じ操作を繰り返します。図は、最初に休日で分け、その先で気温を使う候補の一つです。条件を一つずつ選ぶ学習が、あらゆる木の中から最良の木を見つけるとは限りません。</p>
+<figure>
+<div class="figure-scroll" tabindex="0" role="region" aria-label="来客数を予測する決定木（横にスクロールできます）">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" role="img" aria-labelledby="classical-tree-title">
+<title id="classical-tree-title">休日かを調べ、休日なら気温で分岐する回帰木</title>
+<g fill="none" stroke="#738679" stroke-width="2"><path d="M400 80L170 165M400 80L565 145M565 205L450 285M565 205L685 285"/></g>
+<g font-family="system-ui,sans-serif" text-anchor="middle" font-size="17" fill="#294337">
+<rect x="295" y="20" width="210" height="60" rx="10" fill="#edf3eb" stroke="#35664d"/><text x="400" y="57">休日か？</text>
+<text x="225" y="112" font-size="14">いいえ（平日）</text><text x="536" y="110" font-size="14">はい（休日）</text>
+<rect x="55" y="165" width="230" height="100" rx="10" fill="#f0f4f7" stroke="#4d7897"/><text x="170" y="196">予測：60人</text><text x="170" y="223" font-size="14">訓練日の来客数：50・70</text><text x="170" y="246" font-size="14">平均＝60</text>
+<rect x="460" y="145" width="210" height="60" rx="10" fill="#edf3eb" stroke="#35664d"/><text x="565" y="182">気温が25℃以上か？</text>
+<text x="444" y="245" font-size="14">いいえ</text><text x="683" y="245" font-size="14">はい</text>
+<rect x="340" y="285" width="220" height="80" rx="10" fill="#f0f4f7" stroke="#4d7897"/><text x="450" y="315">予測：100人</text><text x="450" y="344" font-size="14">90・110の平均</text>
+<rect x="575" y="285" width="220" height="80" rx="10" fill="#faf0e9" stroke="#ba7147"/><text x="685" y="315">予測：140人</text><text x="685" y="344" font-size="14">130・150の平均</text>
+</g></svg></div>
+
+<figcaption>上の6日間を分けた回帰木の例。終端のグループを「葉」と呼びます。二乗誤差を使う回帰では、各葉に入った訓練データの平均が予測値です。図の分岐・数値は教材用です。</figcaption>
+</figure>
+<p>新しい日が26℃の休日なら、「休日 → 25℃以上」をたどって140人と予測します。平日なら、図の木では気温にかかわらず60人です。このように条件によって注目する特徴を変えられます。分類用の木では、同じ考え方で、葉に入るクラスがなるべくそろう分岐を探します。</p>
+<p>細かく分けて一日ずつの葉にすれば訓練誤差は消せますが、偶然の違いまで覚えてしまいます。木の深さや一つの葉に必要なデータ数を制限するのは、その過学習を抑えるためです。<a href="https://scikit-learn.org/stable/modules/tree.html">決定木の公式解説</a></p>
+<h3>ランダムフォレストと勾配ブースティング</h3>
+<p>一つの木は、訓練データが少し変わるだけで分岐が変わることがあります。<strong>ランダムフォレスト</strong>は、異なる木を複数学び、回帰なら予測を平均してばらつきを抑える方法です。同じ日に120・140・130人と答えた3本なら、平均の130人を予測します。</p>
+<p><strong>勾配ブースティング</strong>は、今ある予測の弱点を補う木を順番に学び、その修正を足す方法です。複数の木を別々に学んでまとめるのか、前の予測を見て順に補うのかが違います。どちらも、木を増やせば常に未知の日の予測がよくなるわけではありません。</p>
+<p>データの取り直し方と修正量の計算は、<a href="../questions/ensembles-experts.html#bagging">アンサンブルの仕組み</a>で説明します。<a href="https://scikit-learn.org/stable/modules/ensemble.html">木を組み合わせる方法の公式解説</a></p>
+</section>
+<section id="kernels">
+<h2>SVMとカーネル：境界の選び方と、特徴の表し方</h2>
+<p><strong>SVM（サポートベクトルマシン）</strong>は、分類ではクラスを分ける境界を学ぶ方法です。一方、<strong>カーネル</strong>は、特徴を別の空間に移して比較する計算を、二つのデータの関数として行う仕組みです。組み合わせて使われますが、役割は異なります。SVMにはカーネルを使う非線形モデルだけでなく線形モデルもあり、カーネルは回帰や次元削減にも使えます。</p>
+<h3>SVMは、境界の周りに余裕を取る</h3>
+<p>気温と休日の情報から混雑する日・しない日を分けるとします。訓練データを分けられる直線が何本もある場合、どれを選ぶとよいでしょうか。線形SVMは、直線とその近くの訓練点の間の余裕、すなわち<strong>マージン</strong>が広くなる境界を選びます。境界ぎりぎりに点が集まる分け方より、入力が少し変わっても判定が変わりにくい分け方を狙います。</p>
+<p>実際には二つのクラスが重なることもあります。そこで、マージンの内側に点が入ることや誤分類に罰則を与えつつ、余裕を広げることと両立させます。罰則の強さを決めるCという設定値が大きいほど、その違反を厳しく扱います。境界を決める際に効く訓練点が<strong>サポートベクトル</strong>で、誤分類された点も含むことがあります。</p>
+<h3>カーネルは、直線では分けにくい配置を扱う</h3>
+<p>特徴の変換が必要になる例として、気温だけを使う架空の分類を考えます。14℃と30℃の日が混雑し、18・22・26℃の日は混雑しないとします。気温の軸を一か所で区切るだけでは、両端と中央を分けられません。</p>
+<p>気温をx=(T−22)/4と表すと、5点は−2・−1・0・1・2です。ここで各点を、<strong>xとx²の二つの特徴</strong>で表し直します。すると両端の点だけが高い位置に移り、x²=2.5という一本の直線で分けられます。</p>
+<figure class="classical-figure" id="kernel-feature-map"><p class="classical-legend">◆ オレンジ：混雑する　● 青：混雑しない</p><div class="classical-panels"><div class="classical-panel"><p class="classical-panel-title">① 気温の1軸で表す</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 296" role="img" aria-label="① 気温の1軸で表す"><g font-family="system-ui,sans-serif"><path d="M35,225 L315,225" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="170" y="48" text-anchor="middle" font-size="14" fill="#243b30">両端が混雑、中央は混雑しない</text><text x="170" y="91" text-anchor="middle" font-size="13" fill="#243b30">一か所の区切りでは分けられない</text><path d="M64,218 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M64,233 L64,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="64" y="255" text-anchor="middle" font-size="13" fill="#243b30">-2</text><circle cx="122" cy="225" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M122,233 L122,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="122" y="255" text-anchor="middle" font-size="13" fill="#243b30">-1</text><circle cx="180" cy="225" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M180,233 L180,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="180" y="255" text-anchor="middle" font-size="13" fill="#243b30">0</text><circle cx="238" cy="225" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M238,233 L238,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="238" y="255" text-anchor="middle" font-size="13" fill="#243b30">1</text><path d="M296,218 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M296,233 L296,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="296" y="255" text-anchor="middle" font-size="13" fill="#243b30">2</text><text x="180" y="280" text-anchor="middle" font-size="13" fill="#243b30">x = (気温 − 22) / 4</text></g></svg><p class="classical-panel-note">14・18・22・26・30℃の5日間。</p></div><div class="classical-panel"><p class="classical-panel-title">② 特徴を (x, x²) に変換</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 296" role="img" aria-label="② 特徴を (x, x²) に変換"><g font-family="system-ui,sans-serif"><path d="M35,225 L315,225" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M45,25 L45,225" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M42,183 L315,183" stroke="#e8ede5" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="32" y="188" text-anchor="middle" font-size="12" fill="#243b30">1</text><path d="M42,141 L315,141" stroke="#e8ede5" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="32" y="146" text-anchor="middle" font-size="12" fill="#243b30">2</text><path d="M42,99 L315,99" stroke="#e8ede5" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="32" y="104" text-anchor="middle" font-size="12" fill="#243b30">3</text><path d="M42,57 L315,57" stroke="#e8ede5" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="32" y="62" text-anchor="middle" font-size="12" fill="#243b30">4</text><text x="48" y="18" text-anchor="start" font-size="14" fill="#243b30">x²</text><path d="M45,120 L315,120" stroke="#243b30" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/><text x="170" y="110" text-anchor="middle" font-size="13" fill="#243b30">境界：x² = 2.5</text><path d="M64,50 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M64,233 L64,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="64" y="255" text-anchor="middle" font-size="13" fill="#243b30">-2</text><circle cx="122" cy="183" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M122,233 L122,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="122" y="255" text-anchor="middle" font-size="13" fill="#243b30">-1</text><circle cx="180" cy="225" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M180,233 L180,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="180" y="255" text-anchor="middle" font-size="13" fill="#243b30">0</text><circle cx="238" cy="183" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M238,233 L238,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="238" y="255" text-anchor="middle" font-size="13" fill="#243b30">1</text><path d="M296,50 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M296,233 L296,237" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="296" y="255" text-anchor="middle" font-size="13" fill="#243b30">2</text><text x="180" y="280" text-anchor="middle" font-size="13" fill="#243b30">x = (気温 − 22) / 4</text></g></svg><p class="classical-panel-note">横線より上の2点だけが「混雑」。</p></div></div><figcaption>同じ5点を、別の特徴で表す教材用の例。元の気温軸では二か所の境界が必要ですが、変換後は一本の直線で分けられます。図は特徴変換の効果を示し、SVMを学習した結果ではありません。</figcaption></figure>
+<p>この例では二つの特徴を実際に作れば済みますが、変換後の特徴が非常に多いと、作って保持することが負担になります。そこで、変換した特徴ベクトルφ(x)とφ(x′)の<strong>内積</strong>、つまり対応する成分を掛けて足した値だけを直接計算します。これが<strong>カーネルトリック</strong>です。この例なら、次のように元のxとx′から計算できます。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>k</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msup><mi>x</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo><mo>=</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><msup><mo stretchy="false">)</mo><mi mathvariant="sans-serif">T</mi></msup><mi>ϕ</mi><mo stretchy="false">(</mo><msup><mi>x</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo><mo>=</mo><mi>x</mi><msup><mi>x</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup><msup><mi>x</mi><mrow><mo mathvariant="normal">′</mo><mn>2</mn></mrow></msup></mrow><annotation encoding="application/x-tex">k(x,x&#x27;)=\phi(x)^{\mathsf T}\phi(x&#x27;)=xx&#x27;+x^2x&#x27;^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1491em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ϕ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathsf mtight">T</span></span></span></span></span></span></span></span></span><span class="mord mathnormal">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8852em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">x</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′2</span></span></span></span></span></span></span></span></span></span></span></span></span></div>
+<p>x′は比較相手のデータ、φ(x)は(x, x²)です。カーネルを使うSVMの利用時には、新しい入力とサポートベクトルのカーネル値を計算し、学習済みの重み付き和からクラスを判定します。「一番似た点の答えをそのまま使う」方法とは異なります。</p>
+<p>よく使われる<strong>RBFカーネル</strong>は、近い点ほど大きな値を返し、遠い点ほど0に近づく比較方法です。近さがどの範囲まで影響するかという設定で、境界の細かさが変わります。単位の違う特徴をそのまま使うと距離の意味も変わるので、特徴の尺度をそろえる前処理が重要です。なお、カーネルトリックには、特徴空間の内積として表せるカーネルが必要で、任意の類似度をそのまま使えるわけではありません。<a href="https://scikit-learn.org/stable/modules/svm.html">SVMとカーネルの公式解説</a></p>
+</section>
+<section id="structure">
+<h2>クラスタリング：正解のグループを与えずにまとめる</h2>
+<p><strong>クラスタリング</strong>は、データ同士の近さを使ってグループを作る方法です。購入回数や購入額から似た利用者を探すとき、あらかじめ「この人は常連客」といった正解のラベルは与えません。分類が既知のラベルを予測するのに対し、クラスタリングでは入力の中のまとまりを探します。</p>
+<h3>k-meansは、割り当てと平均の計算を交互に行う</h3>
+<p><strong>k-means</strong>は、グループ数kを先に決め、各グループの中心からの距離の二乗和が小さくなるようにデータをまとめます。中心は、そのグループに入ったデータの平均です。各利用者を購入回数と購入額の2つの値で表すなら、中心も「平均の購入回数・平均の購入額」という2つの値になります。</p>
+<p>計算を追うために、ここでは月の購入回数だけに絞り、5人の値が1・2・4・8・9回だったとします。k=2として、初めの中心を1回と4回に置きます。</p>
+<ol>
+<li><strong>近い中心に割り当てる。</strong> 1・2は中心1へ、4・8・9は中心4へ入ります。</li>
+<li><strong>割り当てた値の平均へ中心を移す。</strong> 中心は(1+2)/2=1.5と、(4+8+9)/3=7になります。</li>
+<li><strong>新しい中心で割り当て直す。</strong> 4は、7までの距離3より、1.5までの距離2.5のほうが近いので、グループを移ります。再び平均を取ると中心は約2.33と8.5になり、この例では以後の割り当ては変わりません。</li>
+</ol>
+<figure class="classical-figure" id="kmeans-update"><p class="classical-legend">●・◆：利用者（色と形が所属）　×：中心<br>点線：二つの中心の中間</p><div class="classical-steps"><div class="classical-panel"><p class="classical-panel-title">① 初めの中心で割り当て</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 220" role="img" aria-label="中心1・4。4回の人は右の組。"><g font-family="system-ui,sans-serif"><path d="M34,100 L314,100" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M34,100 L34,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="34" y="125" text-anchor="middle" font-size="12" fill="#243b30">0</text><path d="M62,100 L62,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="62" y="125" text-anchor="middle" font-size="12" fill="#243b30">1</text><path d="M90,100 L90,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="90" y="125" text-anchor="middle" font-size="12" fill="#243b30">2</text><path d="M118,100 L118,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="118" y="125" text-anchor="middle" font-size="12" fill="#243b30">3</text><path d="M146,100 L146,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="146" y="125" text-anchor="middle" font-size="12" fill="#243b30">4</text><path d="M174,100 L174,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="174" y="125" text-anchor="middle" font-size="12" fill="#243b30">5</text><path d="M202,100 L202,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="202" y="125" text-anchor="middle" font-size="12" fill="#243b30">6</text><path d="M230,100 L230,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="230" y="125" text-anchor="middle" font-size="12" fill="#243b30">7</text><path d="M258,100 L258,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="258" y="125" text-anchor="middle" font-size="12" fill="#243b30">8</text><path d="M286,100 L286,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="286" y="125" text-anchor="middle" font-size="12" fill="#243b30">9</text><path d="M314,100 L314,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="314" y="125" text-anchor="middle" font-size="12" fill="#243b30">10</text><path d="M104,44 L104,165" stroke="#243b30" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/><text x="104" y="31" text-anchor="middle" font-size="12" fill="#243b30">境目 2.5</text><circle cx="62" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><circle cx="90" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M146,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M258,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M286,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M56,147 L68,159" stroke="#386b9b" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M56,159 L68,147" stroke="#386b9b" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="62" y="178" text-anchor="middle" font-size="12" fill="#386b9b">1</text><path d="M140,147 L152,159" stroke="#a65c26" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M140,159 L152,147" stroke="#a65c26" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="146" y="178" text-anchor="middle" font-size="12" fill="#a65c26">4</text><text x="314" y="205" text-anchor="end" font-size="12" fill="#243b30">月の購入回数</text></g></svg><p class="classical-panel-note">中心1・4。4回の人は右の組。</p></div><div class="classical-panel"><p class="classical-panel-title">② 中心を更新し、割り当て直す</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 220" role="img" aria-label="中心1.5・7。4回の人が左へ移る。"><g font-family="system-ui,sans-serif"><path d="M34,100 L314,100" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M34,100 L34,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="34" y="125" text-anchor="middle" font-size="12" fill="#243b30">0</text><path d="M62,100 L62,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="62" y="125" text-anchor="middle" font-size="12" fill="#243b30">1</text><path d="M90,100 L90,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="90" y="125" text-anchor="middle" font-size="12" fill="#243b30">2</text><path d="M118,100 L118,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="118" y="125" text-anchor="middle" font-size="12" fill="#243b30">3</text><path d="M146,100 L146,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="146" y="125" text-anchor="middle" font-size="12" fill="#243b30">4</text><path d="M174,100 L174,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="174" y="125" text-anchor="middle" font-size="12" fill="#243b30">5</text><path d="M202,100 L202,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="202" y="125" text-anchor="middle" font-size="12" fill="#243b30">6</text><path d="M230,100 L230,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="230" y="125" text-anchor="middle" font-size="12" fill="#243b30">7</text><path d="M258,100 L258,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="258" y="125" text-anchor="middle" font-size="12" fill="#243b30">8</text><path d="M286,100 L286,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="286" y="125" text-anchor="middle" font-size="12" fill="#243b30">9</text><path d="M314,100 L314,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="314" y="125" text-anchor="middle" font-size="12" fill="#243b30">10</text><path d="M153,44 L153,165" stroke="#243b30" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/><text x="153" y="31" text-anchor="middle" font-size="12" fill="#243b30">境目 4.25</text><circle cx="62" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><circle cx="90" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><circle cx="146" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><text x="146" y="72" text-anchor="middle" font-size="13" fill="#386b9b">移動</text><path d="M258,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M286,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M70,147 L82,159" stroke="#386b9b" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M70,159 L82,147" stroke="#386b9b" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="76" y="178" text-anchor="middle" font-size="12" fill="#386b9b">1.5</text><path d="M224,147 L236,159" stroke="#a65c26" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M224,159 L236,147" stroke="#a65c26" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="230" y="178" text-anchor="middle" font-size="12" fill="#a65c26">7</text><text x="314" y="205" text-anchor="end" font-size="12" fill="#243b30">月の購入回数</text></g></svg><p class="classical-panel-note">中心1.5・7。4回の人が左へ移る。</p></div><div class="classical-panel"><p class="classical-panel-title">③ 再び平均を取り、安定する</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 220" role="img" aria-label="中心約2.33・8.5。所属は変わらない。"><g font-family="system-ui,sans-serif"><path d="M34,100 L314,100" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M34,100 L34,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="34" y="125" text-anchor="middle" font-size="12" fill="#243b30">0</text><path d="M62,100 L62,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="62" y="125" text-anchor="middle" font-size="12" fill="#243b30">1</text><path d="M90,100 L90,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="90" y="125" text-anchor="middle" font-size="12" fill="#243b30">2</text><path d="M118,100 L118,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="118" y="125" text-anchor="middle" font-size="12" fill="#243b30">3</text><path d="M146,100 L146,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="146" y="125" text-anchor="middle" font-size="12" fill="#243b30">4</text><path d="M174,100 L174,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="174" y="125" text-anchor="middle" font-size="12" fill="#243b30">5</text><path d="M202,100 L202,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="202" y="125" text-anchor="middle" font-size="12" fill="#243b30">6</text><path d="M230,100 L230,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="230" y="125" text-anchor="middle" font-size="12" fill="#243b30">7</text><path d="M258,100 L258,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="258" y="125" text-anchor="middle" font-size="12" fill="#243b30">8</text><path d="M286,100 L286,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="286" y="125" text-anchor="middle" font-size="12" fill="#243b30">9</text><path d="M314,100 L314,106" stroke="#bbc6ba" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="314" y="125" text-anchor="middle" font-size="12" fill="#243b30">10</text><path d="M185.667,44 L185.667,165" stroke="#243b30" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/><text x="185.667" y="31" text-anchor="middle" font-size="12" fill="#243b30">境目 5.42</text><circle cx="62" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><circle cx="90" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><circle cx="146" cy="100" r="6" fill="#386b9b" stroke="white" stroke-width="1.5"/><path d="M258,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M286,93 l7,7 l-7,7 l-7,-7 Z" fill="#a65c26" stroke="white" stroke-width="1.5"/><path d="M93.3333,147 L105.333,159" stroke="#386b9b" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M93.3333,159 L105.333,147" stroke="#386b9b" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="99.3333" y="178" text-anchor="middle" font-size="12" fill="#386b9b">2.33</text><path d="M266,147 L278,159" stroke="#a65c26" stroke-width="1.5" stroke-dasharray="" fill="none"/><path d="M266,159 L278,147" stroke="#a65c26" stroke-width="1.5" stroke-dasharray="" fill="none"/><text x="272" y="178" text-anchor="middle" font-size="12" fill="#a65c26">8.5</text><text x="314" y="205" text-anchor="end" font-size="12" fill="#243b30">月の購入回数</text></g></svg><p class="classical-panel-note">中心約2.33・8.5。所属は変わらない。</p></div></div><figcaption>5人の購入回数をk=2で分ける計算例。変わるのは所属と中心で、利用者の購入回数は動きません。初期値を1・4と決めた場合の更新を、同じ目盛りで示しています。</figcaption></figure>
+<p>学習後に新しい利用者を割り当てるときは、その人に最も近い中心を選べます。例えば月3回なら中心約2.33のグループです。ただし、得られたグループに「常連客」などの意味が自動で付くわけではありません。今回は購入回数だけで分けたので、購入額や来店期間までは表していません。</p>
+<h3>「近い」の決め方が、まとまりを変える</h3>
+<p>購入回数が1〜10、購入額が1,000〜100,000という特徴をそのまま距離に使うと、数値の大きい購入額が支配しやすくなります。例えば、各特徴から平均を引き、標準偏差で割る<strong>標準化</strong>をすると、典型的なばらつきを基準に比較できます。ただし、両特徴を同じ程度に扱いたいかは分析の目的によります。</p>
+<p>k-meansは初期の中心で結果が変わることがあり、複数の初期値を試します。また、kを増やすほど中心までの距離は小さくできるので、距離が最小というだけではグループ数を選べません。細分化しても解釈や利用に役立つか、データを少し変えても似たまとまりが出るかを調べます。</p>
+<p>中心の周りに広がるまとまりを想定するk-meansは、曲がった帯状のグループや遠く離れた外れ値には不向きなことがあります。密な領域をつなぎ、孤立点をノイズとして扱う<strong>DBSCAN</strong>や、細かなまとまりから大きなまとまりへ統合する<strong>階層的クラスタリング</strong>など、違う構造を探す方法もあります。<a href="https://scikit-learn.org/stable/modules/clustering.html">クラスタリングの公式解説</a></p>
+</section>
+<section id="pca">
+<h2>PCA：ばらつきを残しながら、少数の座標に変える</h2>
+<p><strong>PCA（主成分分析）</strong>は、多数の特徴を組み合わせて新しい軸を作り、少ない座標でデータを表す方法です。例えば飲料と食品の購入額が一緒に増えるなら、2項目を別々に持つ代わりに、「全体としてどのくらい多く買うか」という1本の軸で大まかな違いを表せます。このように表現する次元数を減らすことを<strong>次元削減</strong>と呼び、可視化や圧縮に使います。</p>
+<h3>軸の向きをデータから学ぶ</h3>
+<p>まず各特徴の平均を引き、平均的な利用者が原点に来るようにします。そのうえで、点を軸へ垂直に落としたときの座標のばらつき、すなわち<strong>分散</strong>が最大になる向きを探します。これが<strong>第1主成分</strong>です。2本目を残す場合は、1本目と直交する向きの中で最も分散が大きい軸を選びます。</p>
+<figure>
+<div class="figure-scroll" tabindex="0" role="region" aria-label="PCAの投影図（横にスクロールできます）">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 410" role="img" aria-labelledby="classical-pca-title">
+<title id="classical-pca-title">右上がりに分布する6点を、第1主成分の軸へ垂直に投影する模式図</title>
+<g font-family="system-ui,sans-serif" fill="#294337">
+<text x="60" y="30" font-size="17">2つの購入額で表した利用者</text>
+<g fill="none" stroke="#96a197" stroke-width="1.5"><path d="M75 65V345H490"/></g>
+<text x="78" y="58" font-size="14">食品の購入額</text><text x="352" y="374" font-size="14">飲料の購入額</text>
+<path d="M100 330L420 90" stroke="#35664d" stroke-width="3"/>
+<text x="435" y="77" font-size="14" fill="#35664d">第1主成分の軸</text>
+<g stroke="#85978e" stroke-width="1.5" stroke-dasharray="4 4">
+<path d="M126 260.5L150 292.5M174 324.5L150 292.5M246 170.5L270 202.5M294 234.5L270 202.5M366 80.5L390 112.5M414 144.5L390 112.5"/>
+</g>
+<g fill="#4d7897" stroke="white" stroke-width="2"><circle cx="126" cy="260.5" r="7"/><circle cx="174" cy="324.5" r="7"/><circle cx="246" cy="170.5" r="7"/><circle cx="294" cy="234.5" r="7"/><circle cx="366" cy="80.5" r="7"/><circle cx="414" cy="144.5" r="7"/></g>
+<g fill="#fff" stroke="#35664d" stroke-width="3"><circle cx="150" cy="292.5" r="6"/><circle cx="270" cy="202.5" r="6"/><circle cx="390" cy="112.5" r="6"/></g>
+<rect x="520" y="95" width="260" height="220" rx="12" fill="#f3f5ef"/>
+<circle cx="547" cy="127" r="6" fill="#4d7897"/><text x="566" y="133" font-size="15">元の利用者の座標</text>
+<circle cx="547" cy="164" r="6" fill="white" stroke="#35664d" stroke-width="2"/><text x="566" y="170" font-size="15">投影後の座標</text>
+<text x="540" y="216" font-size="15">残す：軸に沿う位置の違い</text>
+<text x="540" y="247" font-size="15">失う：軸からのずれ</text>
+<text x="540" y="286" font-size="14">2個の値 → 1個の座標</text>
+</g></svg></div>
+
+<figcaption>飲料と食品の購入額で表した6点を、1本の軸へ投影する模式図。青い点が元の利用者、白抜きの点が投影先です。点線に沿うずれを捨てるため、元は違う点が同じ座標になることもあります。</figcaption>
+</figure>
+<p>図のように両方の購入額が増える方向を残せば、利用者を軸に沿う位置の一つの値で表せます。例えば単位をそろえた平均からの差が飲料+3・食品+1で、残す軸の向きが(0.8, 0.6)なら、新しい座標は0.8×3 + 0.6×1 = 3です。その座標から元の2軸へ戻すと(3×0.8, 3×0.6)=(+2.4, +1.8)になります。両方とも平均より多いという特徴は残りますが、飲料と食品の元の差は復元できません。軸の向きを表す(0.8, 0.6)は、長さが1になるようにそろえた値です。</p>
+<p>利用時には、訓練データで求めた平均と軸を固定し、新しいデータも同じ座標系へ変換します。利用者ごとに軸を学び直すわけではありません。</p>
+<h3>大きいばらつきが、目的に重要とは限らない</h3>
+<p>主成分が全体の分散の何割を保持するかを<strong>寄与率</strong>と呼び、残す軸の数を考える目安にします。ただし、PCAは予測したい正解を使わずに軸を選びます。大きくばらつく購入総額より、小さな商品の買い分けが離反予測に重要なら、分散を多く残しても予測に役立つとは限りません。</p>
+<p>また、円と個数など尺度の異なる特徴では、どの特徴の分散が大きく見えるかが単位に左右されます。平均を引くことと、尺度をそろえることは別の操作です。<strong>クラスタリングは所属グループを作り、PCAは各点の座標を作る</strong>、という違いも押さえておきましょう。<a href="https://scikit-learn.org/stable/modules/decomposition.html">PCAの公式解説</a></p>
+</section>
+<section id="decomposition-example">
+<h2>行列・テンソル分解：共通する少数の要因で表を説明する</h2>
+<p><strong>行列分解</strong>は、数値の表を、より少数の要因を表す行列の積で近似する方法です。推薦では「利用者×商品」の評価表を、「各利用者が各要因をどれだけ持つか」と「各商品が各要因をどれだけ持つか」に分け、両者の組み合わせから未観測の評価を推定します。</p>
+<h3>利用者側と商品側の値を、掛けて足す</h3>
+<p>次は3人による3商品の評価の例です。「?」は、その評価を観測していないことを示します。説明を簡単にするため、以下では利用者ごとの平均点などを別に足さないモデルを使います。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="一部の評価が欠けた利用者と商品の表">
+<table>
+<thead>
+<tr>
+<th>利用者</th>
+<th style="text-align:right">商品A</th>
+<th style="text-align:right">商品B</th>
+<th style="text-align:right">商品C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>アキ</td>
+<td style="text-align:right">5</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">?</td>
+</tr>
+<tr>
+<td>ミナ</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right">3</td>
+</tr>
+<tr>
+<td>ソラ</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">5</td>
+<td style="text-align:right">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>二つの要因で表すモデルが、アキに(2, 1)、商品Cに(1, 0.5)という値を割り当てたとします。この組み合わせの予測は <strong>2×1 + 1×0.5 = 2.5</strong> です。これらは積の計算を示す仮の値で、上の表を最適化した結果ではありません。</p>
+<p>一般に、利用者iの要因をu、商品jの要因をv、要因数をrとすると、予測する評価は次の形になります。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mover accent="true"><mi>R</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mi>r</mi></munderover><msub><mi>u</mi><mrow><mi>i</mi><mi>a</mi></mrow></msub><msub><mi>v</mi><mrow><mi>j</mi><mi>a</mi></mrow></msub><mo separator="true">,</mo><mspace width="2em"/><mi>R</mi><mo>≈</mo><mi>U</mi><msup><mi>V</mi><mi mathvariant="sans-serif">T</mi></msup></mrow><annotation encoding="application/x-tex">\hat R_{ij}=\sum_{a=1}^{r}u_{ia}v_{ja},\qquad R\approx UV^{\mathsf T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2329em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">^</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">ij</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9185em;vertical-align:-1.2671em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8829em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2671em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ia</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ja</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8991em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathsf mtight">T</span></span></span></span></span></span></span></span></span></span></span></span></span></div>
+<p>aは要因の番号です。Uは「利用者数×r」、Vは「商品数×r」の行列で、Vの縦横を入れ替えたものがVᵀです。各行同士を掛けて足すと、元の「利用者数×商品数」の表を作れます。少数の要因を共有することで表の複雑さを制限するのが、<strong>低ランク近似</strong>の考え方です。</p>
+<p>例えば利用者1,000人、商品500個なら、元の表には50万個の値があります。r=10なら、二つの要因行列は1,000×10 + 500×10 = 15,000個の値で表せます。上の3人・3商品の小さな例ではr=2にすると値の数はむしろ増えますが、大きな表で十分少ない要因を使うと圧縮になります。</p>
+<h3>欠けた値を推定できるのは、要因を共有するから</h3>
+<p>学習では、<strong>観測できた評価</strong>と予測の差が小さくなるように、利用者側・商品側の値を同時に調整します。観測された少数の評価に合わせすぎないよう、要因の値にも正則化を加えます。アキの要因はA・Bへの評価から、商品Cの要因はミナ・ソラの評価から影響を受けます。そうして学んだ要因を組み合わせることで、アキとCの組も推定できます。</p>
+<p>「?」を0点として学習すると、評価を知らないだけの商品を、低く評価した商品として扱ってしまいます。購入履歴でも、買わなかった理由は「嫌い」だけでなく「まだ知らない」かもしれません。何を観測とみなして損失を作るかが重要です。また、履歴がない新規利用者・新規商品の要因は、この表だけでは十分に学べません。</p>
+<p>要因に「甘いものの好み」などの意味が必ず付くわけでもありません。利用者側のある要因を2倍、商品側の対応する要因を半分にしても、積は同じです。予測が合うことと、要因が一意に決まることは別です。非負に制限するなど、意味に合わせた条件を加える方法もあります。</p>
+<p>PCAにも分解の考え方があり、平均を引いた完全な表の<strong>特異値分解（SVD）</strong>から主成分を求められます。一方、この推薦の例では欠けた評価を除いて学習します。表を分解するという共通点があっても、何を誤差として小さくするか、どんな制約を加えるかによって方法は変わります。<a href="https://scikit-learn.org/stable/modules/decomposition.html">PCA・行列分解の公式解説</a>・<a href="https://doi.org/10.1109/MC.2009.263">推薦の行列分解</a></p>
+<h3>テンソル分解：月の情報も同じ枠組みに入れる</h3>
+<p>「利用者×商品×月」のように、三つ以上の軸を持つ配列も扱えます。こうした配列を<strong>テンソル</strong>と呼びます。月ごとに別の表を作る代わりに、利用者と商品の要因を共有し、時期による変化を加えるのがテンソル分解の使い方の一つです。</p>
+<p>例えば<strong>CP分解</strong>では、各要因について「利用者側の値 × 商品側の値 × 月側の値」を計算し、それを全要因について足します。上のアキと商品Cの値に、ある月の値(1.5, 0.5)を加えるなら、予測は2×1×1.5 + 1×0.5×0.5 = <strong>3.25</strong> です。月側の値によって、同じ利用者・商品の組でも予測を変えられます。</p>
+<p>これは三つの軸が共通の少数要因で結び付くと仮定したモデルです。月の軸を加えるだけで、まだ観測していない将来の月の値まで予測できるわけではありません。将来へ外挿したいなら、時間変化の規則なども必要になります。<a href="https://tensorly.org/stable/user_guide/tensor_decomposition.html">テンソル分解の公式解説</a>・<a href="https://www.kolda.net/publication/TensorReview.pdf">Kolda・Baderによる総説</a></p>
+</section>
+<section id="practice">
+<h2>方法を選ぶときは、出力と評価をそろえる</h2>
+<p>「どの手法が強いか」を考える前に、欲しい答えを明確にします。来客数なら回帰、混雑の有無なら分類、利用者のまとまりならクラスタリングです。PCAの座標やクラスタの番号は、そのまま来客数の予測にはなりません。</p>
+<p>来客数予測であれば、まず過去の平均などの単純な予測を比較基準にし、線形回帰や木を同じ条件で評価できます。各特徴の効果を足す形で足りるか、条件の組み合わせで予測を変える必要があるか、という見方は候補を選ぶ助けになります。最終的には、未知のデータでの誤差と、計算量・説明のしやすさを確かめます。</p>
+<ol>
+<li><strong>利用場面に合わせてデータを分ける。</strong> 未来の日を予測するなら、過去を訓練用、それより後を検証・テスト用にします。同じ利用者の記録を共有してよいかも、既存利用者への予測なのか、新規利用者への予測なのかで変わります。</li>
+<li><strong>前処理も訓練データから決める。</strong> 標準化の平均や標準偏差、PCAの軸は訓練用だけで求め、検証・テスト用には同じ変換を適用します。先に全データから求めると、評価対象の情報が学習に混ざる<strong>データ漏洩</strong>になります。</li>
+<li><strong>設定値を選ぶデータと、最終評価のデータを分ける。</strong> 木の深さ、SVMのC、分解の要因数などは、通常の重みとは別に選ぶ<strong>ハイパーパラメータ</strong>です。検証用で選び、最後に未使用のテスト用で確かめます。分割を変えて評価する交差検証でも、前処理は各回の訓練部分から学びます。</li>
+</ol>
+<p>正解ラベルのないクラスタリングでは、「正解率」だけで質を判断できません。グループの安定性や実際の分析への有用性を、PCAなら情報の保持や後続の予測への影響を調べます。推薦の評価では、一部の既知の評価を隠して予測できるかを確かめますが、実際に表示される商品の偏りや時間の変化にも注意が必要です。<a href="https://scikit-learn.org/stable/common_pitfalls.html">前処理とデータ漏洩の公式解説</a></p>
+</section>
+<section id="research">
+<h2>基本の発想から、どんな研究の問いが生まれるか</h2>
+<p>これらの手法の研究は、新しい名前の方法を増やすことだけではありません。何を単純化したために、どんな場面で困るのかを見ると、改良の方向が分かります。</p>
+<ul>
+<li><strong>カーネル法：比較の意味と計算量。</strong> 文章やグラフでは何を「近い」とするか。訓練例の組ごとにカーネル値を保持するとn件に対してn²個になるため、近さを十分に保ったまま計算を近似できるか。</li>
+<li><strong>木を使う方法：分岐の効率と制約。</strong> 大量の候補を速く調べられるか。「ある特徴が増えると予測は減らない」といった既知の条件を満たしながら、精度を保てるか。</li>
+<li><strong>クラスタリング：まとまりの根拠。</strong> ノイズや欠測があっても同じまとまりが見えるか。人が知っている「この二つは同じグループ」という部分的な情報をどう使うか。</li>
+<li><strong>分解：復元できる条件。</strong> 観測が少なくても欠けた値を推定できるのは、どんな条件のときか。外れ値に左右されず、意味のある要因を取り出せるか。</li>
+</ul>
+<p>深層学習で画像や文章を特徴ベクトルに変換し、その上で線形分類器やクラスタリングを使うこともできます。入力の表し方を学ぶ部分と、予測・整理を行う部分を組み合わせることで、同じ基本の発想を別のデータにも適用できます。</p>
+</section>
+<section id="sources">
+<h2>参考資料</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/linear_model.html">scikit-learn：線形モデル</a> — 最小二乗、正則化、ロジスティック回帰。</li>
+<li><a href="https://scikit-learn.org/stable/modules/tree.html">scikit-learn：決定木</a>・<a href="https://scikit-learn.org/stable/modules/ensemble.html">アンサンブル</a> — 分割基準、ランダムフォレスト、勾配ブースティング。</li>
+<li><a href="https://scikit-learn.org/stable/modules/svm.html">scikit-learn：SVM</a> — マージンとカーネルを使う分類。</li>
+<li><a href="https://scikit-learn.org/stable/modules/clustering.html">scikit-learn：クラスタリング</a> — k-meansと、異なるまとまりを捉える方法。</li>
+<li><a href="https://scikit-learn.org/stable/modules/decomposition.html">scikit-learn：PCA・行列分解</a> — 投影、SVD、分解の制約。</li>
+<li><a href="https://doi.org/10.1109/MC.2009.263">Koren・Bell・Volinsky：Matrix Factorization Techniques for Recommender Systems</a> — 観測された評価から利用者・商品の要因を学ぶ方法。</li>
+<li><a href="https://tensorly.org/stable/user_guide/tensor_decomposition.html">TensorLy：テンソル分解</a>・<a href="https://www.kolda.net/publication/TensorReview.pdf">Kolda・Bader：Tensor Decompositions and Applications</a> — CP分解などの基本と応用。</li>
+<li><a href="https://scikit-learn.org/stable/common_pitfalls.html">scikit-learn：前処理とデータ漏洩</a> — 訓練と評価を分ける際の注意点。</li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#classical-intro">同じデータでも、知りたいことによって方法が変わる</a><a data-level="2" href="#prediction">線形モデル：特徴ごとの寄与を足し合わせる</a><a data-level="2" href="#trees-and-kernels">木を使う方法：条件で分けてから予測する</a><a data-level="2" href="#kernels">SVMとカーネル：境界の選び方と、特徴の表し方</a><a data-level="2" href="#structure">クラスタリング：正解のグループを与えずにまとめる</a><a data-level="2" href="#pca">PCA：ばらつきを残しながら、少数の座標に変える</a><a data-level="2" href="#decomposition-example">行列・テンソル分解：共通する少数の要因で表を説明する</a><a data-level="2" href="#practice">方法を選ぶときは、出力と評価をそろえる</a><a data-level="2" href="#research">基本の発想から、どんな研究の問いが生まれるか</a><a data-level="2" href="#sources">参考資料</a></aside></div>
+</body></html>

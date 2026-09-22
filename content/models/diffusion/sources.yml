@@ -1,0 +1,22 @@
+ref-001:
+  url: https://arxiv.org/abs/2006.11239
+  label: DDPM：ノイズ予測による学習と生成 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/2112.10752
+  label: Latent Diffusion：潜在空間とcross-attention ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/2212.09748
+  label: DiT：Transformerを予測器にする ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://arxiv.org/abs/2207.12598
+  label: Classifier-Free Diffusion Guidance ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-diffusion-cat-stages.png:
+  url: content/models/diffusion/media/diffusion-cat-stages.png
+  label: diffusion-cat-stages.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="モデルを保存する容量、予測する計算、追加学習の負担を減らす工夫を比べます。蒸留・量子化・枝刈り・PEFTとAttentionの効率化を紹介します。"><meta name="color-scheme" content="light">
+<title>圧縮・軽量な適応 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../content/questions/efficiency/components/flash-attention.js" defer></script><link rel="stylesheet" href="../content/questions/efficiency/components/page.css">
+</head>
+<body data-page="efficiency" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details open><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="representation-learning.html">表現学習</a><a href="transfer-learning.html">転移と適応</a><a href="continual-learning.html">継続・オンライン学習</a><a href="foundation-models.html">基盤モデルの学習・適応</a><a href="ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="robustness.html">頑健性とドメイン汎化</a><a href="uncertainty-unknowns.html">不確実性と未知への対応</a><a href="interpretability.html">説明可能性と内部機構</a><a href="safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="efficiency.html" aria-current="page">圧縮・軽量な適応</a><a href="distributed-systems.html">分散学習・推論実行</a><a href="federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="information-geometry.html">情報幾何</a><a href="causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="datasets.html">データの設計と品質</a><a href="evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">横断的な研究を知る · <span lang="en">Compression and Parameter-Efficient Adaptation</span></p><h1>圧縮・軽量な適応</h1><p class="lead">モデルを保存する容量、予測する計算、追加学習の負担を減らす工夫を比べます。蒸留・量子化・枝刈り・PEFTとAttentionの効率化を紹介します。</p></header>
+<h2 id="efficiency-example">保存・実行・学習の費用</h2>
+<p>犬と猫を見分けるモデルを端末で使いたいとします。「保存できない」「一枚の判定が遅い」「新しい写真で学び直す費用が高い」は、別の問題です。<strong>圧縮</strong>はモデルの表現や計算を小さくする工夫、<strong>軽量な適応</strong>は用途に合わせて更新する部分を減らす工夫です。</p>
+<p>例えば、重みの保存容量を減らしても、端末がその計算形式に対応していなければ速くならない場合があります。以下では、学習時・保存時・利用時のどの費用を変えるかを見ます。</p>
+<h2 id="efficiency-evaluation">軽くする対象と方法</h2>
+<table>
+<thead>
+<tr>
+<th>工夫</th>
+<th>主に変えるもの</th>
+<th>用途に応じて確認すること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>蒸留</td>
+<td>利用するモデルを小さくする</td>
+<td>小さな生徒が、難しい画像でも教師の能力を保つか</td>
+</tr>
+<tr>
+<td>量子化</td>
+<td>数値を表すビット数</td>
+<td>保存量、端末上の速度、丸めによる誤り</td>
+</tr>
+<tr>
+<td>枝刈り</td>
+<td>重みや計算部品の数</td>
+<td>部品を削った後も精度を保ち、実測で速くなるか</td>
+</tr>
+<tr>
+<td>PEFT</td>
+<td>適応で更新する数の量</td>
+<td>少ない更新で新用途へ合い、学習メモリが減るか</td>
+</tr>
+<tr>
+<td>疎なAttention</td>
+<td>情報を集める参照先の数</td>
+<td>長い文書で必要な情報が届くか</td>
+</tr>
+<tr>
+<td>FlashAttention</td>
+<td>途中の値の保存と読み書き</td>
+<td>同じAttentionを装置上で速く実行できるか</td>
+</tr>
+</tbody>
+</table>
+<p>同じ装置・入力サイズ・まとめて処理する件数で、時間とメモリを測って比べます。犬・猫の分類なら、暗い写真など苦手な条件で精度が落ちていないかも確かめます。保存サイズが減ることと、処理が速くなることは別に確認します。</p>
+<section id="distillation">
+<h2>知識蒸留</h2>
+<p><strong>大きなモデルの予測を手本に、小さなモデルを育てます。</strong>同じ入力への予測確率を近づけるように学習し、利用時は小さなモデルだけを使います。</p>
+<figure class="learning-figure">
+<div aria-label="図（狭い画面では横にスクロールできます）" class="figure-scroll" tabindex="0"><svg aria-label="蒸留：同じ画像を教師と生徒に入力し、出力確率の差で生徒を学習する" role="img" viewBox="0 0 800 525" xmlns="http://www.w3.org/2000/svg"><title>蒸留：同じ画像を教師と生徒に入力し、出力確率の差で生徒を学習する</title><defs><marker id="arrow-1" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><text fill="#294337" font-family="system-ui,sans-serif" font-size="19" text-anchor="start" x="24" y="28">学習時：同じ画像から出した確率を比べる</text><image height="85" href="../assets/pet-cat.jpg" preserveAspectRatio="xMidYMid slice" width="90" x="25" y="142"/><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="70" y="250">猫の画像</text><path d="M122 180 L153 180" fill="none" stroke="#738679" stroke-width="2"></path><path d="M153 180 L153 105" fill="none" stroke="#738679" stroke-width="2"></path><path d="M153 180 L153 305" fill="none" stroke="#738679" stroke-width="2"></path><path d="M153 105 L192 105" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><path d="M153 305 L192 305" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><path d="M205 82.0 L243 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 82.0 L243 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 82.0 L243 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 82.0 L243 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 82.0 L243 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 105.0 L243 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 105.0 L243 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 105.0 L243 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 105.0 L243 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 105.0 L243 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 128.0 L243 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 128.0 L243 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 128.0 L243 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 128.0 L243 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M205 128.0 L243 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 59.0 L281 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 59.0 L281 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 59.0 L281 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 59.0 L281 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 59.0 L281 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 82.0 L281 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 82.0 L281 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 82.0 L281 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 82.0 L281 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 82.0 L281 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 105.0 L281 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 105.0 L281 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 105.0 L281 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 105.0 L281 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 105.0 L281 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 128.0 L281 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 128.0 L281 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 128.0 L281 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 128.0 L281 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 128.0 L281 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 151.0 L281 59.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 151.0 L281 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 151.0 L281 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 151.0 L281 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M243 151.0 L281 151.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 59.0 L319 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 59.0 L319 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 59.0 L319 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 82.0 L319 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 82.0 L319 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 82.0 L319 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 105.0 L319 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 105.0 L319 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 105.0 L319 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 128.0 L319 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 128.0 L319 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 128.0 L319 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 151.0 L319 82.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 151.0 L319 105.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M281 151.0 L319 128.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><circle cx="205" cy="82.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="205" cy="105.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="205" cy="128.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="243" cy="59.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="243" cy="82.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="243" cy="105.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="243" cy="128.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="243" cy="151.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="281" cy="59.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="281" cy="82.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="281" cy="105.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="281" cy="128.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="281" cy="151.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="319" cy="82.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="319" cy="105.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="319" cy="128.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="260" y="48">大きな教師：固定</text><path d="M205 282.0 L243 293.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M205 282.0 L243 316.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M205 305.0 L243 293.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M205 305.0 L243 316.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M205 328.0 L243 293.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M205 328.0 L243 316.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M243 293.5 L281 282.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M243 293.5 L281 305.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M243 293.5 L281 328.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M243 316.5 L281 282.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M243 316.5 L281 305.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M243 316.5 L281 328.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><circle cx="205" cy="282.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="205" cy="305.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="205" cy="328.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="243" cy="293.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="243" cy="316.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="281" cy="282.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="281" cy="305.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="281" cy="328.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="260" y="252">小さな生徒：更新</text><path d="M330 105 L393 105" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><path d="M292 305 L393 305" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="419" y="88">猫</text><rect fill="#4d7897" height="19" width="160" x="443" y="74"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="14" text-anchor="start" x="615" y="89">80%</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="419" y="119">犬</text><rect fill="#4d7897" height="19" width="30" x="443" y="105"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="14" text-anchor="start" x="615" y="120">15%</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="419" y="150">車</text><rect fill="#4d7897" height="19" width="10" x="443" y="136"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="14" text-anchor="start" x="615" y="151">5%</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="419" y="288">猫</text><rect fill="#ba7147" height="19" width="120" x="443" y="274"></rect><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="14" text-anchor="start" x="615" y="289">60%</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="419" y="319">犬</text><rect fill="#ba7147" height="19" width="60" x="443" y="305"></rect><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="14" text-anchor="start" x="615" y="320">30%</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="419" y="350">車</text><rect fill="#ba7147" height="19" width="20" x="443" y="336"></rect><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="14" text-anchor="start" x="615" y="351">10%</text><path d="M535 174 L535 246" fill="none" stroke="#ba7147" stroke-dasharray="5 5" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="650" y="200">確率の差を損失にする</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="650" y="225">生徒だけを更新</text><path d="M25 374 L775 374" fill="none" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="18" text-anchor="start" x="24" y="410">利用時</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="170" y="452">新しい画像</text><path d="M230 446 L317 446" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><path d="M332 423.0 L370 434.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M332 423.0 L370 457.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M332 446.0 L370 434.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M332 446.0 L370 457.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M332 469.0 L370 434.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M332 469.0 L370 457.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M370 434.5 L408 423.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M370 434.5 L408 446.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M370 434.5 L408 469.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M370 457.5 L408 423.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M370 457.5 L408 446.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M370 457.5 L408 469.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><circle cx="332" cy="423.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="332" cy="446.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="332" cy="469.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="370" cy="434.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="370" cy="457.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="408" cy="423.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="408" cy="446.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="408" cy="469.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle" x="370" y="500">学習済みの生徒だけ</text><path d="M419 446 L527 446" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="621" y="452">予測：猫</text></svg></div>
+<figcaption>
+<p>棒は予測確率（架空の例）。通常は正解ラベルも使って生徒を学習する。</p>
+</figcaption>
+</figure>
+</section>
+<section id="quantization">
+<h2>量子化</h2>
+<p><strong>重みや途中の値を少ないビットで表し、メモリを減らします。</strong>細かい違いを省く分、予測の正確さが下がることもあります。</p>
+<figure>
+<div aria-label="図（狭い画面では横にスクロールできます）" class="figure-scroll" tabindex="0"><svg aria-label="同じ形のネットワークで、内部の数値を丸めて計算する量子化の模式図" role="img" viewBox="0 0 800 449" xmlns="http://www.w3.org/2000/svg"><title>同じ形のネットワークで、内部の数値を丸めて計算する量子化の模式図</title><defs><marker id="arrow-2" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><text fill="#294337" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="400" y="30">モデルの形はそのまま、内部で扱う数値を粗くする</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="18" text-anchor="start" x="24" y="71">細かい数値で計算</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="65" y="140">入力</text><path d="M100 135 L190 135" fill="none" marker-end="url(#arrow-2)" stroke="#738679" stroke-width="2"></path><path d="M208 112.0 L246 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 112.0 L246 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 112.0 L246 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 112.0 L246 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 135.0 L246 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 135.0 L246 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 135.0 L246 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 135.0 L246 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 158.0 L246 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 158.0 L246 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 158.0 L246 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M208 158.0 L246 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 100.5 L284 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 100.5 L284 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 100.5 L284 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 100.5 L284 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 123.5 L284 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 123.5 L284 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 123.5 L284 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 123.5 L284 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 146.5 L284 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 146.5 L284 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 146.5 L284 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 146.5 L284 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 169.5 L284 100.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 169.5 L284 123.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 169.5 L284 146.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M246 169.5 L284 169.5" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 100.5 L322 112.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 100.5 L322 135.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 100.5 L322 158.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 123.5 L322 112.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 123.5 L322 135.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 123.5 L322 158.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 146.5 L322 112.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 146.5 L322 135.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 146.5 L322 158.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 169.5 L322 112.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 169.5 L322 135.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M284 169.5 L322 158.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><circle cx="208" cy="112.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="208" cy="135.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="208" cy="158.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="246" cy="100.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="246" cy="123.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="246" cy="146.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="246" cy="169.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="284" cy="100.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="284" cy="123.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="284" cy="146.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="284" cy="169.5" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="322" cy="112.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="322" cy="135.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="322" cy="158.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><path d="M334 135 L671 135" fill="none" marker-end="url(#arrow-2)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="715" y="140">予測</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="488" y="97">途中で受け渡す数値の例</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="21" text-anchor="middle" x="488" y="126">0.3746 / 0.6128</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="18" text-anchor="start" x="24" y="291">途中の数値を丸めて計算</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="65" y="360">入力</text><path d="M100 355 L190 355" fill="none" marker-end="url(#arrow-2)" stroke="#738679" stroke-width="2"></path><path d="M208 332.0 L246 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 332.0 L246 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 332.0 L246 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 332.0 L246 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 355.0 L246 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 355.0 L246 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 355.0 L246 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 355.0 L246 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 378.0 L246 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 378.0 L246 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 378.0 L246 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M208 378.0 L246 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 320.5 L284 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 320.5 L284 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 320.5 L284 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 320.5 L284 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 343.5 L284 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 343.5 L284 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 343.5 L284 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 343.5 L284 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 366.5 L284 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 366.5 L284 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 366.5 L284 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 366.5 L284 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 389.5 L284 320.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 389.5 L284 343.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 389.5 L284 366.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M246 389.5 L284 389.5" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 320.5 L322 332.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 320.5 L322 355.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 320.5 L322 378.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 343.5 L322 332.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 343.5 L322 355.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 343.5 L322 378.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 366.5 L322 332.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 366.5 L322 355.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 366.5 L322 378.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 389.5 L322 332.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 389.5 L322 355.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M284 389.5 L322 378.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><circle cx="208" cy="332.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="208" cy="355.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="208" cy="378.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="246" cy="320.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="246" cy="343.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="246" cy="366.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="246" cy="389.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="284" cy="320.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="284" cy="343.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="284" cy="366.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="284" cy="389.5" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="322" cy="332.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="322" cy="355.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="322" cy="378.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><path d="M334 355 L671 355" fill="none" marker-end="url(#arrow-2)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="715" y="360">予測</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="488" y="317">途中で受け渡す数値の例</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="21" text-anchor="middle" x="488" y="346">0.37 / 0.61</text><path d="M437 164 L437 246" fill="none" marker-end="url(#arrow-2)" stroke="#ba7147" stroke-width="2"></path><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="553" y="205">細かい桁を丸める</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="400" y="424">各部分の重みも、少ないビットの数値で保存できる</text></svg></div>
+<figcaption>
+<p>丸めを小数で示した概念図。実際の8 bit形式とは異なる。重みだけを量子化する方法もある。</p>
+</figcaption>
+</figure>
+<p>重みを32 bitから8 bitにすると、10億個の重み本体は<strong>約4 GB → 約1 GB</strong>。倍率などの追加情報や、途中の値のメモリは別です。</p>
+<h3>数値の範囲と精度</h3>
+<p>十進数で4桁 → 3桁に減らす説明例です。</p>
+<ul>
+<li><strong>範囲をほぼ保つ：</strong>最大99.99 → 99.9。12.34は12.3へ丸める。</li>
+<li><strong>細かさを保つ：</strong>最大99.99 → 9.99。1.23はそのまま、12.34は範囲外。</li>
+</ul>
+<p>数値の丸めや範囲外の値の扱いが、予測にどう影響するかを確認します。</p>
+</section>
+<section id="lora">
+<h2>PEFTとLoRA</h2>
+<p><strong>PEFT</strong>は、元の重みの大部分を固定し、少ない重みだけを学ぶ方法群です。その一つの<strong>LoRA</strong>では、<strong>元のモデルを固定し、小さな追加部品だけを学習</strong>して、新しい用途に合わせます。</p>
+<figure>
+<div aria-label="図（狭い画面では横にスクロールできます）" class="figure-scroll" tabindex="0"><svg aria-label="全体の重みを更新する学習と、元の重みを固定して小さな追加部品を学習するLoRAの比較" role="img" viewBox="0 0 800 478" xmlns="http://www.w3.org/2000/svg"><title>全体の重みを更新する学習と、元の重みを固定して小さな追加部品を学習するLoRAの比較</title><defs><marker id="arrow-3" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><text fill="#294337" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="400" y="30">用途に合わせて、どこを学習し直す？</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="195" y="76">モデル全体を調整</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="20" text-anchor="middle" x="595" y="76">LoRA：追加部品を調整</text><path d="M400 90 L400 423" fill="none" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="43" y="204">入力</text><path d="M70 198 L121 198" fill="none" marker-end="url(#arrow-3)" stroke="#738679" stroke-width="2"></path><path d="M135 175.0 L173 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 175.0 L173 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 175.0 L173 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 175.0 L173 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 175.0 L173 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 198.0 L173 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 198.0 L173 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 198.0 L173 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 198.0 L173 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 198.0 L173 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 221.0 L173 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 221.0 L173 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 221.0 L173 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 221.0 L173 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M135 221.0 L173 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 152.0 L211 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 152.0 L211 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 152.0 L211 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 152.0 L211 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 152.0 L211 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 175.0 L211 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 175.0 L211 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 175.0 L211 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 175.0 L211 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 175.0 L211 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 198.0 L211 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 198.0 L211 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 198.0 L211 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 198.0 L211 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 198.0 L211 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 221.0 L211 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 221.0 L211 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 221.0 L211 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 221.0 L211 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 221.0 L211 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 244.0 L211 152.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 244.0 L211 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 244.0 L211 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 244.0 L211 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M173 244.0 L211 244.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 152.0 L249 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 152.0 L249 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 152.0 L249 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 175.0 L249 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 175.0 L249 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 175.0 L249 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 198.0 L249 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 198.0 L249 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 198.0 L249 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 221.0 L249 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 221.0 L249 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 221.0 L249 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 244.0 L249 175.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 244.0 L249 198.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><path d="M211 244.0 L249 221.0" fill="none" stroke="#ba7147" stroke-width="0.8"></path><circle cx="135" cy="175.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="135" cy="198.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="135" cy="221.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="173" cy="152.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="173" cy="175.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="173" cy="198.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="173" cy="221.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="173" cy="244.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="211" cy="152.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="211" cy="175.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="211" cy="198.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="211" cy="221.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="211" cy="244.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="249" cy="175.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="249" cy="198.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><circle cx="249" cy="221.0" fill="white" r="6" stroke="#ba7147" stroke-width="2"></circle><path d="M260 198 L315 198" fill="none" marker-end="url(#arrow-3)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="351" y="204">出力</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="443" y="204">入力</text><path d="M470 198 L521 198" fill="none" marker-end="url(#arrow-3)" stroke="#738679" stroke-width="2"></path><path d="M535 175.0 L573 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 175.0 L573 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 175.0 L573 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 175.0 L573 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 175.0 L573 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 198.0 L573 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 198.0 L573 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 198.0 L573 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 198.0 L573 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 198.0 L573 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 221.0 L573 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 221.0 L573 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 221.0 L573 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 221.0 L573 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M535 221.0 L573 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 152.0 L611 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 152.0 L611 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 152.0 L611 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 152.0 L611 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 152.0 L611 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 175.0 L611 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 175.0 L611 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 175.0 L611 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 175.0 L611 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 175.0 L611 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 198.0 L611 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 198.0 L611 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 198.0 L611 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 198.0 L611 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 198.0 L611 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 221.0 L611 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 221.0 L611 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 221.0 L611 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 221.0 L611 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 221.0 L611 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 244.0 L611 152.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 244.0 L611 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 244.0 L611 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 244.0 L611 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M573 244.0 L611 244.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 152.0 L649 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 152.0 L649 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 152.0 L649 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 175.0 L649 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 175.0 L649 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 175.0 L649 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 198.0 L649 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 198.0 L649 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 198.0 L649 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 221.0 L649 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 221.0 L649 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 221.0 L649 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 244.0 L649 175.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 244.0 L649 198.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><path d="M611 244.0 L649 221.0" fill="none" stroke="#4d7897" stroke-width="0.8"></path><circle cx="535" cy="175.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="535" cy="198.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="535" cy="221.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="573" cy="152.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="573" cy="175.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="573" cy="198.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="573" cy="221.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="573" cy="244.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="611" cy="152.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="611" cy="175.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="611" cy="198.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="611" cy="221.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="611" cy="244.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="649" cy="175.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="649" cy="198.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><circle cx="649" cy="221.0" fill="white" r="6" stroke="#4d7897" stroke-width="2"></circle><path d="M660 198 L715 198" fill="none" marker-end="url(#arrow-3)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="751" y="204">出力</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="195" y="121">多くの重みを更新する</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="595" y="121">学習済みの重みは固定</text><path d="M555 220 L555 304" fill="none" stroke="#35664d" stroke-width="2"></path><path d="M555 304 L564 304" fill="none" marker-end="url(#arrow-3)" stroke="#35664d" stroke-width="2"></path><rect fill="#35664d" height="26" rx="3" width="21" x="566" y="291"></rect><path d="M588 304 L598 304" fill="none" stroke="#35664d" stroke-width="2"></path><path d="M598 304 L598 226" fill="none" marker-end="url(#arrow-3)" stroke="#35664d" stroke-width="2"></path><path d="M593 220 L593 304" fill="none" stroke="#35664d" stroke-width="2"></path><path d="M593 304 L602 304" fill="none" marker-end="url(#arrow-3)" stroke="#35664d" stroke-width="2"></path><rect fill="#35664d" height="26" rx="3" width="21" x="604" y="291"></rect><path d="M626 304 L636 304" fill="none" stroke="#35664d" stroke-width="2"></path><path d="M636 304 L636 226" fill="none" marker-end="url(#arrow-3)" stroke="#35664d" stroke-width="2"></path><text fill="#35664d" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="598" y="349">小さな追加部品だけを学習</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="195" y="385">更新する量が多い</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle" x="595" y="385">更新する量が少ない</text><text fill="#294337" font-family="system-ui,sans-serif" font-size="19" text-anchor="middle" x="400" y="450">元のモデルの働きに、追加部品の補正を足す</text></svg></div>
+<figcaption>
+<p>青は固定、緑は学習する追加部品。元のモデルの計算に、小さな補正を足す。</p>
+</figcaption>
+</figure>
+<p>軽くなるのは主に追加学習の負担です。利用時にも元のモデルは必要です。</p>
+<details>
+<summary>補足：LoRAで学ぶ数を減らす仕組み</summary>
+<p><span id="peft-detail"></span></p>
+<p>LoRAは、重みへの補正を二つの小さな行列の積で表します。</p>
+<p>例えば1000×1000の行列そのものは100万個の数を持ちます。補正を1000×8と8×1000の積で表せば、学ぶ数は1万6000個です。これは一つの行列だけに着目した教材上の計算で、モデル全体の削減率ではありません。8という小ささが表せる補正を制限するため、性能との兼ね合いがあります。<a href="https://arxiv.org/abs/2106.09685">LoRA原論文</a></p>
+<p>減らせるのは更新する重みや、その勾配・更新のための状態などです。元のモデルを読み込む費用や途中の計算がすべてなくなるわけではありません。条件が合えば、学んだ補正を元の行列へまとめて利用することもできます。</p>
+</details>
+</section>
+<h2 id="pruning">枝刈り</h2>
+<p>ニューラルネットワークにある重みや部品の一部を取り除くことを<strong>枝刈り（pruning）</strong>と呼びます。例えば画像の分類器で、影響が小さいと見積もった重みをゼロにし、その後に残した部分を再調整します。影響を見誤れば、重要な特徴まで失います。</p>
+<p>個々の重みをまばらにゼロにする方法では、値を保存する量を減らせる場合がありますが、通常の行列計算でゼロも計算するなら速度はほとんど変わりません。フィルタや層などまとまった部品を取り除く方法なら、実際に計算のサイズを減らせますが、削れる構造の自由度は変わります。</p>
+<h2 id="sparse-attention">Attentionの計算を減らす</h2>
+<p>ここでは、画像の分類から<strong>長い報告書を読んで質問に答える</strong>場面へ移ります。入力が長くなると、モデルの重みを保存できても、文章を処理する途中の計算やメモリが足りなくなるからです。</p>
+<p><strong>Attention</strong>は、文章を分割した単位（トークン）どうしの関連度を調べ、情報を集める仕組みです。全トークンの組合せを調べると、文章が長くなるほど計算やメモリの負担が増えます。</p>
+<p>工夫には二つの方向があります。<strong>疎なAttention</strong>は参照する相手を絞ります。BigBirdやLongformerは近所の参照と、離れた情報を受け渡す参照を組み合わせます。一方、<strong>FlashAttention</strong>は参照先を減らさず、途中の値を小分けに計算して、メモリの読み書きを減らします。</p>
+<p>前者は必要な情報が届くか、後者は装置上で同じ計算を効率よく実行できるかが焦点です。</p>
+<details>
+<summary>補足：Attentionの参照パターンと計算量</summary>
+<p>通常の密なSelf-Attentionでは、長さnの文章全体を処理する組合せはn²個です。長さが2倍になると4倍になります。ここでは生成中の1トークンだけでなく、文章全体を処理する場合を考えます。</p>
+<h3>BigBird：近所・全体・ランダムな参照を組み合わせる</h3>
+<p><a href="https://arxiv.org/abs/2007.14062">BigBird（2020）</a>は、次の三つを組み合わせます。</p>
+<ul>
+<li><strong>局所的な参照：</strong>各位置が、前後の一定範囲を参照する。近くの単語のつながりを扱う。</li>
+<li><strong>全体への参照：</strong>少数の「グローバルトークン」が全位置を参照し、各位置もそれらを参照する。文書全体の情報を受け渡す窓口になる。</li>
+<li><strong>ランダムな参照：</strong>各位置に、ランダムに選んだ少数の参照先を加える。近所だけでは届きにくい情報の経路を増やす。</li>
+</ul>
+<figure>
+<div class="attention-patterns">
+<div class="attention-pattern-panel"><h4>密なAttention</h4>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="密なAttention。行が集める位置、列が参照先。">
+<text x="186" y="22" text-anchor="middle" font-size="14" fill="#354b42">参照先 →</text>
+<text x="16" y="182" text-anchor="middle" transform="rotate(-90 16 182)" font-size="14" fill="#354b42">情報を集める位置 →</text>
+<rect x="54" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="50" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="75" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+</svg></div>
+<div class="attention-pattern-panel"><h4>BigBirdの参照パターン</h4>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="BigBirdの参照パターン。行が集める位置、列が参照先。">
+<text x="186" y="22" text-anchor="middle" font-size="14" fill="#354b42">参照先 →</text>
+<text x="16" y="182" text-anchor="middle" transform="rotate(-90 16 182)" font-size="14" fill="#354b42">情報を集める位置 →</text>
+<rect x="54" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="96" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="117" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="138" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="159" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="180" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="201" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="222" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="243" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="264" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="285" y="50" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="54" y="71" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="71" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="71" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="138" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="222" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="71" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="92" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="96" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="92" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="222" y="92" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="243" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="92" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="113" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="117" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="113" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="113" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="222" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="113" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="134" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="117" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="138" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="134" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="134" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="222" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="134" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="155" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="117" y="155" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="138" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="159" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="155" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="222" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="155" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="176" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="176" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="117" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="138" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="180" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="176" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="176" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="197" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="197" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="117" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="138" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="201" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="197" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="285" y="197" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="218" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="117" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="138" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="222" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="218" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="218" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="285" y="218" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="239" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="239" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="96" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="117" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="138" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="222" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="243" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="239" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="239" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="54" y="260" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="260" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="96" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="117" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="138" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="222" y="260" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="264" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="260" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="54" y="281" width="19" height="19" rx="2" fill="#526ba3"/>
+<rect x="75" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="96" y="281" width="19" height="19" rx="2" fill="#bb7732"/>
+<rect x="117" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="138" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="159" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="180" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="201" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="222" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="243" y="281" width="19" height="19" rx="2" fill="#e9eeeb"/>
+<rect x="264" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+<rect x="285" y="281" width="19" height="19" rx="2" fill="#4e8271"/>
+</svg></div>
+</div>
+<div class="attention-pattern-legend"><span><i style="background:#4e8271"></i>通常／近所</span><span><i style="background:#526ba3"></i>全体との窓口</span><span><i style="background:#bb7732"></i>ランダム</span><span><i style="background:#e9eeeb"></i>計算しない</span></div>
+
+<figcaption>
+<p>12トークンの教材用模式図。行は情報を集める位置、列は参照先で、色のある組合せだけを計算する。右は先頭をグローバルトークンとし、近所とランダムな参照を加えた例。色は参照の種類で、学習された重みの大きさではない。実際のBigBirdでは効率よく実行するため、トークンをブロックにまとめて扱う。</p>
+</figcaption>
+</figure>
+<p>報告書の末尾の表現には、グローバルトークンを介して冒頭の情報も届きます。ただし、一つの層で全体から情報を集め、次の層でその更新済みの情報を各位置へ渡す、という段階が必要です。ランダムな参照先も、重要な語を判定して選んでいるわけではありません。</p>
+<p>局所的な参照先の数w、ランダムな参照先の数r、グローバルトークンの数gを固定すれば、計算する組合せはおおむねn(w+r+g)に比例します。表現の次元も固定すると、このAttention部分の計算量は<strong>O(n²)からO(n)</strong>になります。ここでO(n)とは、入力の長さにほぼ比例して計算が増えるという意味です。重みの数や他の層の計算が同じ割合で減るという意味ではありません。</p>
+<h3 id="longformer">Longformer</h3>
+<p><strong>Longformerは、長い文書を少ない計算で読むためのTransformerです。</strong>報告書を短く切り捨てずに扱いやすくなり、離れた箇所の情報を使った質問応答などに役立ちます。</p>
+<p>通常のAttentionでは、<strong>一つの単語が文書全体を参照</strong>するので、長文ほど計算が増えます。Longformerでは、<strong>各単語の参照先を「近所＋質問などの特別な位置」に絞ります。</strong><a href="https://arxiv.org/abs/2004.05150">原論文</a></p>
+<figure>
+<div class="attention-patterns"><div class="attention-pattern-panel"><h4>通常のAttention</h4><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-label="文書中の一語の参照先。全位置。"><g font-family="system-ui,sans-serif" fill="#294337" text-anchor="middle"><path d="M183 65 L30 127" stroke="#526ba3" stroke-width="1.8" fill="none"/><path d="M183 65 L75 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L111 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L147 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L183 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L219 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L255 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L291 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><rect x="144" y="30" width="78" height="35" rx="4" fill="#e3ecde"/><text x="183" y="53" font-size="15">ある語</text><rect x="7" y="127" width="46" height="32" rx="4" fill="#526ba3"/><text x="30" y="148" fill="white" font-size="14">質問</text><rect x="63" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="99" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="135" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="171" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="207" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="243" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="279" y="127" width="24" height="32" rx="4" fill="#4e8271"/><text x="182" y="184" font-size="14">文書のトークン</text><text x="160" y="219" font-size="15">全位置との関連度を計算</text></g></svg></div><div class="attention-pattern-panel"><h4>Longformer</h4><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-label="文書中の一語の参照先。近所と質問だけ。"><g font-family="system-ui,sans-serif" fill="#294337" text-anchor="middle"><path d="M183 65 L30 127" stroke="#526ba3" stroke-width="1.8" fill="none"/><path d="M183 65 L147 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L183 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><path d="M183 65 L219 127" stroke="#4e8271" stroke-width="1.8" fill="none"/><rect x="144" y="30" width="78" height="35" rx="4" fill="#e3ecde"/><text x="183" y="53" font-size="15">ある語</text><rect x="7" y="127" width="46" height="32" rx="4" fill="#526ba3"/><text x="30" y="148" fill="white" font-size="14">質問</text><rect x="63" y="127" width="24" height="32" rx="4" fill="#e5e9e5"/><rect x="99" y="127" width="24" height="32" rx="4" fill="#e5e9e5"/><rect x="135" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="171" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="207" y="127" width="24" height="32" rx="4" fill="#4e8271"/><rect x="243" y="127" width="24" height="32" rx="4" fill="#e5e9e5"/><rect x="279" y="127" width="24" height="32" rx="4" fill="#e5e9e5"/><text x="182" y="184" font-size="14">文書のトークン</text><text x="160" y="219" font-size="15">近所＋質問だけを参照</text></g></svg></div></div>
+<figcaption>
+<p>文書中の一語から見た参照先の模式図。色の付いた位置を参照する。「質問」は複数のトークンをまとめた表示。</p>
+</figcaption>
+</figure>
+<p>質問の位置は文書全体を参照できるため、離れた情報を受け渡す窓口になります。近所の範囲と特別な位置の数を固定すると、計算量は入力の長さにほぼ比例します。</p>
+<h3 id="flash-attention">FlashAttention</h3>
+<p><strong>FlashAttentionは、Attentionの結果を保ちながら、GPU上の実行を速く・省メモリにする計算手法です。</strong>長文を扱うときのメモリ不足や待ち時間を減らすのに役立ちます。</p>
+<p>通常の素直な実装では、<strong>全組合せの関連度や重みを大きな表としてメモリに保存し、読み戻して使います。</strong>FlashAttentionでは、<strong>小分けに計算して、その場で出力に反映</strong>します。大きな表の保存を省くことで、<strong>メモリを節約し、データの移動待ちも減らせます。</strong><a href="https://arxiv.org/abs/2205.14135">原論文</a></p>
+<figure>
+<div class="fa-demo" aria-label="通常の実装とFlashAttentionの計算を順に見る">
+<div class="attention-patterns">
+<div class="fa-panel" data-method="normal"><h4>通常の素直な実装</h4><div class="fa-input">同じ入力を3つの範囲に分ける</div><div class="fa-arrow">↓ 計算して保存</div><div class="fa-memory"><strong>大容量メモリ</strong><div class="fa-blocks"><span class="fa-block filled" data-block="0"><b>1</b><span>▦</span></span><span class="fa-block filled" data-block="1"><b>2</b><span>▦</span></span><span class="fa-block filled" data-block="2"><b>3</b><span>▦</span></span></div><small>関連度・重みの表がたまる</small></div><div class="fa-arrow fa-transfer">↓ 表全体を読み戻す</div><div class="fa-output done">出力が完成</div><p class="fa-status">大きな表を保存し、読み戻して出力を計算。</p></div>
+<div class="fa-panel" data-method="flash"><h4>FlashAttention</h4><div class="fa-input">同じ入力を3つの範囲に分ける</div><div class="fa-arrow">↓ 小分けに読み込む</div><div class="fa-memory"><strong>小さく高速なメモリ</strong><div class="fa-work"><span class="fa-tile">▦</span><span class="fa-tile-label">同じ場所を使い回す</span></div><small>小さな作業領域を使い回せる</small></div><div class="fa-arrow fa-transfer">↓ その場で出力に反映</div><div class="fa-output done">出力が完成</div><p class="fa-status">範囲ごとに途中結果を補正しながら更新。</p></div></div>
+<p class="fa-explanation"><strong>計算結果を保ちながら、保存する途中の表と読み書きを減らす。</strong>メモリを節約でき、データの移動待ちも減るため高速化につながる。</p>
+</div>
+<figcaption>
+<p>自動で繰り返す模式図。図の1・2・3は、計算する全組合せを小分けにした範囲を表す。再生時間は実際の速度を表さない。右は小分けでも全体の重み付けが保たれるよう、途中結果を補正する。</p>
+</figcaption>
+</figure>
+<p><strong>参照先は全部使い、数学的には同じ出力を得ます。</strong>減らすのは主にメモリの読み書きで、演算量はO(n²)のままです（数値の丸めの差はあり得ます）。</p>
+</details>
+<section id="sources">
+<h2>出典・参考資料</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1503.02531">知識蒸留 ↗</a></li>
+<li><a href="https://arxiv.org/abs/1712.05877">整数量子化の研究例 ↗</a></li>
+<li><a href="https://arxiv.org/abs/2106.09685">LoRA ↗</a></li>
+<li><a href="https://arxiv.org/abs/2205.14135">FlashAttention ↗</a></li>
+<li><a href="https://arxiv.org/abs/2007.14062">BigBird ↗</a></li>
+<li><a href="https://arxiv.org/abs/2004.05150">Longformer ↗</a></li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#efficiency-example">保存・実行・学習の費用</a><a data-level="2" href="#efficiency-evaluation">軽くする対象と方法</a><a data-level="2" href="#distillation">知識蒸留</a><a data-level="2" href="#quantization">量子化</a><a data-level="2" href="#lora">PEFTとLoRA</a><a data-level="2" href="#pruning">枝刈り</a><a data-level="2" href="#sparse-attention">Attentionの計算を減らす</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</body></html>

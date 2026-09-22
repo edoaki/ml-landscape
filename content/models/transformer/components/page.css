@@ -1,0 +1,28 @@
+
+.tf-halo{display:none}.tf-final-layer .tf-token.tf-last .tf-halo{display:block}.tf-final-layer .tf-token:not(.tf-last){opacity:.4}.tf-token{transition:transform 1000ms cubic-bezier(.4,0,.2,1),opacity .5s}.tf-ellipsis{align-self:center;padding:0 3px}.tf-output svg{width:100%;min-width:0}.tf-space[hidden],.tf-output[hidden]{display:none!important}
+
+/* Keep teaching diagrams at a readable scale even on very wide screens. */
+body[data-page="transformer"] .figure-scroll>svg{display:block;width:100%;max-width:760px;max-height:560px;min-width:0;margin:auto}
+body[data-page="transformer"] #attention .figure-scroll>svg{max-width:540px;max-height:390px}
+.tf-stage{grid-template-columns:minmax(0,520px) 200px;justify-content:center}.tf-representation .tf-live{max-width:790px;margin:auto}
+.tf-vector-shape{transition:x .7s,y .7s,width .7s,height .7s,rx .7s,fill-opacity .5s,opacity .5s}
+.tf-numbers,.tf-output-chain{opacity:0;transition:opacity .4s}.tf-word{transition:opacity .4s}
+.tf-sentence .tf-vector-shape{opacity:0}
+.tf-numeric .tf-word{opacity:0}.tf-numeric .tf-column{opacity:1}.tf-numeric .tf-vector-shape{opacity:0}
+.tf-numeric .tf-space ellipse,.tf-numeric .tf-space svg>text{opacity:0}
+.tf-output-moving .tf-token:not(.tf-last),.tf-output-moving .tf-space ellipse,.tf-output-moving .tf-space svg>text{opacity:0}
+.tf-output-morph .tf-token.tf-last .tf-vector-shape{x:-85px;y:-23px;width:170px;height:46px;rx:4px;fill-opacity:.15;stroke:#b2703c}
+.tf-output-morph .tf-token.tf-last .tf-numbers{opacity:1}
+.tf-output-morph .tf-token.tf-last .tf-word{transform:translate(-35px,-40px)}
+.tf-output-ready .tf-output-chain{opacity:1}
+@media(max-width:600px){.tf-stage{grid-template-columns:1fr}.tf-stage-copy{padding-top:10px}}
+@media(prefers-reduced-motion:reduce){.tf-token,.tf-vector-shape,.tf-numbers,.tf-word,.tf-output-chain{transition:none}}
+
+.tf-numeric .tf-token{transition:transform .35s ease}.tf-numeric .tf-column{transition:opacity .35s .25s}
+@media(prefers-reduced-motion:reduce){.tf-numeric .tf-token,.tf-numeric .tf-numbers{transition:none}}
+
+.tf-column{opacity:0;transition:opacity .35s}.tf-sentence .tf-column text{fill:inherit}
+@media(prefers-reduced-motion:reduce){.tf-column{transition:none}}
+
+.tf-cycle{text-align:center}.tf-cycle>span{display:block;line-height:1;padding:8px 0;font-size:18px}.tf-cycle>div{color:#4b674a}
+

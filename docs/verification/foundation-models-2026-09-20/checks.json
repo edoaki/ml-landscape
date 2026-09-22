@@ -1,0 +1,56 @@
+[
+  {
+    "width": 320,
+    "javascript": false,
+    "offline": true,
+    "overflow": false,
+    "math": 3,
+    "figures": 5,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "offline": true,
+    "overflow": false,
+    "math": 3,
+    "figures": 5,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "javascript": false,
+    "offline": true,
+    "overflow": false,
+    "math": 3,
+    "figures": 5,
+    "errors": []
+  },
+  {
+    "width": 320,
+    "javascript": true,
+    "offline": true,
+    "overflow": false,
+    "math": 3,
+    "figures": 5,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "offline": true,
+    "overflow": false,
+    "math": 3,
+    "figures": 5,
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "javascript": true,
+    "offline": true,
+    "overflow": false,
+    "math": 3,
+    "figures": 5,
+    "errors": []
+  }
+]

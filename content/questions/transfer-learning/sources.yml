@@ -1,0 +1,5 @@
+exp-maml:
+  url: https://arxiv.org/abs/1703.03400
+  label: Finn et al. (2017), Model-Agnostic Meta-Learning
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。

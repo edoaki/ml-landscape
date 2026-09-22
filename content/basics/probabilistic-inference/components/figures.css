@@ -1,0 +1,31 @@
+/* Static Bayesian inference figures. */
+.bayes-figure .bf-body { padding: 24px; }
+.bayes-figure .bf-title { display: block; font-size: 18px; line-height: 1.7; }
+.bayes-figure .bf-observation { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin: 20px 0; font-size: 14px; }
+.bf-coins { display: flex; gap: 8px; }
+.bf-coins span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #e6eee0; border: 1px solid #66815e; color: #2e543a; font-weight: 700; }
+.bf-coins .bf-tail { background: #f0ece4; border-color: #a1937c; color: #6d5c42; }
+.bayes-figure .bf-axis { font-size: 13px; color: #52665a; margin: 0 0 18px; line-height: 1.7; }
+.bf-candidate + .bf-candidate { margin-top: 22px; }
+.bf-candidate > strong { display: block; font-size: 15px; margin-bottom: 8px; }
+.bf-bar-row { display: grid; grid-template-columns: 3.5em minmax(0,1fr) 4em; align-items: center; gap: 10px; margin: 6px 0; font-size: 13px; font-variant-numeric: tabular-nums; }
+.bf-bar-row > :last-child { text-align: right; }
+.bf-track { display: block; height: 15px; background: #f0f2ed; }
+.bf-fill { display: block; height: 100%; }
+.bf-before { background: #a4afa5; }
+.bf-after { background: #427451; }
+.bf-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 20px; }
+.bf-panel { min-width: 0; }
+.bf-panel > strong { font-size: 16px; }
+.bayes-figure .bf-panel p { font-size: 13px; line-height: 1.7; margin: 6px 0 0; }
+.bayes-figure svg { width: 100%; height: auto; min-width: 0; display: block; }
+.bf-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 14px 0 0; font-size: 12px; }
+.bf-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.bf-legend i { width: 22px; height: 0; border-top: 3px solid #427451; }
+.bf-legend .bf-approx { border-top: 3px dashed #507fa3; }
+.bf-legend .bf-samples { border-top: 3px solid #a6632c; }
+@media (max-width: 600px) {
+ .bayes-figure .bf-body { padding: 16px; }
+ .bf-panels { grid-template-columns: 1fr; gap: 26px; }
+ .bf-bar-row { gap: 6px; }
+}

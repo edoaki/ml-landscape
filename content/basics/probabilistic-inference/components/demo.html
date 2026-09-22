@@ -1,0 +1,23 @@
+<figure class="bayes-figure" id="bayes-demo" aria-labelledby="bayes-title">
+ <div class="bf-body">
+  <strong class="bf-title" id="bayes-title">表が多く出ると、表の出やすい候補の確率が上がる</strong>
+  <div class="bf-observation"><span>観測した結果</span><div class="bf-coins" aria-label="表、表、裏、表"><span>表</span><span>表</span><span class="bf-tail">裏</span><span>表</span></div></div>
+  <p class="bf-axis">棒の長さ：その候補が正しいと考える確率（0〜100%）</p>
+<div class="bf-candidate">
+ <strong>表が25%出るコイン</strong>
+ <div class="bf-bar-row"><span>観測前</span><span class="bf-track" aria-hidden="true"><span class="bf-fill bf-before" style="width:33.333333333333336%"></span></span><span>33.3%</span></div>
+ <div class="bf-bar-row"><span>観測後</span><span class="bf-track" aria-hidden="true"><span class="bf-fill bf-after" style="width:6.521739130434782%"></span></span><strong>6.5%</strong></div>
+</div>
+<div class="bf-candidate">
+ <strong>表が50%出るコイン</strong>
+ <div class="bf-bar-row"><span>観測前</span><span class="bf-track" aria-hidden="true"><span class="bf-fill bf-before" style="width:33.333333333333336%"></span></span><span>33.3%</span></div>
+ <div class="bf-bar-row"><span>観測後</span><span class="bf-track" aria-hidden="true"><span class="bf-fill bf-after" style="width:34.78260869565217%"></span></span><strong>34.8%</strong></div>
+</div>
+<div class="bf-candidate">
+ <strong>表が75%出るコイン</strong>
+ <div class="bf-bar-row"><span>観測前</span><span class="bf-track" aria-hidden="true"><span class="bf-fill bf-before" style="width:33.333333333333336%"></span></span><span>33.3%</span></div>
+ <div class="bf-bar-row"><span>観測後</span><span class="bf-track" aria-hidden="true"><span class="bf-fill bf-after" style="width:58.69565217391305%"></span></span><strong>58.7%</strong></div>
+</div>
+ </div>
+ <figcaption>観測前（事前分布）は各候補が同じ確率。観測後（事後分布）は「表が75%出るコイン」の確率が約59%に上がります。75%はコインの性質、約59%はその候補の確からしさです。</figcaption>
+</figure>

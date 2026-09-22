@@ -1,0 +1,6 @@
+/* Keep navigation and the page's static representations reachable without JS. */
+.mobile-menu { display: none; }
+.toc > * { opacity: 1; }
+@media (max-width: 820px) {
+  .sidenav { display: block; position: static; width: auto; height: auto; max-height: 22rem; overflow: auto; padding: 1rem 0; border: 0; box-shadow: none; }
+}

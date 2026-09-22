@@ -1,0 +1,29 @@
+[
+  {
+    "width": 1440,
+    "javascript": true,
+    "overflow": false,
+    "page_errors": [],
+    "figures": 2,
+    "math_blocks": 5,
+    "raw_math_delimiters": false
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "overflow": false,
+    "page_errors": [],
+    "figures": 2,
+    "math_blocks": 5,
+    "raw_math_delimiters": false
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "overflow": false,
+    "page_errors": [],
+    "figures": 2,
+    "math_blocks": 5,
+    "raw_math_delimiters": false
+  }
+]

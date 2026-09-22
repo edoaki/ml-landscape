@@ -1,0 +1,20 @@
+exp-ddp:
+  url: https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html
+  label: PyTorch：Distributed Data Parallel公式解説
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+pipeline:
+  url: https://docs.pytorch.org/tutorials/intermediate/pipelining_tutorial.html
+  label: PyTorch：パイプライン並列
+  verified_on: '2026-09-20'
+  verification: 公式解説で分担方法と通信の必要性を確認。本文の数値例は独自の仮定。
+fsdp:
+  url: https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html
+  label: PyTorch：FSDP2
+  verified_on: '2026-09-20'
+  verification: 公式解説で分担方法と通信の必要性を確認。本文の数値例は独自の仮定。
+inference:
+  url: https://docs.vllm.ai/en/latest/serving/parallelism_scaling/
+  label: vLLM：分散推論と並列化
+  verified_on: '2026-09-20'
+  verification: 公式解説で分担方法と通信の必要性を確認。本文の数値例は独自の仮定。

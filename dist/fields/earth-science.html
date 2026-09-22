@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="この先の雨から数日先の気温・風まで、予測したい量と時間の違いを見渡します。雨雲レーダーから降水を予測する映像で、入力と結果を比べます。"><meta name="color-scheme" content="light">
+<title>気象予測 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<link rel="stylesheet" href="../content/fields/earth-science/components/page.css">
+</head>
+<body data-page="earth-science" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html">動画理解・生成</a><a href="spatial.html">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html">時系列</a><a href="graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html" aria-current="page">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">Weather Forecasting</span></p><h1>気象予測</h1><p class="lead">この先の雨から数日先の気温・風まで、予測したい量と時間の違いを見渡します。雨雲レーダーから降水を予測する映像で、入力と結果を比べます。</p></header>
+<h2 id="weather-tasks">何を、どのくらい先まで予測するか</h2>
+<p>気象予測では、これまでの観測などから、この先の雨・気温・風といった大気の変化を見積もります。予測したい量と時間によって、使う情報や難しさが変わります。</p>
+<table>
+<thead>
+<tr>
+<th>知りたいこと</th>
+<th>入力 → 出力の例</th>
+<th>役立つ場面</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>この先数十分の雨</td>
+<td>直近の雨雲レーダー画像 → 雨の場所と強さ</td>
+<td>屋外作業や移動の判断</td>
+</tr>
+<tr>
+<td>数時間〜数日先の気温や風</td>
+<td>広い範囲の大気の状態 → 各時刻・地点の気温や風</td>
+<td>予定の調整や電力需給の見積もり</td>
+</tr>
+<tr>
+<td>強い雨などが起きる可能性</td>
+<td>観測など → 複数のあり得る未来や発生確率</td>
+<td>起こり得る事態への備え</td>
+</tr>
+</tbody>
+</table>
+<p>時間の区切りは説明の目安です。また、確率を出す予測は、雨・気温・風のいずれにも使えます。一つの未来を当てることに加え、どの程度の幅で変わり得るかも研究の対象です。</p>
+<h2 id="weather-data">気象データの空間と時間</h2>
+<p>気象では、ある場所の雨だけでなく、周囲の雨域がどちらへ動くかも手がかりになります。例えば5分おきに撮られた複数枚の雨雲レーダー画像から、30分後の雨の強さの地図を出すのが短時間予測の例です。<strong>入力も出力も、空間と時間に広がるデータ</strong>になります。</p>
+<p>観測には地上の測定、レーダー、衛星などがあり、見ている量や解像度が異なります。予測に使う大気の状態は、観測と数値モデルなどを組み合わせて推定する場合もあります。モデルには、予測を開始する時点で得られる情報だけを渡します。</p>
+<section id="weather">
+<h2>雨の場所と強さを予測する：DGMRの例</h2>
+<p>雨の予測AI「DGMR」の例です。<strong>これまでの雨雲レーダーから、この先の雨の場所と強さを予測します。</strong></p>
+<div class="science-io">
+<div>
+<p>入力<strong>直前20分の<br>
+雨雲レーダー画像</strong></p>
+</div>
+<div class="science-arrow">
+<p>DGMR<strong>→</strong></p>
+</div>
+<div>
+<p>出力<strong>この先90分の<br>
+雨の場所と強さ</strong></p>
+</div>
+</div>
+<figure class="science-video">
+<video aria-label="実際の雨とDGMRの予測を比べる研究動画" controls="" playsinline="" poster="../content/fields/earth-science/media/dgmr-rain-poster.jpg" preload="metadata"><source src="../content/fields/earth-science/media/dgmr-rain.mp4" type="video/mp4"/>動画を再生できません。</video>
+<figcaption>
+<p><strong>左（Target）＝実際に観測された雨。右（DGMR）＝AIが予測した雨。</strong>色のついた部分が雨の範囲。左右で雨の移動や広がりがどれくらい似ているかを見てください。<a href="https://deepmind.google/blog/nowcasting-the-next-hour-of-rain/">DeepMind・Met Officeの研究公開映像（2021）</a>。英国の事例の上段2画面を抜粋し、見やすいよう3倍の時間で再生します。</p>
+</figcaption>
+</figure>
+<p>短時間先の大雨を予測して、屋外作業や移動、防災の判断に役立てる研究です。 <a href="https://www.nature.com/articles/s41586-021-03854-z">DGMRの論文</a></p>
+</section>
+<h2 id="forecast-horizon">予測期間とリードタイム</h2>
+<p>雨域が今と同じ速さで動くなら、直近の移動を延長するだけでも短い時間先の手がかりになります。しかし雨雲が発生・発達・消滅すると、平行移動では説明できません。さらに数日先の大気の予測では、広い範囲の気温・気圧・風などの関係が重要になります。</p>
+<p>予測開始から何時間先かを<strong>リードタイム</strong>と呼びます。「30分先」と「3日先」の誤差を混ぜて一つにすると、どの時間で使えるか分からなくなります。また、一回の雨や風を予測することと、長い期間の統計的な傾向を調べることは、問いと評価の時間尺度が違います。</p>
+<h2 id="weather-evaluation">予測が役立つかを確かめる</h2>
+<p>雨なら強さだけでなく、降る場所と時刻も大切です。弱い雨では合っていても、強い雨を見逃すかもしれません。使いたい地域・季節・予測時間ごとに、どこまで当たるかを確かめます。</p>
+<details>
+<summary>補足：位置のずれ・見逃し・地域差の評価</summary>
+<h3 id="weather-metrics">降水予測の評価指標</h3>
+<p>教材例として、10 km幅の強い雨域を、10 km東にずらして予測した場合を考えます。各地点を厳密に比べると、実際に降った場所では「見逃し」、予測だけ降った場所では「空振り」になります。雨の強さは合っていても、位置のずれが大きな誤差になるわけです。</p>
+<table>
+<thead>
+<tr>
+<th>見たい能力</th>
+<th>調べる量</th>
+<th>見落としやすい点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数値の近さ</td>
+<td>雨量や気温の誤差</td>
+<td>平均をよくするため、極端な値が弱まっていないか</td>
+</tr>
+<tr>
+<td>強い雨の検出</td>
+<td>決めた雨量以上の見逃し・空振り</td>
+<td>雨の少ない地点ばかりで成績が高くなっていないか</td>
+</tr>
+<tr>
+<td>位置の近さ</td>
+<td>周辺の範囲も含めた一致</td>
+<td>広い許容範囲で細かなずれを隠していないか</td>
+</tr>
+<tr>
+<td>確率の適切さ</td>
+<td>「降る確率70%」の事例で実際の頻度を確認</td>
+<td>確信の強さが観測と合っているか</td>
+</tr>
+</tbody>
+</table>
+<p>数値の地図を一つ出す代わりに、複数のあり得る未来を出す方法もあります。予測の幅が狭ければよいのではなく、その幅で実際の変化をどれくらい捉えられるかを評価します。</p>
+<h3 id="weather-splits">地域別・時期別の評価</h3>
+<p>連続するレーダー画像はよく似ています。同じ雨雲の直前の画像を訓練、直後をテストに入れると、独立した別の日より簡単になることがあります。時期や気象事例を分け、平地・山地、弱い雨・強い雨、リードタイムごとの成績を調べます。</p>
+<p>研究では、局地的な強雨や未経験の地域で精度を保てるか、どれだけ早く予測を返せるかを改善します。ある地域の成功映像だけで、別の地域や長い予測期間でも同じ性能とは言えません。</p>
+</details>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#weather-tasks">何を、どのくらい先まで予測するか</a><a data-level="2" href="#weather-data">気象データの空間と時間</a><a data-level="2" href="#weather">雨の場所と強さを予測する：DGMRの例</a><a data-level="2" href="#forecast-horizon">予測期間とリードタイム</a><a data-level="2" href="#weather-evaluation">予測が役立つかを確かめる</a></aside></div>
+</body></html>

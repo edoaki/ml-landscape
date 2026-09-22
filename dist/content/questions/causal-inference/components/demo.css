@@ -1,0 +1,15 @@
+#causal-demo .causal-step { font-weight: 700; margin-top: 24px; }
+#causal-demo .causal-populations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+#causal-demo .causal-card { border: 1px solid #d5dfd5; border-radius: 6px; padding: 16px; background: #fafbf7; }
+#causal-demo .causal-card p { font-size: 14px; margin: 12px 0 0; }
+#causal-demo .causal-formula { white-space: pre-line; font-variant-numeric: tabular-nums; }
+#causal-demo .causal-mix { display: flex; height: 16px; background: #e1c8a2; border-radius: 3px; overflow: hidden; margin-top: 10px; }
+#causal-demo .causal-mix span { display: block; background: #637897; }
+#causal-demo .causal-key { display: inline-block; width: 12px; height: 12px; margin-right: 4px; }
+#causal-demo .causal-key.low { background: #637897; }
+#causal-demo .causal-key.high { background: #e1c8a2; }
+@media (max-width: 640px) {
+ #causal-demo .causal-populations { grid-template-columns: 1fr; }
+ #causal-demo .ld-controls { align-items: stretch; }
+ #causal-demo .ld-controls button { flex: 1 1 100%; text-align: left; }
+}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="論文の引用と分子を例に、ノード・辺・グラフ全体の予測を比べます。GNN以外の方法と、将来の関係を隠す評価も説明します。"><meta name="color-scheme" content="light">
+<title>グラフ | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+
+</head>
+<body data-page="graphs" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html">動画理解・生成</a><a href="spatial.html">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html">時系列</a><a href="graphs.html" aria-current="page">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">Graph Learning</span></p><h1>グラフ</h1><p class="lead">論文の引用と分子を例に、ノード・辺・グラフ全体の予測を比べます。GNN以外の方法と、将来の関係を隠す評価も説明します。</p></header>
+<h2 id="graph-example">ノードとエッジ</h2>
+<p>グラフは、対象を<strong>ノード（点）</strong>、関係を<strong>エッジ（辺）</strong>として表したデータです。折れ線グラフなどの統計図とは別の意味です。例えば論文A・B・Cを点にし、「AがBを引用した」をAからBへの矢印で表します。本文の特徴だけでなく、誰を引用しているかも分野を推定する手がかりになります。</p>
+<p>辺には向きや種類もあります。「AがBを引用した」は逆向きと同じ意味ではありません。分子なら点は原子、辺は結合で、原子の種類や結合の種類を特徴として持たせます。まず何を点と辺にするかを決めることが、モデルを選ぶ前の大切な作業です。</p>
+<section id="graphs">
+<h2>グラフの予測タスク</h2>
+<figure class="task-example">
+<div class="task-pair"><svg aria-label="入力：論文と引用の関係" role="img" viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg"><title>入力：論文と引用の関係</title><defs><marker id="arrow-4" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="170" y="26">入力：論文と引用の関係</text><path d="M65 95 L170 65" fill="none" stroke="#738679" stroke-width="2"></path><path d="M170 65 L275 108" fill="none" stroke="#738679" stroke-width="2"></path><path d="M65 95 L108 198" fill="none" stroke="#738679" stroke-width="2"></path><path d="M108 198 L235 204" fill="none" stroke="#738679" stroke-width="2"></path><path d="M275 108 L235 204" fill="none" stroke="#738679" stroke-width="2"></path><circle cx="65" cy="95" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="65" y="100">1</text><circle cx="170" cy="65" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="170" y="70">2</text><circle cx="275" cy="108" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="275" y="113">3</text><circle cx="108" cy="198" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="108" y="203">4</text><circle cx="235" cy="204" fill="#e0e6de" r="23"></circle><text fill="#35664d" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="235" y="209">?</text></svg><svg aria-label="出力：未分類の論文の分野" role="img" viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg"><title>出力：未分類の論文の分野</title><defs><marker id="arrow-5" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><text fill="#294337" font-family="system-ui,sans-serif" font-size="17" text-anchor="middle" x="170" y="26">出力：未分類の論文の分野</text><path d="M65 95 L170 65" fill="none" stroke="#738679" stroke-width="2"></path><path d="M170 65 L275 108" fill="none" stroke="#738679" stroke-width="2"></path><path d="M65 95 L108 198" fill="none" stroke="#738679" stroke-width="2"></path><path d="M108 198 L235 204" fill="none" stroke="#738679" stroke-width="2"></path><path d="M275 108 L235 204" fill="none" stroke="#738679" stroke-width="2"></path><circle cx="65" cy="95" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="65" y="100">1</text><circle cx="170" cy="65" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="170" y="70">2</text><circle cx="275" cy="108" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="275" y="113">3</text><circle cx="108" cy="198" fill="#4d7897" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="108" y="203">4</text><circle cx="235" cy="204" fill="#ba7147" r="23"></circle><text fill="white" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="235" y="209">AI</text></svg></div>
+<figcaption>
+<p>ノード分類の教材例。点が論文、線が引用関係（方向は省略）。未知の点に分野「AI」を予測する。グラフ全体に一つのラベルを付けるタスクとは異なる。</p>
+</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>タスク</th>
+<th>入力 → 出力</th>
+<th>実問題と、違いを見る点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ノード分類</td>
+<td>関係グラフ → 点の属性</td>
+<td>文献の分野。特徴と引用の構造を合わせる。</td>
+</tr>
+<tr>
+<td>リンク予測</td>
+<td>グラフ → 未知の関係のスコア</td>
+<td>知識グラフの補完、推薦。偽の辺をどう用意するかも評価条件。</td>
+</tr>
+<tr>
+<td>グラフ全体の回帰・分類</td>
+<td>分子グラフ → 性質</td>
+<td>溶解度・材料特性。分子骨格の違う対象へ汎化するか。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span id="graph-outputs"></span></p>
+<p>ノード分類では、隣接する論文の分野を参考にできます。ただし、総説は多分野を引用するので、「近くは必ず同じ分野」とは限りません。リンク予測では、記録にない引用が、引用しないと確定した関係なのか、まだ観測していないだけなのかを区別します。観測されなかった辺をどのように比較対象に選ぶかで、問題の難しさも変わります。</p>
+</section>
+<h2 id="graph-methods">グラフの学習手法</h2>
+<p><strong>GNN</strong>は、近隣の点の特徴を集めて点の表現を更新するニューラルネットワークです。しかし、グラフの問題すべてにGNNが必要なわけではありません。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>論文の例で使う情報</th>
+<th>何が分かるか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本文だけの分類</td>
+<td>題名や要旨</td>
+<td>つながりを使わなくても分野を当てられるか</td>
+</tr>
+<tr>
+<td>手作りの特徴</td>
+<td>引用数、共通の引用先の数</td>
+<td>関係を少数の数値へ要約して使えるか</td>
+</tr>
+<tr>
+<td>ラベル伝播</td>
+<td>既知の分野を辺に沿って広げる</td>
+<td>近隣が似るという仮定が役立つか</td>
+</tr>
+<tr>
+<td>ランダムウォークによる埋め込み</td>
+<td>辺をたどって一緒に訪れやすい点</td>
+<td>つながり方を数値列に表せるか</td>
+</tr>
+<tr>
+<td>GNN</td>
+<td>点の特徴と近隣の特徴</td>
+<td>どんな情報を集めると予測に役立つかを学べるか</td>
+</tr>
+</tbody>
+</table>
+<p>ラベル伝播は、既知の正解が近隣にも当てはまりやすい設定で有効です。埋め込みとは、対象を比較や予測に使える数の並びにすることです。</p>
+<h2 id="graph-evaluation">グラフの評価と情報漏洩</h2>
+<p>来年の引用を予測する実験で、来年の引用関係を入力にも含めると、答えの一部を先に見せることになります。ある時点までの情報から、その後の関係を予測します。一方、既知のグラフ内で一部の点のラベルだけを隠す評価もあります。この二つは使える情報が違います。</p>
+<p>研究では、新しく来た論文や別のグラフにも使えるか、大規模な関係を限られたメモリで扱えるかを調べます。辺を使った効果は、本文だけの方法と比べて確かめます。</p>
+<h2 id="inherited-sources">参考資料</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1706.02216">GraphSAGE ↗</a></li>
+</ul>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#graph-example">ノードとエッジ</a><a data-level="2" href="#graphs">グラフの予測タスク</a><a data-level="2" href="#graph-methods">グラフの学習手法</a><a data-level="2" href="#graph-evaluation">グラフの評価と情報漏洩</a><a data-level="2" href="#inherited-sources">参考資料</a></aside></div>
+</body></html>

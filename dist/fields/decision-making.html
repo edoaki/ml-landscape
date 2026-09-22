@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="行動と報酬から学ぶ基本を起点に、行動記録からの学習、複数主体の協調・競争、ロボットへの応用を説明します。"><meta name="color-scheme" content="light">
+<title>意思決定・強化学習・ロボット | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../assets/expansion-demos.js" defer></script><script src="../content/fields/decision-making/components/agents-demo.js" defer></script><link rel="stylesheet" href="../content/fields/decision-making/components/page.css"><link rel="stylesheet" href="../assets/expansion-demos.css"><link rel="stylesheet" href="../assets/learning-demos.css">
+</head>
+<body data-page="decision-making" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html">動画理解・生成</a><a href="spatial.html">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html">時系列</a><a href="graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html" aria-current="page">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">Sequential Decision Making and Reinforcement Learning</span></p><h1>意思決定・強化学習・ロボット</h1><p class="lead">行動と報酬から学ぶ基本を起点に、行動記録からの学習、複数主体の協調・競争、ロボットへの応用を説明します。</p></header>
+<h2 id="decision-example">逐次意思決定の基本</h2>
+<p>配送ロボットが荷物を届ける場面を考えます。入力は現在地・障害物・電池残量などの観測、出力は「右へ進む」「待つ」「充電する」といった行動です。動いた後には位置や電池残量が変わるため、次も同じ条件で選べるとは限りません。このような連続した選択を<strong>逐次意思決定</strong>と呼びます。</p>
+<p><strong>状態</strong>は、次の変化を考えるために必要な環境の情報です。ロボットが実際に見られるカメラやセンサの値は<strong>観測</strong>で、状態のすべてが分かるとは限りません。曲がり角の向こうに障害物があるなら、観測の履歴を使った推定も必要です。</p>
+<h2 id="rl">強化学習の基本</h2>
+<p><strong>エージェント</strong>は行動を選ぶ主体、<strong>環境</strong>は行動の対象です。エージェントは状況を観測し、<strong>方策</strong>という選択ルールに従って行動します。環境からは次の観測と、結果のよさを表す<strong>報酬</strong>が返ります。</p>
+<figure class="rl-loop">
+<svg aria-label="エージェントが行動し、環境から次の観測と報酬を受け取る" role="img" viewBox="0 0 600 210" xmlns="http://www.w3.org/2000/svg"><title>エージェントが行動し、環境から次の観測と報酬を受け取る</title><defs><marker id="arrow-1" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><rect fill="#4d7897" fill-opacity=".08" height="65" rx="9" stroke="#4d7897" stroke-opacity=".45" width="170" x="30" y="55"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="115.0" y="83.5">エージェント</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="115.0" y="107.5">方策：行動の選択ルール</text><rect fill="#35664d" fill-opacity=".08" height="65" rx="9" stroke="#35664d" stroke-opacity=".45" width="170" x="400" y="55"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="485.0" y="83.5">環境</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="485.0" y="107.5">行動に応じて状態が変化</text><path d="M207 76 L392 76" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="300" y="60">行動</text><path d="M485 128 V178 H115 V128" fill="none" marker-end="url(#arrow-1)" stroke="#738679" stroke-width="2"></path><text fill="#294337" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle" x="300" y="166">次の観測 ＋ 報酬</text></svg>
+<figcaption>
+<p>行動 → 結果を観測、を繰り返す。集めた経験を使い、将来も含めた報酬の合計が大きくなるように方策を更新する。</p>
+</figcaption>
+</figure>
+<p>たとえばゲームでは、画面を見て移動や攻撃を選び、得点や勝敗を報酬として受け取ります。いろいろな行動を試した経験から、将来も含めて報酬を多く得られる方策を学びます。目の前の得点だけでなく、その後に勝てるかも選択の評価に含めます。</p>
+<p>学習では「試す → 結果を評価する → 方策を更新する」を繰り返します。利用するときは、学習した方策で行動を選びます。各状況で正解の行動を教える代わりに、行動した結果を学習の手がかりにします。</p>
+<p>基本図の参考：<a href="https://gymnasium.farama.org/v1.0.0/introduction/basic_usage/">Gymnasium公式：エージェントと環境のやり取り ↗</a></p>
+<h2 id="policy-value-reward">報酬・価値・方策</h2>
+<p>荷物を届けたら報酬+10、移動一回に−1とする教材用の設定を考えます。<strong>報酬</strong>はその時点の結果への点数、<strong>価値</strong>は、ある方策で行動した場合にこの先得られる報酬の合計の見積もりです。<strong>方策</strong>は、その状況でどの行動を選ぶかを決めるルールです。</p>
+<p>目先の移動だけなら−1ですが、2回の移動の後に+10を得るなら、割引しない合計は8です。−1を避けていつまでも停止するより、配送に向かう価値が高い可能性があります。実際の強化学習では、将来の報酬を少し小さく数える<strong>割引率</strong>を使うこともあります。</p>
+<figure class="exp-demo exp-stepper" aria-label="二回動いて配送する：目先の点数と合計"><p class="exp-title">配送の報酬と累積報酬</p><div class="exp-controls" hidden><button type="button" data-exp="prev">前へ</button><button type="button" data-exp="next">次へ</button><button type="button" data-exp="reset">最初へ</button><span class="exp-counter" role="status" aria-live="polite"></span></div><div class="exp-stages"><div class="exp-stage"><p class="exp-stage-title">1. 出発前</p><div class="exp-tiles"><div class="exp-tile exp-active">出発：ロボット</div><div class="exp-tile">途中</div><div class="exp-tile">届け先</div></div><p>まだ報酬は0。ここから届け先へ向かう方策を考えます。</p></div><div class="exp-stage"><p class="exp-stage-title">2. 一回移動</p><div class="exp-tiles"><div class="exp-tile">出発</div><div class="exp-tile exp-active">途中：ロボット</div><div class="exp-tile">届け先</div></div><p>移動の報酬は−1。ここまでの合計は−1です。移動だけを見れば負担があります。</p></div><div class="exp-stage"><p class="exp-stage-title">3. 二回目の移動で到着</p><div class="exp-tiles"><div class="exp-tile">出発</div><div class="exp-tile">途中</div><div class="exp-tile exp-active">届け先：ロボット</div></div><p>移動−1と配送成功+10で、この段階は+9。全体の合計は−1−1+10＝8です。</p></div></div><figcaption>教材用の決めた経路と報酬。割引なしで計算し、方策の学習は実行していません。 JavaScript無効時は全段階を表示します。</figcaption></figure>
+<p>正解の行動を各場面で与えなくても、行動した結果を集めて方策や価値を改善できます。ただし、実際には試していない行動の結果はその場では観測できません。</p>
+<h2 id="exploration-bandit">探索と活用・バンディット</h2>
+<p>近道Aは何度も成功し、道Bはほとんど試していないとします。Aを選ぶ<strong>活用</strong>は、今分かっている情報でよい結果を狙うことです。Bを試す<strong>探索</strong>は、将来の選択に役立つ情報を集めることです。探索には失敗や時間の費用もあるため、ただランダムに動けばよいわけではありません。</p>
+<p><strong>バンディット</strong>は、基本的には各回で選択肢を一つ選び、その報酬から選択を改善する設定です。例えば、その回の利用者にA・Bの案内画像のどちらを見せるか選び、クリックの有無を観測します。選ばなかった画像の結果は分かりません。標準的なバンディットでは、行動によって次の環境状態が変わる長期の連鎖を扱わない点が、配送経路の強化学習との違いです。利用者の特徴を入力に使う文脈付きバンディットもあります。</p>
+<p>研究では、試す回数を減らすことや、少ない報酬から学ぶことを目指します。報酬だけでなく、配送成功率・所要時間・衝突数を確認すれば、「点数は高いが目的を満たしていない」方策を発見できます。</p>
+<h2 id="learning-settings">学習の設定と応用</h2>
+<p>配送ロボットの行動を学ぶ場合でも、使える経験や、一緒に動く相手によって課題が変わります。</p>
+<table>
+<thead>
+<tr>
+<th>広がり</th>
+<th>何を変えるか</th>
+<th>中心となる工夫</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>行動記録からの学習</td>
+<td>自分で試す代わりに、過去の操作記録を使う</td>
+<td>手本の動きをまねる、記録の報酬から行動を改善する</td>
+</tr>
+<tr>
+<td>マルチエージェント学習</td>
+<td>一台ではなく、複数台が影響し合う</td>
+<td>相手と協調し、チームとして成果を出す</td>
+</tr>
+<tr>
+<td>ロボットへの応用</td>
+<td>実際の物体や機械を動かす</td>
+<td>観測に合わせて動きを修正し、現実とのずれに対応する</td>
+</tr>
+</tbody>
+</table>
+<p>これらは重なります。二台の実機ロボットを、人の操作記録から学ばせることもできます。</p>
+<h2 id="logs-task">行動記録から学ぶ方法</h2>
+<p>ロボットの試行には時間や費用がかかるため、過去の操作記録を使う方法があります。「右に障害物があるとき、左へ曲がった」という記録でも、何を学ぶかで使い方が変わります。</p>
+<p><span id="logs-imitation"></span>
+<span id="logs-offline"></span>
+<span id="logs-inverse"></span>
+<span id="logs-comparison"></span></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>使う記録と中心の考え方</th>
+<th>得たいもの</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模倣学習</td>
+<td>手本の行動をまねる。基本的な行動クローニングでは、状態と行動の組を正解にする</td>
+<td>手本を再現する方策</td>
+</tr>
+<tr>
+<td>オフライン強化学習</td>
+<td>報酬も付いた固定の記録から、将来の報酬を増やす行動を学ぶ。学習中に追加試行しない</td>
+<td>よりよい結果を目指す方策</td>
+</tr>
+<tr>
+<td>逆強化学習</td>
+<td>手本がどんな結果を重視しているかを推定する</td>
+<td>行動を説明する報酬</td>
+</tr>
+</tbody>
+</table>
+<p>例えば、遠回りでも障害物から離れる手本なら、模倣ではその動きをまね、逆強化学習では安全を高く評価する報酬を考えます。オフライン強化学習なら、記録された報酬から経路のよさを学びます。これらは組み合わせることもできます。</p>
+<details>
+<summary>補足：記録から学ぶときの限界と評価</summary>
+<p><span id="logs-evaluation"></span></p>
+<p>模倣では、小さなミスで手本にない状態へ出ると、その後も間違いやすくなります。手本の再現率だけでなく、配送を最後まで成功できるかを確かめます。<a href="https://proceedings.mlr.press/v15/ross11a.html">模倣学習の研究例</a></p>
+<p>オフライン強化学習では、記録にない行動をその場で試せません。未経験の経路を過大評価しないよう、記録から離れた行動の評価を抑えるなどの工夫をします。記録から新しい方策の成績を推定する<strong>オフライン方策評価</strong>にも、必要な行動が記録に含まれるなどの条件があります。<a href="https://arxiv.org/abs/2005.01643">解説論文</a></p>
+<p>逆強化学習では、同じ行動を説明する報酬が複数ありえます。環境の情報や仮定も必要で、記録だけから意図が一意に分かるわけではありません。<a href="https://ai.stanford.edu/~ang/papers/icml00-irl.pdf">原論文</a></p>
+</details>
+<h2 id="agents-task">マルチエージェント学習とは</h2>
+<p><strong>マルチエージェント学習</strong>は、複数のエージェントが互いに影響する状況での学習を扱います。</p>
+<p>例えば二台のロボットが荷物の両端を持って運ぶとき、一台だけ進むと荷物が傾きます。自分の行動だけでなく、相手の行動も結果を左右します。下の図は、その協調を示す模式例です。</p>
+<figure class="learning-demo" id="agents-demo" aria-labelledby="agents-title">
+ <div class="ld-body">
+  <p class="ld-eyebrow">相手の行動で、自分の行動の結果も変わる</p>
+  <strong class="ld-title" id="agents-title">二台で荷物を右の台へ運ぶ</strong>
+  <svg viewBox="0 0 520 300" role="img" aria-labelledby="agents-svg-title agents-svg-desc">
+   <title id="agents-svg-title">上から見た二台のロボットと荷物</title><desc id="agents-svg-desc">左のAとBが荷物の両端を持つ。右の台まで二台が足並みをそろえて動く必要がある。</desc>
+   <rect x="345" y="50" width="150" height="220" rx="12" fill="#e9f0e4" stroke="#a9bea5"/>
+   <text x="420" y="35" text-anchor="middle" fill="#365940" font-size="19">運び先の台</text>
+   <path d="M180 150H310m-15-10 15 10-15 10" stroke="#acb9a8" fill="none" stroke-width="3"/>
+   <line data-load x1="100" y1="90" x2="100" y2="230" stroke="#c79763" stroke-width="28" stroke-linecap="round"/>
+   <g data-robot="A" transform="translate(100 90)"><circle r="27" fill="#35664d"/><text text-anchor="middle" y="7" font-size="22" fill="white">A</text></g>
+   <g data-robot="B" transform="translate(100 230)"><circle r="27" fill="#537f9b"/><text text-anchor="middle" y="7" font-size="22" fill="white">B</text></g>
+   <text x="100" y="35" text-anchor="middle" fill="#365940" font-size="19">出発位置</text>
+  </svg>
+  <p class="ld-status" role="status">出発位置：AもBも待っています。茶色の棒は荷物です。</p>
+  <div class="ld-controls" hidden><button type="button" data-move="alone">Aだけ進む</button><button type="button" data-move="together">AとBが一緒に進む</button><button type="button" data-reset>出発位置に戻す</button></div>
+ </div>
+ <figcaption>上から見た模式図。「Aだけ」では荷物の向きが斜めになり、「一緒」では向きを保って台まで移動します。荷物・把持部の変形などは省略し、共同の行動が結果を変えることだけを示しています。各ボタンは出発位置からの別の選択を比較します。</figcaption>
+ <noscript>Aだけ進むと片端だけが前へ出ます。二台がそろって進めば、荷物の向きを保てます。</noscript>
+</figure>
+
+<h3 id="agents-rewards">協調と競争</h3>
+<p>複数のエージェントが報酬を増やすように学ぶとき、次のような関係があります。</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="表（横にスクロールできます）">
+<table>
+<thead>
+<tr>
+<th>関係</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>協調</td>
+<td>二台で荷物を届け、共通の報酬を得る</td>
+</tr>
+<tr>
+<td>競争</td>
+<td>一つの荷物を先に取ろうとする</td>
+</tr>
+<tr>
+<td>混合</td>
+<td>配送車が速さを競いつつ、衝突を避ける</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>荷物運びで各自の速さだけを報酬にすると、協調が崩れることがあります。チームの目的に合う報酬が必要です。</p>
+<details>
+<summary>複数主体の学習で生じる課題</summary>
+<h3 id="agents-nonstationary">相手の学習による変化</h3>
+<p>相手がいつも待つなら、自分も待つほうが荷物は安定します。しかし相手が進むようになると、自分も進むほうがよくなります。</p>
+<p>相手も学習するため、同じ状況での行動の結果が変わります。この<strong>非定常性</strong>により、過去の経験をそのまま使いにくくなります。</p>
+<h3 id="agents-observation">観測・通信・集中学習</h3>
+<p>各ロボットが手元の情報しか得られない状況を<strong>部分観測</strong>と呼びます。「準備できた」と通信すれば協調しやすくなりますが、遅延や通信の失敗も考慮します。</p>
+<p><strong>集中学習・分散実行</strong>では、学習時には全体の情報を使い、実行時は各ロボットが手元の情報で行動します。例えば学習中の評価器には両方の行動を見せ、各方策には実行時に得られる情報だけを与えます。<a href="https://arxiv.org/abs/1706.02275">研究例</a></p>
+<h3 id="agents-credit">貢献の評価と役割分担</h3>
+<p>チームで報酬を得ても、誰の行動が成功に役立ったかは分かりにくいことがあります。個々の行動の貢献を評価する問題を<strong>信用割当（credit assignment）</strong>と呼びます。</p>
+<p>荷物運びでは、一方が経路を選び、他方が姿勢を安定させるなどの役割分担も考えられます。状況に応じて役割を学ぶことが研究課題です。</p>
+<h3 id="agents-evaluation">評価</h3>
+<p>到着率や所要時間などのチーム全体の成績に加え、各ロボットの消費電力なども測ります。</p>
+<p>固定した二台で成功しても、別の相手と組むと失敗することがあります。相手の変更、台数の増加、通信の遅延にも対応できるかを調べます。</p>
+</details>
+<h2 id="robot-task">ロボットの認識と行動</h2>
+<p>「赤いカップを棚へ運んで」と頼まれたロボットは、画像からカップを見つけるだけでは終わりません。手を近づけ、つかみ、持ち上げ、棚へ置く必要があります。<strong>認識した状況から行動を選び、結果を観測して修正する</strong>のが基本の流れです。</p>
+<p>入力はカメラ画像や手にかかる力など、出力は「手を右へ動かす」「指を閉じる」といった指令です。</p>
+<p><span id="robot-feedback"></span></p>
+<p>カップへ手を伸ばす間に位置がずれたら、新しい観測で動きを直します。この<strong>フィードバック</strong>によって、最初に決めた動きを続けるだけでは扱えない変化に対応します。観測や計算の遅れも、動作の成功を左右します。</p>
+<p><span id="robot-learning"></span></p>
+<p>行動記録を使う場合も、試行の報酬から学ぶ場合も、実際にカップを運べるかが目標です。模倣で初期の動きを学び、その後に試行で調整する組み合わせもあります。</p>
+<p><span id="sim-to-real"></span></p>
+<p>シミュレーションでは、同じ動作を何度も速く試せます。しかし、実際のカップの摩擦や重さ、カメラの色は完全には再現できません。この差が<strong>sim-to-real</strong>の課題です。仮想環境で摩擦・照明・重さを変えて練習させるのは、一つの条件だけに慣れるのを避ける方法です。変える範囲が現実と合わなければ効果は限られます。</p>
+<p>評価では、使ったことのないカップや置き場所でも成功するか、動作時間、落下・接触の回数を調べます。成功場面の映像だけから、どんな状況でも動けるとは判断できません。研究では、少ない実演や実機試行で、失敗からも戻れる行動を学ぶことが課題になります。</p>
+<p><span id="robotics"></span></p>
+<h3>言葉の指示で物を動かす：RT-2</h3>
+<p>「缶を拾って」という指示に答えるだけでなく、対象の位置を捉え、アームとグリッパーを動かす必要があります。RT-2は、視覚・言語の知識をロボットの行動へつなぐ研究例です。画像と言葉を扱うモデルに動作を表す出力も学ばせ、実際の操作へ接続します。</p>
+<figure>
+<video controls="" poster="../content/fields/decision-making/media/rt2-result-poster.jpg" preload="none" style="width:100%"><source src="../content/fields/decision-making/media/rt2-result.mp4" type="video/mp4"/></video>
+<figcaption>
+<p><a href="https://robotics-transformer2.github.io/">RT-2 著者公開映像</a>。指示と、ロボットが選んだ対象・動作を対応させて見る。</p>
+</figcaption>
+</figure>
+<p>RT-2は実演の動作を学ぶ研究例です。この映像を、そのまま強化学習の成果とは捉えません。</p>
+<h3>並列シミュレーション</h3>
+<figure class="decision-video">
+<video aria-label="ORBITの並列ロボットシミュレーション" controls="" playsinline="" poster="../content/fields/decision-making/media/decision-orbit-poster.jpg" preload="none"><source src="../content/fields/decision-making/media/decision-orbit.mp4" type="video/mp4"/></video>
+<figcaption>
+<p>多数の環境で同時に試行し、方策の学習に使う経験を集める。<a href="https://isaac-orbit.github.io/">ORBIT著者ページ：Reinforcement Learning</a>の映像。</p>
+</figcaption>
+</figure>
+<p>多数のロボットを並列に動かし、姿勢や接触の経験を集める様子を見ます。</p>
+<p><span id="research-9"></span></p>
+<h2 id="applications">ゲーム・設備への応用</h2>
+<p>ゲームなら得点や勝敗、設備の制御なら消費電力や運転条件が、行動のよさを測る手がかりになります。どちらも、選んだ行動がその後の状況を変える問題です。</p>
+<h3 id="games">ゲーム画面から操作を学ぶ：DQN</h3>
+<p>DQNはゲーム画面を入力し、各操作から将来得られる報酬を見積もって行動を選びます。下の動画では、学習によって操作が変わる様子を見られます。</p>
+<figure class="decision-video">
+<video aria-label="DQNのブロック崩しの学習過程" controls="" playsinline="" poster="../content/fields/decision-making/media/decision-breakout-poster.jpg" preload="none"><source src="../content/fields/decision-making/media/decision-breakout.mp4" type="video/mp4"/></video>
+<figcaption>
+<p>100・200・400・600エピソード後の比較。終盤では壁の端に穴を開け、ボールを上側へ送る動きに注目。<a href="https://www.nature.com/articles/nature14236">DQN原論文・補足動画2</a>。</p>
+</figcaption>
+</figure>
+<h3 id="research-11">データセンターの冷却制御</h3>
+<figure>
+<div aria-label="図（狭い画面では横にスクロールできます）" class="figure-scroll" tabindex="0"><svg aria-label="DeepMindの公式事例を基にした役割の模式図。ゲームの得点と違い、設備の制約を満たしながら効率を考える。" role="img" viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg"><title>DeepMindの公式事例を基にした役割の模式図。ゲームの得点と違い、設備の制約を満たしながら効率を考える。</title><defs><marker id="arrow-4" markerHeight="7" markerWidth="7" orient="auto-start-reverse" refX="9" refY="5" viewBox="0 0 10 10"><path d="M0 0L10 5L0 10" fill="#738679"></path></marker></defs><rect fill="#4d7897" fill-opacity=".08" height="76" rx="9" stroke="#4d7897" stroke-opacity=".45" width="170.5" x="20.0" y="42"></rect><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="105.25" y="76.0">温度・設備の状態</text><text fill="#4d7897" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="105.25" y="100.0">センサ観測</text><path d="M193.5 80 L213.5 80" fill="none" marker-end="url(#arrow-4)" stroke="#738679" stroke-width="2"></path><rect fill="#35664d" fill-opacity=".08" height="76" rx="9" stroke="#35664d" stroke-opacity=".45" width="170.5" x="216.5" y="42"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="301.75" y="76.0">設定候補を評価</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="301.75" y="100.0">制約の中で選ぶ</text><path d="M390.0 80 L410.0 80" fill="none" marker-end="url(#arrow-4)" stroke="#738679" stroke-width="2"></path><rect fill="#35664d" fill-opacity=".08" height="76" rx="9" stroke="#35664d" stroke-opacity=".45" width="170.5" x="413.0" y="42"></rect><text fill="#35664d" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="498.25" y="76.0">冷却設備を制御</text><text fill="#35664d" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="498.25" y="100.0">次の状態を観測</text><path d="M586.5 80 L606.5 80" fill="none" marker-end="url(#arrow-4)" stroke="#738679" stroke-width="2"></path><rect fill="#ba7147" fill-opacity=".08" height="76" rx="9" stroke="#ba7147" stroke-opacity=".45" width="170.5" x="609.5" y="42"></rect><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle" x="694.75" y="76.0">結果を評価</text><text fill="#ba7147" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle" x="694.75" y="100.0">エネルギーと制約</text></svg></div>
+<figcaption>
+<p>DeepMindの公式事例を基にした役割の模式図。ゲームの得点と違い、設備の制約を満たしながら効率を考える。</p>
+</figcaption>
+</figure>
+<p>見どころは、予測が良いだけでなく、選んだ設定を設備で使えるかです。監視、制約、失敗時の対応を含めたシステムとして評価します。</p>
+<p><a href="https://deepmind.google/blog/safety-first-ai-for-autonomous-data-centre-cooling-and-industrial-control/">冷却制御：公式事例 ↗</a></p>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#decision-example">逐次意思決定の基本</a><a data-level="2" href="#rl">強化学習の基本</a><a data-level="2" href="#policy-value-reward">報酬・価値・方策</a><a data-level="2" href="#exploration-bandit">探索と活用・バンディット</a><a data-level="2" href="#learning-settings">学習の設定と応用</a><a data-level="2" href="#logs-task">行動記録から学ぶ方法</a><a data-level="2" href="#agents-task">マルチエージェント学習とは</a><a data-level="3" href="#agents-rewards">協調と競争</a><a data-level="2" href="#robot-task">ロボットの認識と行動</a><a data-level="2" href="#applications">ゲーム・設備への応用</a><a data-level="3" href="#games">ゲーム画面から操作を学ぶ：DQN</a><a data-level="3" href="#research-11">データセンターの冷却制御</a></aside></div>
+</body></html>

@@ -1,0 +1,35 @@
+{
+  "numeric": "PASS: regression, tree SSE, boosting, kernel mapping, k-means updates, PCA projection, matrix/CP products",
+  "browser": [
+    {
+      "width": 1440,
+      "javascript": true,
+      "offline": true,
+      "figures": 4,
+      "math": 4,
+      "document_overflow": false,
+      "clipped_new_svg_labels": [],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "javascript": true,
+      "offline": true,
+      "figures": 4,
+      "math": 4,
+      "document_overflow": false,
+      "clipped_new_svg_labels": [],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "javascript": false,
+      "offline": true,
+      "figures": 4,
+      "math": 4,
+      "document_overflow": false,
+      "clipped_new_svg_labels": [],
+      "errors": []
+    }
+  ]
+}

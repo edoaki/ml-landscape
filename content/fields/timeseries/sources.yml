@@ -1,0 +1,28 @@
+ref-001:
+  url: https://arxiv.org/abs/2310.10688
+  label: TimesFM：2024年の原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://github.com/google-research/timesfm
+  label: 著者実装（複数の版あり） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://github.com/salesforce/Merlion
+  label: Merlion：著者実装とチュートリアル ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://arxiv.org/abs/1706.02216
+  label: GraphSAGE ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-timesfm-result.png:
+  url: content/fields/timeseries/media/timesfm-result.png
+  label: timesfm-result.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-merlion-result.png:
+  url: content/fields/timeseries/media/merlion-result.png
+  label: merlion-result.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

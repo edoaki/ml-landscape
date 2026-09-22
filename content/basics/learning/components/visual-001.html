@@ -1,0 +1,8 @@
+<div class="lf-demo">
+<p class="lf-step"><span>1</span>元の文章から、入力と正解を作る</p>
+<div class="lf-sentence">猫が <mark>魚を</mark> 食べる</div>
+<div class="lf-split"><div><span class="lf-kicker">モデルに見せる入力</span><div class="lf-sentence">猫が <b class="lf-mask">次は？</b></div><p>予測する位置より前だけを見せる</p></div><div><span class="lf-kicker">答え合わせに使う正解</span><div class="lf-sentence"><mark>魚を</mark></div><p>元の文章から取り出しておく</p></div></div>
+<p class="lf-step"><span>2</span>予測を正解と比べて、モデルを更新する</p>
+<div class="lf-answer"><span>予測の例 <b>肉を</b></span><span aria-hidden="true">≠</span><span>正解 <b>魚を</b></span></div>
+<p class="lf-takeaway">この入力で「魚を」の予測確率が高くなるように重みを調整する。</p>
+</div>

@@ -1,0 +1,30 @@
+ref-001:
+  url: https://cs231n.github.io/convolutional-networks/
+  label: Stanford CS231n：局所接続と重み共有 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
+  label: LeCun et al., Gradient-Based Learning Applied to Document Recognition ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/1512.03385
+  label: ResNet（2015） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://arxiv.org/abs/1505.04597
+  label: U-Net（2015） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv2d.html
+  label: PyTorch：Conv2dのstride・padding ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://docs.pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html
+  label: PyTorch：MaxPool2d ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-convolution.svg:
+  url: content/models/cnn/media/convolution.svg
+  label: convolution.svg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

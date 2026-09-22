@@ -1,0 +1,8 @@
+node_modules/
+test-results/
+.test-content-*/
+.DS_Store
+# Local leftovers from the retired Python environment
+.venv/
+__pycache__/
+*.py[oc]

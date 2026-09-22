@@ -1,0 +1,30 @@
+ref-001:
+  url: https://sites.google.com/view/learning-to-simulate
+  label: Sanchez-Gonzalez et al. (2020) 著者公開動画：Water-3D
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://openfwi-lanl.github.io/
+  label: 研究例：OpenFWI / InversionNet
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-gns-water.mp4:
+  url: content/fields/science/media/gns-water.mp4
+  label: gns-water.mp4
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+exp-pinn:
+  url: https://arxiv.org/abs/1711.10561
+  label: Raissi et al. (2017), Physics Informed Deep Learning (Part I)
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+exp-operator:
+  url: https://www.jmlr.org/papers/v24/21-1524.html
+  label: Kovachki et al. (2023), Neural Operator
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+  diagram_verification: 原論文の積分カーネルと離散化（2節・3節）を確認。熱伝導を重み付き和で近似する独自の模式図として提示し、一般の層では特徴変換や非線形処理を加えることを明記。
+exp-fno:
+  url: https://arxiv.org/abs/2010.08895
+  label: Li et al. (2020/2021), Fourier Neural Operator for Parametric Partial Differential Equations
+  verified_on: '2026-09-20'
+  verification: 原論文の要旨と著者の公式実装解説で、フーリエ空間で作用を学ぶ構成を確認。位置からカーネルを出す模式例とは異なる実装として言及。

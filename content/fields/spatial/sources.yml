@@ -1,0 +1,37 @@
+ref-001:
+  url: https://vision.in.tum.de/tumvi/exported/euroc/512_16/
+  label: TUM VI：dataset-outdoors1_512_16 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/2007.11898v2
+  label: Figure 6 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html
+  label: Open3D：点群のダウンサンプリング例 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/
+  label: 3D Gaussian Splatting：bicycle ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://www.matthewtancik.com/nerf
+  label: NeRF：colorspout ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://arxiv.org/abs/2003.12039v3
+  label: 'Teed & Deng — RAFT: Recurrent All-Pairs Field Transforms for Optical Flow
+    ↗'
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-007:
+  url: https://github.com/princeton-vl/RAFT
+  label: RAFT 著者実装 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-008:
+  url: https://github.com/UZ-SLAMLab/ORB_SLAM3
+  label: ORB-SLAM3 著者実装・動画 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-009:
+  url: https://github.com/facebookresearch/sam2
+  label: SAM 2 著者実装 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

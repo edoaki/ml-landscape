@@ -1,0 +1,25 @@
+rmf:
+  label: NIST (2023), Artificial Intelligence Risk Management Framework 1.0
+  url: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf
+  verified_on: '2026-09-20'
+  verification: 公式文書のリスク・影響と信頼性の特性を参照。教材推薦は独自例。
+opportunity:
+  label: Hardt, Price & Srebro (2016), Equality of Opportunity in Supervised Learning
+  url: https://arxiv.org/abs/1610.02413
+  verified_on: '2026-09-20'
+  verification: 原論文第2節のdemographic parityとの区別、Definition 2.1のequalized oddsとDefinition 2.2のequal opportunityを確認。人数表と比較図は教材独自の架空例。
+dp:
+  label: Dwork & Roth (2014), The Algorithmic Foundations of Differential Privacy
+  url: https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf
+  verified_on: '2026-09-20'
+  verification: 著者公開書籍Definition 2.4、Definition 3.3・Theorem 3.6のラプラス機構、合成の扱いを確認。独自図は感度1、ε=0.5、Laplace(0,2)の密度を描画。
+membership:
+  label: Shokri et al. (2017), Membership Inference Attacks against Machine Learning Models
+  url: https://arxiv.org/abs/1610.05820
+  verified_on: '2026-09-20'
+  verification: 著者論文要旨の、モデルへの問い合わせから学習データへの所属を推測する設定を確認。補習コースの例は教材独自の仮定。
+dp-sgd:
+  label: Abadi et al. (2016), Deep Learning with Differential Privacy
+  url: https://arxiv.org/abs/1607.00133
+  verified_on: '2026-09-20'
+  verification: 著者原論文Algorithm 1の例ごとの勾配クリッピング、ノイズ付加、プライバシー会計を参照。一人の全履歴の保護とは区別。

@@ -1,0 +1,13 @@
+ref-001:
+  url: https://arxiv.org/abs/2010.11929
+  label: ViT：An Image is Worth 16x16 Words（2020） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://llava-vl.github.io/
+  label: LLaVA：Visual Instruction Tuning（2023） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/2103.00020
+  label: CLIP：Learning Transferable Visual Models From Natural Language Supervision（2021）
+    ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

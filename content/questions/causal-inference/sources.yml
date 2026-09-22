@@ -1,0 +1,10 @@
+pearl:
+  label: 'Pearl (2009), Causal inference in statistics: An overview'
+  url: https://web.cs.ucla.edu/~kaoru/SS-2009-57-Sup.pdf
+  verified_on: '2026-09-20'
+  verification: 著者所属機関の公開論文で介入・交絡・識別を参照。植物の図は独自の教材用模式図で実証結果ではない。
+causal-ml:
+  label: 'Schölkopf et al. (2021), Towards Causal Representation Learning'
+  url: https://arxiv.org/abs/2102.11107
+  verified_on: '2026-09-20'
+  verification: 著者公開の要旨で因果表現学習、および転移・汎化との接点を確認。栽培の例は独自の説明用の例。

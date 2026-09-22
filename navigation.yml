@@ -1,0 +1,108 @@
+- title: はじめに
+  items:
+  - page: introduction
+- title: 基礎と代表的な機械学習手法
+  items:
+  - page: fundamentals
+  - page: learning
+  - page: probabilistic-inference
+  - page: classical
+- title: 分野・タスクから知る
+  items:
+  - page: vision
+    category: データの種類
+  - page: video
+    category: データの種類
+  - page: spatial
+    category: データの種類
+  - page: language
+    category: データの種類
+  - page: audio
+    category: データの種類
+  - page: multimodal
+    category: データの種類
+  - page: timeseries
+    category: データの種類
+  - page: graphs
+    category: データの種類
+  - page: recommendation
+    category: 選択・行動
+  - page: decision-making
+    category: 選択・行動
+  - page: world-models
+    category: 選択・行動
+  - page: combinatorial-optimization
+    category: 選択・行動
+  - page: life-science
+    category: 科学への応用
+  - page: science
+    category: 科学への応用
+  - page: earth-science
+    category: 科学への応用
+- title: 横断的な研究を知る
+  items:
+  - page: representation-learning
+    category: 学習・適応
+  - page: transfer-learning
+    category: 学習・適応
+  - page: continual-learning
+    category: 学習・適応
+  - page: foundation-models
+    category: 学習・適応
+  - page: ensembles-experts
+    category: 学習・適応
+  - page: robustness
+    category: 信頼性・安全性
+  - page: uncertainty-unknowns
+    category: 信頼性・安全性
+  - page: interpretability
+    category: 信頼性・安全性
+  - page: safety
+    category: 信頼性・安全性
+  - page: efficiency
+    category: 効率化・学習システム
+  - page: distributed-systems
+    category: 効率化・学習システム
+  - page: federated-learning
+    category: 効率化・学習システム
+  - page: information-geometry
+    category: 理論・推論
+  - page: causal-inference
+    category: 理論・推論
+  - page: datasets
+    category: データ・評価
+  - page: evaluation
+    category: データ・評価
+- title: モデルの仕組みを知る
+  items:
+  - page: cnn
+    category: ネットワーク構造
+  - page: rnn
+    category: ネットワーク構造
+  - page: transformer
+    category: ネットワーク構造
+  - page: vit
+    category: ネットワーク構造
+    parent: transformer
+  - page: gnn
+    category: ネットワーク構造
+  - page: ssm
+    category: ネットワーク構造
+  - page: generative-overview
+    category: 生成モデルの枠組み
+  - page: vae
+    category: 生成モデルの枠組み
+  - page: gan
+    category: 生成モデルの枠組み
+  - page: normalizing-flow
+    category: 生成モデルの枠組み
+  - page: diffusion
+    category: 生成モデルの枠組み
+  - page: flow-matching
+    category: 生成モデルの枠組み
+  - page: llm
+    category: 言語モデル
+  - page: clip
+    category: マルチモーダルモデル
+  - page: vlm
+    category: マルチモーダルモデル

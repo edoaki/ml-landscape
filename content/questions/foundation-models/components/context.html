@@ -1,0 +1,6 @@
+<figure class="fm-figure" id="fm-context" aria-label="SFTは重みを更新し、ICLとRAGは利用時の入力を変える">
+<div class="fm-context-grid">
+<div class="fm-route"><h3>SFT</h3><p class="fm-purpose">答え方を学ばせる</p><div class="fm-paper">学習データ<br>問題 → 計算付きの回答</div><div class="fm-down">↓ 重みを更新</div><div class="fm-model fm-updated"><strong>調整したLLM</strong><span>学んだ結果が重みに残る</span></div><div class="fm-down">↓ 利用時</div><div class="fm-output">新しい問題へ回答</div></div>
+<div class="fm-route"><h3>文脈内学習（ICL）</h3><p class="fm-purpose">その場で例を見せる</p><div class="fm-paper fm-input"><span class="fm-eyebrow">今回の入力</span>例：50円の品物を2個<br>答え：50 × 2 = 100円<hr>問題：120円のノートを3冊…</div><div class="fm-down">↓ 重みはそのまま</div><div class="fm-output">例から形式を読み取り<br>計算付きで回答</div></div>
+<div class="fm-route"><h3>検索で資料を追加（RAG）</h3><p class="fm-purpose">必要な事実を渡す</p><div class="fm-paper fm-input"><span class="fm-eyebrow">今回の入力</span>検索結果：<br>ノート120円、鉛筆80円<hr>問題：ノート3冊と鉛筆1本の合計は？</div><div class="fm-down">↓ 重みはそのまま</div><div class="fm-output">資料の価格を使って回答</div></div>
+</div><figcaption>同じ買い物の問題で、学習による調整と利用時の入力の工夫を比較。価格やお手本は説明用の架空例です。</figcaption></figure>

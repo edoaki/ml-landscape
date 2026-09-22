@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="3D・空間理解では、カメラや物体の位置と、場面の立体的な形を扱います。画像から位置を推定するSLAMや、新しい視点を描くNeRFなどを、図と映像で説明します。"><meta name="color-scheme" content="light">
+<title>3D・空間理解 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<link rel="stylesheet" href="../content/fields/spatial/components/page.css">
+</head>
+<body data-page="spatial" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details open><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="vision.html">画像</a><a href="video.html">動画理解・生成</a><a href="spatial.html" aria-current="page">3D・空間理解</a><a href="language.html">自然言語</a><a href="audio.html">音声・音楽</a><a href="multimodal.html">マルチモーダル</a><a href="timeseries.html">時系列</a><a href="graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="recommendation.html">検索・推薦</a><a href="decision-making.html">意思決定・強化学習・ロボット</a><a href="world-models.html">世界モデルと計画</a><a href="combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="life-science.html">生命科学・分子</a><a href="science.html">物理・シミュレーション（Scientific ML）</a><a href="earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">分野・タスクから知る · <span lang="en">3D and Spatial Understanding</span></p><h1>3D・空間理解</h1><p class="lead">3D・空間理解では、カメラや物体の位置と、場面の立体的な形を扱います。画像から位置を推定するSLAMや、新しい視点を描くNeRFなどを、図と映像で説明します。</p></header>
+<section id="slam">
+<h2>自分の位置と周囲の地図</h2>
+<p><strong>SLAM</strong>は、移動中の観測から「自分がどこにいるか」と「周りに何がどこにあるか」を同時に推定する問題です。ロボットやカメラが移動した経路を知るのに使います。次はORB-SLAM3による推定例です。</p>
+<p><strong>入力：</strong>TUM VIの「outdoors1」で撮影した連続画像と、加速度・角速度。下は同じ走行中の2時点の右カメラ画像です。</p>
+<div class="spatial-raft-pair">
+<figure>
+<p><a href="../assets/orb-outdoors1-5-display.png"><img src="../assets/orb-outdoors1-5-display.png" alt="outdoors1の右カメラ画像。建物の横の歩道。"></a></p>
+<figcaption>
+<p>走行中の画像① <a href="../assets/orb-outdoors1-5-display.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+<figure>
+<p><a href="../assets/orb-outdoors1-4-display.png"><img src="../assets/orb-outdoors1-4-display.png" alt="同じoutdoors1の約51秒後の右カメラ画像。建物と木々の間の歩道。"></a></p>
+<figcaption>
+<p>約51秒後の画像② <a href="../assets/orb-outdoors1-4-display.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+</div>
+<p>出典：<a href="https://vision.in.tum.de/tumvi/exported/euroc/512_16/">TUM VI：dataset-outdoors1_512_16 ↗</a>。</p>
+<p><strong>出力：</strong>同じ「outdoors1」を処理して推定した移動軌跡。赤はこの走行だけで推定、青は以前の走行で作った地図も使って推定した結果です。</p>
+<figure class="spatial-slam-output">
+<svg aria-labelledby="slam-output-title" role="img" style="display:block;width:100%;overflow:hidden" viewBox="0 0 870 724"><title id="slam-output-title">outdoors1の推定軌跡。座標軸を除き横向きに表示。赤は単独、青は以前の地図を利用。</title><image height="934" href="../assets/orb-slam3-figure6.png" transform="translate(0 724) rotate(-90) translate(-90 -18)" width="852"/></svg>
+<figcaption>
+<p>赤・青とも推定結果。青はmagistrale2の地図を利用。座標軸を除き90度回転して表示。出典：<a href="https://arxiv.org/abs/2007.11898v2">Figure 6 ↗</a>。</p>
+</figcaption>
+</figure>
+</section>
+<section id="space">
+<h2>立体的な形の復元</h2>
+<p><strong>3D再構成</strong>は、複数の写真や深度の計測などから、物体や部屋の立体的な形を復元する問題です。建物の記録や、ロボットが周囲の形を把握することに役立ちます。</p>
+<p>3Dの場面を表す方法の一つが、位置と色を持つ点の集まりです。</p>
+</section>
+<section id="pointcloud">
+<h3>点群による表現</h3>
+<p>下の部屋は、壁や床、椅子を色付きの点で表しています。各点は3D空間での位置を持つので、視点を変えて立体として眺められます。深度センサなどの計測結果にも使われる表現です。</p>
+<figure>
+<p><a href="../assets/pointcloud-room.png"><img src="../assets/pointcloud-room.png" alt="室内の椅子や壁を色付きの点で表した点群。"></a></p>
+<figcaption>
+<p>出典：<a href="https://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html">Open3D：点群のダウンサンプリング例 ↗</a>。公開画像を引用。 <a href="../assets/pointcloud-room.png">画像を拡大 ↗</a></p>
+</figcaption>
+</figure>
+</section>
+<h2 id="new-view-task">撮影していない視点の画像</h2>
+<p><strong>新規視点合成</strong>は、撮影した画像を手がかりに、別の位置から見た画像を作る問題です。商品の立体表示やVRなどに使えます。もっともらしい画像を描くことと、正確な形を測ることは区別して評価します。次の二つは、場面の表し方が異なる方法です。</p>
+<section id="gaussian-splatting">
+<h3>3D Gaussian Splatting</h3>
+<p>複数の写真から、視点を動かしても写真のように見える場面を作ります。点群の点に広がりと透明度を持たせたような、小さな色の粒の集まりを学習します。</p>
+<figure>
+<video controls="" playsinline="" preload="metadata"><source src="../assets/3dgs-bicycle.mp4" type="video/mp4"/></video>
+<figcaption>
+<p><a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/">3D Gaussian Splatting：bicycle ↗</a>。公開結果。</p>
+</figcaption>
+</figure>
+<p>動画は、復元した場面の中で視点を動かした結果です。自転車と奥の建物の位置関係が変わり、平面の写真を拡大するだけでは作れない見え方になります。</p>
+</section>
+<section id="novel-view">
+<p><span id="research-4"></span></p>
+<h3>NeRF</h3>
+<p>場面の見え方をNNに覚えさせる方法もあります。いろいろな角度の写真から学習し、撮影していない視点の画像を描くのがNeRFです。</p>
+<figure>
+<div class="figure-scroll" tabindex="0">
+<p><img src="../assets/spatial-nerf-simple.svg" alt="複数の角度の写真からNNが場面を学習し、撮影していない視点の画像を描く。" class="diagram-image"></p>
+</div>
+<figcaption>
+<p>NeRF：場面をNNで表し、新しい視点から描く。教材用の模式図。</p>
+</figcaption>
+</figure>
+<p>学習するのは、その場面専用のNNです。入力に3Dの位置と見る方向を与えると、その場所の色や密度を返します。密度は、そこにどれくらい物があるかの手がかりです。</p>
+<p>新しい画像を作るときは、カメラから見える方向に沿ってNNへ何度も問い合わせ、返ってきた色と密度を重ね合わせます。こうして、写真に写っていた形や模様を別の角度から描きます。</p>
+<figure>
+<video aria-label="NeRFの著者公開の新規視点合成動画" controls="" playsinline="" poster="../assets/nerf-result-poster.jpg" preload="none"><source src="../assets/nerf-result.mp4" type="video/mp4"/></video>
+<figcaption>
+<p><a href="https://www.matthewtancik.com/nerf">NeRF：colorspout ↗</a>。Mildenhall et al.（2020）の著者公開結果 colorspout_200k_rgb。撮影していない視点の生成結果。</p>
+</figcaption>
+</figure>
+<p>NNが予測するのは分類ラベルではなく、3D空間の各場所の見え方です。カメラの位置を変えて問い合わせることで、同じ物体を回り込むような映像を作れます。</p>
+<p>奥行きに応じた見え方や、物体が重なって隠れる部分、反射の変化を確認できます。生成画像の自然さと、正確な3D表面の復元は別に評価します。</p>
+</section>
+<section id="sources">
+<h2>出典・参考資料</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/2007.11898v2">Campos et al. — ORB-SLAM3: An Accurate Open-Source Library for Visual, Visual-Inertial and Multi-Map SLAM ↗</a></li>
+<li><a href="https://github.com/UZ-SLAMLab/ORB_SLAM3">ORB-SLAM3 著者実装・動画 ↗</a></li>
+<li><a href="https://www.matthewtancik.com/nerf">NeRF 著者ページ ↗</a></li>
+<li><a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/">3D Gaussian Splatting 著者ページ ↗</a></li>
+</ul>
+</section>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#slam">自分の位置と周囲の地図</a><a data-level="2" href="#space">立体的な形の復元</a><a data-level="3" href="#pointcloud">点群による表現</a><a data-level="2" href="#new-view-task">撮影していない視点の画像</a><a data-level="3" href="#gaussian-splatting">3D Gaussian Splatting</a><a data-level="3" href="#novel-view">NeRF</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</body></html>

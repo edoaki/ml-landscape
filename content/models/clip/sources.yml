@@ -1,0 +1,9 @@
+ref-001:
+  url: https://www.robots.ox.ac.uk/~vgg/data/pets/
+  label: Oxford-IIIT Pet
+  verification: 既存素材の出典・利用条件を継承。今回の移動で画像を変更していない。
+ref-002:
+  url: https://arxiv.org/html/2103.00020v1#S2
+  label: Radford et al. (2021), Learning Transferable Visual Models From Natural Language Supervision
+  verified_on: '2026-09-20'
+  verification: 原論文の手法・Figure 1・利用時の分類を確認。図と数値は従来の教材用模式図を移設。

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" role="img" aria-labelledby="title desc"><title id="title">学習ではモデルを調整し、推論では学んだモデルを使う</title><desc id="desc">教師あり学習の例。画像をモデルに入力し、予測と正解から損失を計算してパラメータを更新する。推論では新しい画像から、パラメータを固定した学習済みモデルが予測を出す。</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs><rect width="820" height="470" fill="white"/><g font-family="Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif" fill="#243b30">
+<text x="28" y="35" font-size="21" fill="#35664d" text-anchor="start" font-weight="600">学習：正解と比べてモデルを調整する</text>
+<rect x="28" y="80" width="150" height="76" rx="10" fill="#eef3e7" stroke="#35664d" stroke-width="1.5"/><text x="103.0" y="109" font-size="18" fill="#35664d" text-anchor="middle" font-weight="600">訓練用の画像</text><text x="103.0" y="135" font-size="15" fill="#35664d" text-anchor="middle" font-weight="400">入力</text>
+<rect x="242" y="80" width="150" height="76" rx="10" fill="#eef3e7" stroke="#35664d" stroke-width="1.5"/><text x="317.0" y="109" font-size="18" fill="#35664d" text-anchor="middle" font-weight="600">モデル</text><text x="317.0" y="135" font-size="15" fill="#35664d" text-anchor="middle" font-weight="400">パラメータ</text>
+<rect x="456" y="80" width="140" height="76" rx="10" fill="#eef3e7" stroke="#35664d" stroke-width="1.5"/><text x="526.0" y="109" font-size="18" fill="#35664d" text-anchor="middle" font-weight="600">予測</text><text x="526.0" y="135" font-size="15" fill="#35664d" text-anchor="middle" font-weight="400">猫・犬の確率</text>
+<rect x="660" y="80" width="132" height="76" rx="10" fill="#fbf0e8" stroke="#a65c32" stroke-width="1.5"/><text x="726.0" y="109" font-size="18" fill="#a65c32" text-anchor="middle" font-weight="600">損失</text><text x="726.0" y="135" font-size="15" fill="#a65c32" text-anchor="middle" font-weight="400">ずれを測る</text>
+<path d="M178 118 H240" fill="none" stroke="#35664d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M392 118 H454" fill="none" stroke="#35664d" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M596 118 H658" fill="none" stroke="#35664d" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="652" y="195" width="148" height="64" rx="10" fill="#fbf0e8" stroke="#a65c32" stroke-width="1.5"/><text x="726.0" y="233.0" font-size="18" fill="#a65c32" text-anchor="middle" font-weight="600">正解ラベル</text>
+<path d="M726 195 V158" fill="none" stroke="#a65c32" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M660 143 H628 V289 H317 V158" fill="none" stroke="#a65c32" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="466" y="279" font-size="16" fill="#a65c32" text-anchor="middle" font-weight="400">損失を小さくするように更新</text>
+<text x="28" y="201" font-size="16" fill="#243b30" text-anchor="start" font-weight="400">画像と正解の組を使って</text>
+<text x="28" y="226" font-size="16" fill="#243b30" text-anchor="start" font-weight="400">予測 → 比較 → 更新を繰り返す</text>
+<path d="M28 318 H792" stroke="#dfe5da"/>
+<text x="28" y="354" font-size="21" fill="#4d7897" text-anchor="start" font-weight="600">推論：学習したモデルで新しい入力を処理する</text>
+<rect x="28" y="380" width="180" height="70" rx="10" fill="#edf3f7" stroke="#4d7897" stroke-width="1.5"/><text x="118.0" y="421.0" font-size="18" fill="#4d7897" text-anchor="middle" font-weight="600">新しい画像</text>
+<rect x="303" y="380" width="214" height="70" rx="10" fill="#edf3f7" stroke="#4d7897" stroke-width="1.5"/><text x="410.0" y="409" font-size="18" fill="#4d7897" text-anchor="middle" font-weight="600">学習済みモデル</text><text x="410.0" y="435" font-size="15" fill="#4d7897" text-anchor="middle" font-weight="400">パラメータは固定</text>
+<rect x="612" y="380" width="180" height="70" rx="10" fill="#edf3f7" stroke="#4d7897" stroke-width="1.5"/><text x="702.0" y="409" font-size="18" fill="#4d7897" text-anchor="middle" font-weight="600">予測</text><text x="702.0" y="435" font-size="15" fill="#4d7897" text-anchor="middle" font-weight="400">猫・犬の確率</text>
+<path d="M208 415 H301" fill="none" stroke="#4d7897" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M517 415 H610" fill="none" stroke="#4d7897" stroke-width="2" marker-end="url(#arrow)"/>
+</g></svg>

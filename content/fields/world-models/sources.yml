@@ -1,0 +1,24 @@
+ref-001:
+  url: https://deepmind.google/research/alphago/
+  label: Google DeepMindの対局記録
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://www.nature.com/articles/nature16961
+  label: AlphaGo原論文（2016）
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://diamond-wm.github.io/
+  label: DIAMOND著者ページ
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-decision-diamond-poster.jpg:
+  url: content/fields/world-models/media/decision-diamond-poster.jpg
+  label: decision-diamond-poster.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-decision-diamond.mp4:
+  url: content/fields/world-models/media/decision-diamond.mp4
+  label: decision-diamond.mp4
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

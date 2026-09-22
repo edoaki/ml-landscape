@@ -1,0 +1,8 @@
+ref-001:
+  url: https://arxiv.org/abs/1406.2661
+  label: Generative Adversarial Networks（2014） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1611.07004
+  label: pix2pix：Image-to-Image Translation（2016） ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

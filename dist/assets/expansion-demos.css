@@ -1,0 +1,36 @@
+.exp-demo { padding: 20px; background: #f3f6ef; border: 1px solid #d2dfcc; border-radius: 10px; overflow: hidden; }
+.exp-demo [hidden] { display: none !important; }
+.exp-demo .exp-title { margin: 0 0 14px; font-weight: 700; color: #244d36; font-size: 16px; }
+.exp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 18px; }
+.exp-controls button, .exp-controls select { padding: 9px 12px; min-height: 44px; max-width: 100%; border: 1px solid #95aa8c; border-radius: 6px; background: #fff; color: #244d36; }
+.exp-controls button:disabled { opacity: .45; cursor: default; }
+.exp-controls label { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; max-width: 100%; }
+.exp-controls input { width: 170px; max-width: 100%; accent-color: #35664d; }
+.exp-counter { width: 100%; font-size: 12px; color: #4d6554; }
+.exp-stage { padding: 16px; border: 1px solid #dce5d6; border-radius: 7px; background: #fff; margin: 10px 0; animation: exp-appear .22s ease-out; }
+.exp-stage .exp-stage-title { margin-top: 0; font-weight: 650; }
+.exp-stage p, .exp-result { font-size: 14px; }
+.exp-tiles { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.exp-tile { padding: 14px 12px; border: 1px solid #cbd4c6; border-radius: 6px; background: #f5f6f3; color: #5f695b; font-size: 14px; overflow-wrap: anywhere; }
+.exp-active { background: #e5efdf; border-color: #739569; color: #244d36; font-weight: 650; }
+.exp-track { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; }
+.exp-position { padding: 8px 1px; text-align: center; border: 1px solid #c5d2be; border-radius: 5px; }
+.exp-position span, .exp-position strong, .exp-position small { display: block; }
+.exp-position strong { padding: 10px 0; }
+.exp-bars > div { margin: 12px 0; font-size: 14px; }
+.exp-bar-track { height: 20px; background: #edf1e9; border-radius: 3px; overflow: hidden; }
+.exp-bar-track i { display: block; height: 100%; background: #5e875b; }
+.exp-bars > div:nth-child(2) i { background: #547f9b; }
+.exp-demo svg { display: block; width: 100%; min-width: 0; padding: 0; background: #fff; border-radius: 6px; }
+.exp-demo svg text { font-size: 13px; fill: #45604c; }
+.exp-dot { transition: cx .3s ease, cy .3s ease; }
+.exp-cases { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 8px; }
+.exp-case { background: #e5efdf; border: 1px solid #8ca480; border-radius: 5px; padding: 10px 5px; font-size: 12px; text-align: center; transition: background .2s; }
+.exp-case span, .exp-case strong, .exp-case small { display: block; margin: 3px 0; }
+.exp-case[data-correct="0"] span:nth-of-type(2) { color: #8e401e; font-weight: 700; }
+.exp-case.exp-held { background: #f1f1ed; border-style: dashed; border-color: #a6ada1; color: #657064; }
+.exp-demo figcaption { padding: 14px 0 0; font-size: 12px; line-height: 1.8; }
+@keyframes exp-appear { from { opacity: .45; } to { opacity: 1; } }
+@media (max-width: 520px) { .exp-demo { padding: 14px; } .exp-stage { padding: 12px; } .exp-tiles { grid-template-columns: 1fr; } .exp-cases { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (prefers-reduced-motion: reduce) { .exp-stage { animation: none; } .exp-dot, .exp-case { transition: none; } }
+@media print { .exp-controls { display: none !important; } .exp-demo .exp-stage[hidden] { display: block !important; } .exp-stage { animation: none; } }

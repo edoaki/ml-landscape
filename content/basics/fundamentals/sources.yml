@@ -1,0 +1,46 @@
+media-reliability.svg:
+  url: content/basics/fundamentals/media/reliability.svg
+  label: reliability.svg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+ref-ml-basics:
+  url: https://www.deeplearningbook.org/contents/ml.html
+  label: Goodfellow, Bengio, Courville『Deep Learning』第5章：Machine Learning Basics
+  verification: 2026-09-20、著者公開サイトの章題・目次と検索で取得した本文を確認。
+media-learning-and-inference.svg:
+  url: content/basics/fundamentals/media/learning-and-inference.svg
+  label: 学習と推論の模式図
+  conditions: 本教材で作成した説明用の模式図。実測結果ではない。
+  verification: 2026-09-20、本文との対応を確認。
+media-data-splits.svg:
+  url: content/basics/fundamentals/media/data-splits.svg
+  label: 訓練・検証・テストの役割
+  conditions: 本教材で作成した説明用の模式図。実測結果ではない。
+  verification: 2026-09-20、本文との対応を確認。
+uml:
+  label: 'Shalev-Shwartz & Ben-David (2014), Understanding Machine Learning: From
+    Theory to Algorithms'
+  url: https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf
+  verified_on: '2026-09-20'
+  verification: 著者公開書籍の有限仮説集合・一様収束の枠組みを参照。数値例はHoeffding上界とunion boundから計算。
+ref-001:
+  url: https://github.com/ajithpinninti/gradient-descent-visualizer
+  label: Ajith Pinninti — Gradient Descent Visualizer ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-optimization-descent-poster.jpg:
+  url: content/basics/fundamentals/media/optimization-descent-poster.jpg
+  label: optimization-descent-poster.jpg
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+exp-adam:
+  url: https://arxiv.org/abs/1412.6980
+  label: Kingma and Ba (2015), Adam
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+zhang:
+  label: Zhang et al., Understanding deep learning requires rethinking generalization
+  url: https://arxiv.org/abs/1611.03530
+  verified_on: '2026-09-20'
+  verification: 原論文の無作為ラベルを用いる実験の位置付けを確認。

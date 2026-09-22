@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="製品検査の例で、新しいことを学びながら以前の能力を保つ継続学習を説明します。オンライン学習は、迷惑メールの判定を人の訂正から少しずつ更新する例で扱います。"><meta name="color-scheme" content="light">
+<title>継続・オンライン学習 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<link rel="stylesheet" href="../content/questions/continual-learning/components/page.css">
+</head>
+<body data-page="continual-learning" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details><summary>基礎と代表的な機械学習手法</summary><a href="../basics/fundamentals.html">学習・最適化の基本概念</a><a href="../basics/learning.html">学習の枠組み</a><a href="../basics/probabilistic-inference.html">確率モデルとベイズ推論</a><a href="../basics/classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details open><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="representation-learning.html">表現学習</a><a href="transfer-learning.html">転移と適応</a><a href="continual-learning.html" aria-current="page">継続・オンライン学習</a><a href="foundation-models.html">基盤モデルの学習・適応</a><a href="ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="robustness.html">頑健性とドメイン汎化</a><a href="uncertainty-unknowns.html">不確実性と未知への対応</a><a href="interpretability.html">説明可能性と内部機構</a><a href="safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="efficiency.html">圧縮・軽量な適応</a><a href="distributed-systems.html">分散学習・推論実行</a><a href="federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="information-geometry.html">情報幾何</a><a href="causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="datasets.html">データの設計と品質</a><a href="evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">横断的な研究を知る · <span lang="en">Continual and Online Learning</span></p><h1>継続・オンライン学習</h1><p class="lead">製品検査の例で、新しいことを学びながら以前の能力を保つ継続学習を説明します。オンライン学習は、迷惑メールの判定を人の訂正から少しずつ更新する例で扱います。</p></header>
+<h2 id="continual-example">継続学習の目的</h2>
+<p>工場で、製品の写真から「傷あり／傷なし」を判定するモデルを使うとします。1月は四角い金属板（製品A）だけを検査していましたが、2月から丸い金属部品（製品B）も検査します。Aも引き続き作るので、同じモデルで両方を検査したい状況です。</p>
+<p>Bの写真と正解だけで追加学習すると、モデルの重み（判定の仕方を決める数値）がB向けに変わり、以前は見分けられたAの傷を見逃すなど、Aの検査が下手になることがあります。<strong>継続学習</strong>は、このように新しいことを順に学びながら、以前の課題も解ける状態を保つことを目指します。</p>
+<p>毎回すべての過去データで学び直せるなら話は単純になりますが、保存容量や利用条件によって過去の写真を残せない場合もあります。「古いデータへどのくらいアクセスできるか」が方法を考える出発点です。</p>
+<section id="continual">
+<figure class="learning-figure">
+<div class="ld"><h3>同じモデルから、追加学習の方法を分けて比べる</h3><div class="ld-card"><span class="ld-tag">出発点：Aを学んだモデル</span><div class="ld-axis"><span>正解率 0%</span><span>100%</span></div><div class="ld-score"><span>旧製品A</span><strong>90%</strong></div><div class="ld-bar "><span style="width:90%"></span></div><div class="ld-score"><span>新製品B</span><strong>55%</strong></div><div class="ld-bar b"><span style="width:55%"></span></div></div><div class="ld-grid" style="margin-top:16px"><div><p>↓ <strong>Bの写真だけで追加学習</strong></p><div class="ld-card"><span class="ld-product"><svg viewBox="0 0 68 58" role="img" aria-label="製品の模式図：新製品B"><rect width="68" height="58" rx="5" fill="#f1f4ef"/><circle cx="34" cy="28" r="20" fill="#d5dfe0" stroke="#647c80" stroke-width="2"/><path d="M24 17l8 8-5 7 14 6" fill="none" stroke="#964523" stroke-width="3"/></svg><small>新製品B</small></span><div class="ld-axis"><span>正解率 0%</span><span>100%</span></div><div class="ld-score"><span>旧製品A</span><strong>60%</strong></div><div class="ld-bar "><span style="width:60%"></span></div><div class="ld-score"><span>新製品B</span><strong>90%</strong></div><div class="ld-bar b"><span style="width:90%"></span></div><p><strong>Aは30ポイント低下</strong><br>Bの改善だけでは忘却を見逃す。</p></div></div><div><p>↓ <strong>B ＋ 保存したAで追加学習</strong></p><div class="ld-card"><span class="ld-product"><svg viewBox="0 0 68 58" role="img" aria-label="製品の模式図：新製品B"><rect width="68" height="58" rx="5" fill="#f1f4ef"/><circle cx="34" cy="28" r="20" fill="#d5dfe0" stroke="#647c80" stroke-width="2"/><path d="M24 17l8 8-5 7 14 6" fill="none" stroke="#964523" stroke-width="3"/></svg><small>新製品B</small></span><span class="ld-product"><svg viewBox="0 0 68 58" role="img" aria-label="製品の模式図：Aを復習"><rect width="68" height="58" rx="5" fill="#f1f4ef"/><rect x="12" y="10" width="44" height="36" rx="5" fill="#d5dfe0" stroke="#647c80" stroke-width="2"/><path d="M24 17l8 8-5 7 14 6" fill="none" stroke="#964523" stroke-width="3"/></svg><small>Aを復習</small></span><div class="ld-axis"><span>正解率 0%</span><span>100%</span></div><div class="ld-score"><span>旧製品A</span><strong>85%</strong></div><div class="ld-bar "><span style="width:85%"></span></div><div class="ld-score"><span>新製品B</span><strong>88%</strong></div><div class="ld-bar b"><span style="width:88%"></span></div><p><strong>Aの低下を5ポイントに抑える</strong><br>過去の例も学習に混ぜる。</p></div></div></div><p class="ld-note">数値は架空。同じ出発点から分かれた二つの結果で、Bだけで学んだ結果をさらに更新して復習ありの結果になったわけではない。</p></div>
+
+<figcaption>
+<p>新旧両方の正解率を見ると、忘却と復習の効果を比較できる。数値は説明用で、改善を保証するものではない。</p>
+</figcaption>
+</figure>
+</section>
+<h2 id="forgetting-example">破滅的忘却</h2>
+<p>図の正解率は、学習に使わない同じ評価写真で測ったと仮定した教材用の値です。実験結果ではありません。Bだけで追加学習すると、Bは55%から90%へ改善していますが、Aは90%から60%へ下がっています。新しい情報を学ぶことで過去の能力を大きく失う現象を<strong>破滅的忘却</strong>と呼びます。</p>
+<p>復習ありの結果は、Aの学習後のモデルから、BとAの一部を混ぜて学んだ別の結果です。Aは85%に保たれていますが、Bは88%となり、復習によって新しい課題への合わせ方も変わり得ます。</p>
+<h2 id="continual-methods">忘却を抑える方法</h2>
+<p><strong>リプレイ</strong>では、保存したAの写真をBの練習に混ぜます。Aにも合うよう更新できる一方、保存件数と、どの写真を選ぶかが問題になります。<strong>重要な重みの変化を抑える方法</strong>では、以前の課題に大切だった部分を大きく動かさないようにします。変化を抑えすぎればBを学びにくくなります。<strong>部品を分ける方法</strong>では、B用の部品を追加するなどして干渉を減らしますが、モデルの大きさや使う部品の選択が課題になります。</p>
+<p>以前のモデルの出力を手本に残すこともできますが、旧モデルが知らなかった欠陥まで正しく教えられるわけではありません。どの能力を保持する必要があるかを定めて比べます。</p>
+<section id="online">
+<h2>オンライン学習</h2>
+<p>次は、メールが一通ずつ届く例で、モデルを更新するタイミングを考えます。すでに学習した迷惑メール判定モデルを使っていても、新しい文面の迷惑メールを見逃すことがあります。利用者が判定を訂正したとき、そのメールと正しい分類を使ってモデルを少しずつ学び直せば、その後の判定に生かせます。</p>
+<p><strong>オンライン学習</strong>は、このように順に得られるデータを使い、モデルを逐次更新する学習方法です。全データがそろうのを待ってまとめて学習する代わりに、一件ずつ、または少数件ずつ学習を進めます。ここでの「オンライン」は、インターネットへの接続ではなく、データを順に取り込むことを指します。</p>
+<figure class="learning-figure">
+<div class="ld">
+  <h3>一通の訂正を、次のメールの判定に生かす</h3>
+  <div class="ld-step">
+    <b>1</b>
+    <div><strong>メール①が届く → 今のモデルで判定</strong>
+      <p>「お荷物を保管中です。こちらから再配達の手続きを」</p>
+      <p>モデルは<strong>「通常のメール」</strong>と判定し、受信箱に入れる。この時点では正解を知らない。</p>
+    </div>
+  </div>
+  <div class="ld-step">
+    <b>2</b>
+    <div><strong>利用者が「迷惑メール」と訂正</strong>
+      <p>配送会社を装う迷惑メールだったと分かる。記録した予測と照合すると、今回の判定は<strong>不正解</strong>。</p>
+    </div>
+  </div>
+  <div class="ld-step">
+    <b>3</b>
+    <div><strong>メール①と正解で、モデルを更新</strong>
+      <p>入力はメール①の本文、正解は「迷惑メール」。この正解に近づくように、判定に使う重みを少し調整する。</p>
+    </div>
+  </div>
+  <div class="ld-step">
+    <b>4</b>
+    <div><strong>メール②は、更新したモデルで判定</strong>
+      <p>「再配達のお申し込みはこちら」という別のメールが届く。メール①から学んだ結果も使って判定する。</p>
+      <p>メール②の正解が得られたら、また評価・更新を行う。</p>
+    </div>
+  </div>
+</div>
+
+<figcaption>
+<p>教師ありオンライン学習の例。メールを分類した後に利用者から正解を得て、モデルを更新する。文面と判定は説明用の架空例。</p>
+</figcaption>
+</figure>
+<p>図の更新では、メール本文と「迷惑メール」という正解を使い、その正解を出しやすくなるように重みを調整します。訂正された一通を迷惑メールフォルダへ移すだけなら、モデルは学習していません。<strong>次に届くメールにも使う判定の仕方を変える</strong>ことが、ここでの学習です。一通からの更新だけで、似たメールを必ず見分けられるようになるわけではありません。</p>
+<p>図は誤った判定を訂正する例ですが、正しく判定できたメールも、正解が得られれば学習に使えます。正解がすぐ届かない場合は、得られた時点で更新します。</p>
+</section>
+<h3 id="online-timing">予測・評価・更新の順序</h3>
+<p>図のメール①では、更新前の「通常のメール」という予測は不正解です。更新後に同じメールを「迷惑メール」と判定できても、最初の見逃しが正解に変わるわけではありません。届いた時点での予測能力を調べるには、<strong>予測を記録 → 正解と照合して評価 → 学習に使う</strong>という順序を守ります。</p>
+<h3 id="continual-online-relation">継続学習との関係</h3>
+<p>同じ迷惑メール判定でも、オンライン学習で注目するのは「届くメールから少しずつ更新すること」です。継続学習で注目するのは「新しい手口を学んだ後も、以前の手口を見分けられること」です。新しい配送通知を装う迷惑メールから逐次学びつつ、以前からある当選通知を装う迷惑メールも見分け続けたいなら、両方の観点が必要です。</p>
+<p>ただし、すべての過去の判断を保つべきとも限りません。以前は不要だった配信メールを利用者が新たに購読したなら、そのメールに対する判断は変える必要があります。何を保ち、何に適応したいかを決めて評価します。</p>
+<p>研究では、各段階で以前のデータと新しいデータの両方に対する精度、保存容量、更新時間を調べます。最後の平均だけでなく、いつ、どの種類のメールで性能が落ちたかを見ると、忘却を見つけやすくなります。</p>
+<p><a href="https://arxiv.org/abs/1612.00796">重要な重みの変化を抑える研究例</a></p>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#continual-example">継続学習の目的</a><a data-level="3" href="#continual">同じモデルから、追加学習の方法を分けて比べる</a><a data-level="2" href="#forgetting-example">破滅的忘却</a><a data-level="2" href="#continual-methods">忘却を抑える方法</a><a data-level="2" href="#online">オンライン学習</a><a data-level="3" href="#online-timing">予測・評価・更新の順序</a><a data-level="3" href="#continual-online-relation">継続学習との関係</a></aside></div>
+</body></html>

@@ -1,0 +1,15 @@
+{
+  "mode": "file://, offline",
+  "checks": [
+    "language: forward/back/reset and end boundaries",
+    "decision-making: forward/back/reset and end boundaries",
+    "world-models: forward/back/reset and end boundaries",
+    "continual-learning: forward/back/reset and end boundaries",
+    "ensembles-experts: forward/back/reset and end boundaries",
+    "Optimization: exact two-step results, eight-step limit, rescaling and reset",
+    "Abstention: coverage/error counts, all-held edge case and keyboard input",
+    "7 demos: mobile, reduced motion, JS=True, no document overflow",
+    "7 demos: mobile, reduced motion, JS=False, no document overflow"
+  ],
+  "errors": []
+}

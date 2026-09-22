@@ -1,0 +1,40 @@
+ref-001:
+  url: https://www.robots.ox.ac.uk/~vgg/data/pets/
+  label: Oxford-IIIT Pet
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://developers.google.com/machine-learning/intro-to-ml/what-is-ml?hl=ja
+  label: Google：機械学習の概要 — 教師あり・教師なし・強化学習の入門 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://cloud.google.com/discover/what-is-reinforcement-learning?hl=ja
+  label: Google Cloud：強化学習とは — 行動・報酬・方策の説明 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://www.ibm.com/jp-ja/think/topics/machine-learning-types
+  label: IBM：機械学習の種類 — 自己教師あり学習を含む整理 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-005:
+  url: https://arxiv.org/abs/2104.14294
+  label: DINO 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-006:
+  url: https://arxiv.org/abs/2002.05709
+  label: SimCLR：対照学習の研究例 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-007:
+  url: https://arxiv.org/abs/2108.07258
+  label: 基盤モデルの位置付け ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-dino-supervised.png:
+  url: content/basics/learning/media/dino-supervised.png
+  label: dino-supervised.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+media-dino-self-supervised.png:
+  url: content/basics/learning/media/dino-self-supervised.png
+  label: dino-self-supervised.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

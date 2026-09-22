@@ -1,0 +1,50 @@
+[
+  {
+    "width": 320,
+    "javascript": false,
+    "figures": 6,
+    "overflow": false,
+    "clipped_svg_text": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "figures": 6,
+    "overflow": false,
+    "clipped_svg_text": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "javascript": false,
+    "figures": 6,
+    "overflow": false,
+    "clipped_svg_text": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "javascript": true,
+    "figures": 6,
+    "overflow": false,
+    "clipped_svg_text": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "figures": 6,
+    "overflow": false,
+    "clipped_svg_text": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "javascript": true,
+    "figures": 6,
+    "overflow": false,
+    "clipped_svg_text": [],
+    "errors": []
+  }
+]

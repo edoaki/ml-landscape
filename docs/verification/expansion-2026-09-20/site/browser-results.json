@@ -1,0 +1,41 @@
+{
+  "site": "/Users/aki/docs/ml-landscape",
+  "mode": "file://; network offline",
+  "pages": 58,
+  "views": [
+    {
+      "javascript": true,
+      "width": 1440,
+      "pages_checked": 58
+    },
+    {
+      "javascript": true,
+      "width": 390,
+      "pages_checked": 58
+    },
+    {
+      "javascript": false,
+      "width": 390,
+      "pages_checked": 58
+    },
+    {
+      "javascript": false,
+      "width": 1440,
+      "pages_checked": 58
+    }
+  ],
+  "interactions": [
+    "CNN: stride/padding recalculation",
+    "LLM: next-token stage and embedding stage",
+    "GNN: calculation replay with reduced motion",
+    "Timeseries: forecast selection, observations, anomaly pattern and threshold",
+    "Audio: offline playback, melody/backing switch and position continuity",
+    "SSM: next/reset; detailed timeline tested by test_ssm_animation.cjs",
+    "Flow Matching: frame advance/reset",
+    "Video: stored result frame switching",
+    "NeRF: offline video decode and playback",
+    "Protein: coordinate rotation",
+    "Science: wave animation slider"
+  ],
+  "errors": []
+}

@@ -1,0 +1,71 @@
+/* Concrete examples, scoped to the learning page. */
+body[data-page="learning"] .learning-figure { padding: 24px; }
+.learning-detail { margin: 16px 0 40px; border: 1px solid #cddbd1; border-radius: 10px; padding: 16px; }
+.learning-detail summary { cursor: pointer; font-weight: 600; }
+.lf-demo { color: #294337; }
+.lf-demo p { font-size: .93rem; margin: 12px 0; line-height: 1.8; }
+.lf-demo .lf-step { display: flex; gap: 10px; align-items: baseline; font-size: 1rem; font-weight: 650; margin: 24px 0 16px; }
+.lf-step:first-child { margin-top: 0; }
+.lf-step > span { display: inline-grid; place-items: center; background: #35664d; color: white; flex: 0 0 26px; height: 26px; border-radius: 50%; font-size: .85rem; }
+.lf-split { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin: 20px 0; }
+.lf-split > div { min-width: 0; }
+.lf-kicker { font-size: .85rem; font-weight: 600; color: #52685b; }
+.lf-sentence { padding: 18px 12px; background: #f3f6f1; border-radius: 6px; text-align: center; font-size: 1.12rem; line-height: 2; margin: 10px 0; }
+.lf-demo mark { background: #e0edce; color: #294337; padding: 3px 7px; border-radius: 4px; }
+.lf-mask { border: 1px dashed #6b7a70; padding: 3px 10px; background: white; }
+.lf-answer, .lf-combine { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 20px 0; }
+.lf-answer b { display: inline-block; margin: 4px; padding: 5px 12px; background: #faf0e5; }
+.lf-answer > span:last-child b { background: #e0edce; }
+.lf-demo .lf-takeaway { padding: 16px 18px; border-left: 3px solid #75956a; background: #f1f5ec; margin: 18px 0 0; }
+.lf-samples { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; max-width: 560px; margin: 16px auto; }
+.lf-sample { text-align: center; max-width: 280px; margin: 12px auto; }
+body[data-page="learning"] .lf-svg { display: block; min-width: 0; width: 100%; height: auto; font: 14px system-ui,sans-serif; fill: #294337; margin: 12px auto; }
+.lf-tag { display: inline-block; padding: 5px 10px; border: 1px solid #8ca880; border-radius: 4px; background: #edf4e9; font-size: .85rem; line-height: 1.65; }
+.lf-pseudo { background: #fff4e8; border: 1px dashed #a56d40; }
+.lf-muted { background: #f2f3f3; border-color: #bdc6c1; color: #5f6b64; }
+.lf-photo-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; max-width: 490px; margin: auto; text-align: center; }
+.lf-photo-pair > div > span { display: block; font-size: .88rem; margin-top: 10px; }
+.lf-photo { position: relative; overflow: hidden; width: 100%; max-width: 197px; aspect-ratio: 394 / 500; margin: auto; border-radius: 8px; background: #f3f5f0; }
+.lf-photo img { width: 100%; height: 100%; padding: 0; margin: 0; object-fit: cover; }
+.lf-photo-crop img { position: absolute; width: 185%; height: 185%; max-width: none; left: -59%; top: -33%; object-fit: fill; }
+.lf-demo .lf-relation { text-align: center; padding: 10px; margin: 12px auto 28px; max-width: 490px; color: #35664d; border-bottom: 3px solid #8aaa7b; }
+.lf-demo .lf-apart { color: #935a31; border-bottom-style: dashed; border-color: #c69b76; }
+.lf-mail { padding: 20px; background: #f8faf7; border: 1px solid #d1dbd2; border-radius: 8px; max-width: 480px; margin: auto; }
+.lf-mail > span { display: block; color: #647568; font-size: .8rem; border-bottom: 1px solid #d1dbd2; padding-bottom: 8px; margin-bottom: 12px; }
+.lf-demo .lf-large { font-size: 1.1rem; }
+.lf-demo .lf-rule { text-align: center; padding: 12px; background: #f1f5ec; font-weight: 600; }
+.lf-demo .lf-score { text-align: center; font-size: 1.15rem; }
+@media (max-width:650px) {
+ body[data-page="learning"] .learning-figure { padding: 16px; }
+ .lf-split { grid-template-columns: 1fr; gap: 16px; }
+ .lf-split > div + div { border-top: 1px solid #dce4da; padding-top: 16px; }
+ .lf-samples { gap: 8px; }
+ .lf-tag { font-size: .8rem; padding: 4px 6px; }
+ .lf-photo-pair { gap: 12px; }
+ .lf-demo .lf-step { font-size: .95rem; }
+ .lf-demo .lf-takeaway { padding: 12px; }
+ body[data-page="learning"] .learning-detail .compare { grid-template-columns: 1fr; }
+}
+/* DINO: actual views of one photograph, followed by comparable outputs. */
+.dino-example { color: #294337; }
+.dino-heading { font-weight: 650; text-align: center; margin: 0 0 18px; }
+.dino-views, .dino-outputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 24px; }
+.dino-view { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.dino-view > span, .dino-example small { font-size: .85rem; color: #52685b; }
+.dino-photo { width: 197px; max-width: 100%; aspect-ratio: 394 / 500; position: relative; overflow: hidden; border-radius: 8px; }
+.dino-photo img { display: block; width: 100%; height: 100%; max-width: none; object-fit: fill; padding: 0; margin: 0; }
+.dino-crop-outline { position: absolute; left: 32%; top: 18%; width: 54%; height: 54%; border: 3px solid #fff; outline: 2px solid #35664d; box-sizing: border-box; }
+.dino-close img { position: absolute; width: 185.185%; height: 185.185%; left: -59.259%; top: -33.333%; }
+.dino-outputs > div { padding-top: 12px; border-top: 2px solid #35664d; }
+.dino-outputs > div:last-child { border-color: #ba7147; }
+.dino-bars { display: grid; gap: 8px; margin: 16px 0; }
+.dino-bars span { display: grid; grid-template-columns: 1.4em minmax(0, 1fr) 2em; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.dino-bars i { height: 15px; width: var(--bar); background: #35664d; border-radius: 2px; }
+.dino-student i { background: #ba7147; }
+.dino-update { padding: 16px; background: #edf3ec; border-radius: 8px; margin-bottom: 0; }
+@media (max-width: 650px) {
+ .dino-views, .dino-outputs { gap: 12px; }
+ .dino-view strong, .dino-outputs strong { font-size: .85rem; }
+ .dino-view > span, .dino-example small { font-size: .78rem; }
+ .dino-bars span { font-size: .8rem; gap: 3px; }
+}

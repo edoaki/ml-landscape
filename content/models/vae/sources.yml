@@ -1,0 +1,12 @@
+ref-001:
+  url: https://www.deeplearningbook.org/contents/autoencoders.html
+  label: Deep Learning 第14章：Autoencoders ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1312.6114
+  label: Kingma & Welling, Auto-Encoding Variational Bayes ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://www.nature.com/articles/s41592-019-0494-8
+  label: scGen：細胞の刺激応答予測 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

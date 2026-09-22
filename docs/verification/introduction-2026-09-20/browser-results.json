@@ -1,0 +1,46 @@
+{
+  "pages_checked": 59,
+  "views": [
+    {
+      "entry": "index.html",
+      "width": 1440,
+      "javascript": true
+    },
+    {
+      "entry": "index.html",
+      "width": 390,
+      "javascript": true
+    },
+    {
+      "entry": "index.html",
+      "width": 320,
+      "javascript": true
+    },
+    {
+      "entry": "index.html",
+      "width": 390,
+      "javascript": false
+    },
+    {
+      "entry": "dist/index.html",
+      "width": 1440,
+      "javascript": true
+    },
+    {
+      "entry": "dist/index.html",
+      "width": 390,
+      "javascript": true
+    },
+    {
+      "entry": "dist/index.html",
+      "width": 320,
+      "javascript": true
+    },
+    {
+      "entry": "dist/index.html",
+      "width": 390,
+      "javascript": false
+    }
+  ],
+  "errors": []
+}

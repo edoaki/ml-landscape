@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="機械学習は、データから規則性を学び、未知のデータに対する予測や判断に役立てる方法です。モデルと学習の関係、損失関数とパラメータの更新、汎化と過学習、性能評価の基本を説明します。"><meta name="color-scheme" content="light">
+<title>学習・最適化の基本概念 | 機械学習の全体像</title>
+<link rel="stylesheet" href="../assets/katex.css"><link rel="stylesheet" href="../assets/style.css"><link rel="stylesheet" href="../assets/navigation.css"><link rel="stylesheet" href="../assets/content.css">
+<noscript><link rel="stylesheet" href="../assets/no-script.css"></noscript>
+<script src="../assets/navigation.js" defer></script>
+<script src="../assets/expansion-demos.js" defer></script><link rel="stylesheet" href="../assets/expansion-demos.css">
+</head>
+<body data-page="fundamentals" data-site-root="..">
+<a class="skip" href="#main">本文へ移動</a>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="../index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次"><p class="nav-label">目次</p><details open><summary>はじめに</summary><a href="../index.html">機械学習とは</a></details><details open><summary>基礎と代表的な機械学習手法</summary><a href="fundamentals.html" aria-current="page">学習・最適化の基本概念</a><a href="learning.html">学習の枠組み</a><a href="probabilistic-inference.html">確率モデルとベイズ推論</a><a href="classical.html">古典的な機械学習</a></details><details><summary>分野・タスクから知る</summary><p class="nav-category">データの種類</p><a href="../fields/vision.html">画像</a><a href="../fields/video.html">動画理解・生成</a><a href="../fields/spatial.html">3D・空間理解</a><a href="../fields/language.html">自然言語</a><a href="../fields/audio.html">音声・音楽</a><a href="../fields/multimodal.html">マルチモーダル</a><a href="../fields/timeseries.html">時系列</a><a href="../fields/graphs.html">グラフ</a><p class="nav-category">選択・行動</p><a href="../fields/recommendation.html">検索・推薦</a><a href="../fields/decision-making.html">意思決定・強化学習・ロボット</a><a href="../fields/world-models.html">世界モデルと計画</a><a href="../fields/combinatorial-optimization.html">組合せ最適化</a><p class="nav-category">科学への応用</p><a href="../fields/life-science.html">生命科学・分子</a><a href="../fields/science.html">物理・シミュレーション（Scientific ML）</a><a href="../fields/earth-science.html">気象予測</a></details><details><summary>横断的な研究を知る</summary><p class="nav-category">学習・適応</p><a href="../questions/representation-learning.html">表現学習</a><a href="../questions/transfer-learning.html">転移と適応</a><a href="../questions/continual-learning.html">継続・オンライン学習</a><a href="../questions/foundation-models.html">基盤モデルの学習・適応</a><a href="../questions/ensembles-experts.html">アンサンブル・専門家の組み合わせ</a><p class="nav-category">信頼性・安全性</p><a href="../questions/robustness.html">頑健性とドメイン汎化</a><a href="../questions/uncertainty-unknowns.html">不確実性と未知への対応</a><a href="../questions/interpretability.html">説明可能性と内部機構</a><a href="../questions/safety.html">安全性・公平性・プライバシー</a><p class="nav-category">効率化・学習システム</p><a href="../questions/efficiency.html">圧縮・軽量な適応</a><a href="../questions/distributed-systems.html">分散学習・推論実行</a><a href="../questions/federated-learning.html">連合学習</a><p class="nav-category">理論・推論</p><a href="../questions/information-geometry.html">情報幾何</a><a href="../questions/causal-inference.html">因果推論・因果学習</a><p class="nav-category">データ・評価</p><a href="../questions/datasets.html">データの設計と品質</a><a href="../questions/evaluation.html">評価設計・再現性</a></details><details><summary>モデルの仕組みを知る</summary><p class="nav-category">ネットワーク構造</p><a href="../models/cnn.html">CNN</a><a href="../models/rnn.html">RNN・LSTM・GRU</a><a href="../models/transformer.html">Transformer</a><a href="../models/vit.html" data-parent="transformer">ViT</a><a href="../models/gnn.html">GNN</a><a href="../models/ssm.html">SSM・Mamba</a><p class="nav-category">生成モデルの枠組み</p><a href="../models/generative-overview.html">生成モデルの全体像</a><a href="../models/vae.html">VAE</a><a href="../models/gan.html">GAN</a><a href="../models/normalizing-flow.html">Normalizing Flow</a><a href="../models/diffusion.html">Diffusion</a><a href="../models/flow-matching.html">Flow Matching</a><p class="nav-category">言語モデル</p><a href="../models/llm.html">LLM</a><p class="nav-category">マルチモーダルモデル</p><a href="../models/clip.html">CLIP</a><a href="../models/vlm.html">VLM（視覚言語モデル）</a></details></nav>
+<main class="article" id="main"><header class="hero"><p class="eyebrow">基礎と代表的な機械学習手法 · <span lang="en">Machine Learning Fundamentals</span></p><h1>学習・最適化の基本概念</h1><p class="lead">機械学習は、データから規則性を学び、未知のデータに対する予測や判断に役立てる方法です。モデルと学習の関係、損失関数とパラメータの更新、汎化と過学習、性能評価の基本を説明します。</p></header>
+<h2 id="basics">機械学習における「学習」とは</h2>
+<p>機械学習では、入力から答えを計算する<strong>モデル</strong>を、データを使って調整します。これが<strong>学習</strong>です。猫と犬の分類なら、写真と「猫」「犬」という正解を使い、新しい写真も見分けられるようにします。データに付けた正解を<strong>ラベル</strong>と呼びます。</p>
+<p>ここでは、入力と正解の組から学ぶ<strong>教師あり学習</strong>を例に、モデルを作り、使い、確かめる流れを見ます。</p>
+<h2 id="model">タスク・モデル・特徴</h2>
+<p><strong>タスク</strong>は、モデルを使って解きたい問題です。画像が猫か犬かを答えるように種類を予測するタスクを<strong>分類</strong>、住宅価格や気温のような数値を予測するタスクを<strong>回帰</strong>と呼びます。</p>
+<p>モデルは、入力から出力を計算する仕組みです。猫と犬の分類なら、入力は画像、出力はそれぞれの種類である確率などです。多くのモデルには、入力のどの情報をどの程度使うかを決める数値があり、学習によって調整するこれらの値を<strong>パラメータ</strong>と呼びます。ニューラルネットワークの重みは、その一例です。</p>
+<p>モデルが扱えるように、データの性質を数値で表したものを<strong>特徴</strong>や<strong>表現</strong>と呼びます。画像なら、色や輪郭、模様などが手がかりになります。人が使う特徴を設計する方法もあれば、深層学習のように、予測に役立つ表現を作る処理そのものを学習する方法もあります。</p>
+<h2 id="inference">学習と推論</h2>
+<p>学習したモデルを使い、入力から予測などの出力を得る処理を<strong>推論</strong>と呼びます。猫と犬の分類なら、学習では画像と正解を使ってパラメータを調整し、推論では新しい画像だけを入力して猫か犬かを予測します。通常の推論では、学習済みのパラメータを固定して計算します。</p>
+<p>学習と推論を区別すると、モデルを作るために必要な情報と、できあがったモデルを使うために必要な情報が分かります。正解ラベルは学習や評価で必要でも、利用時の入力には含まれません。</p>
+<h2 id="loss">損失関数と学習の進め方</h2>
+<p>モデルを改善するには、出力がどのくらい望ましいものかを測る必要があります。<strong>損失関数</strong>は、学習で小さくしたい量を定める関数です。教師あり学習では、予測と正解のずれを測るものを使います。例えば数値を予測する回帰では、予測値と正解の差を二乗した値を損失にできます。</p>
+<p>ニューラルネットワークなどでは、次の処理を繰り返して学習します。</p>
+<ol>
+<li>訓練用のデータをモデルに入力し、予測を計算する。</li>
+<li>予測と正解を比べ、損失を計算する。</li>
+<li>多くの訓練例での損失を小さくするように、パラメータを更新する。</li>
+</ol>
+<p>猫と犬の分類でも、正解の種類に高い確率を割り当てるほど損失が小さくなる関数を使い、予測を改善していきます。このようにモデルを調整する具体的な手続きを<strong>学習アルゴリズム</strong>と呼びます。損失関数は「何を小さくしたいか」、学習アルゴリズムは「どう調整するか」を定めます。</p>
+<figure>
+<div class="figure-scroll" tabindex="0" role="region" aria-label="学習時の予測・比較・更新と、推論時の処理の違い">
+<p><img src="../content/basics/fundamentals/media/learning-and-inference.svg" alt="学習時の予測・比較・更新と、推論時の処理の違い" class="diagram-image"></p>
+</div>
+<figcaption>教師あり学習の模式図。上段では予測と正解から損失を計算し、パラメータを更新します。下段は学習後の利用（推論）です。正解ラベルを入力せず、通常はパラメータを固定して予測します。</figcaption>
+</figure>
+<h2 id="optimization">パラメータの更新と学習率</h2>
+<p>損失を小さくするためにパラメータを調整する計算を<strong>最適化</strong>と呼びます。猫と犬を見分けるモデルでも、どの重みをどちらへ動かすと損失が減るかを調べて更新します。一つの重みを少し増やしたときの損失の変化率が微分で、それを全パラメータ分並べたものが<strong>勾配</strong>です。</p>
+<p><strong>勾配降下法</strong>は、勾配が示す損失の増加方向と逆へ重みを動かす方法です。一回に動かす幅を調整するのが<strong>学習率</strong>です。小さすぎると改善に時間がかかり、大きすぎると損失が増えたり更新が不安定になったりします。</p>
+<details>
+<summary>詳しく：更新の式・学習率の操作例・代表的な更新法</summary>
+<h3 id="gradient-descent">勾配降下法の計算</h3>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>θ</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>θ</mi><mi>t</mi></msub><mo>−</mo><mi>η</mi><mi mathvariant="normal">∇</mi><mi>L</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\theta_{t+1} = \theta_t - \eta\nabla L(\theta_t)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9028em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">η</span><span class="mord">∇</span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></div>
+<p>θはパラメータ全体、tは更新回数、Lは損失、η（イータ）は更新幅を決める<strong>学習率</strong>、∇Lは勾配です。「今の重みから、学習率×勾配を引く」と読みます。損失が増える方向の逆へ進むための計算です。</p>
+<figure>
+<video style="display:block;max-width:100%;height:auto" aria-label="3Dの損失地形を点が下る最適化の動画" controls="" loop="" playsinline="" poster="../content/basics/fundamentals/media/optimization-descent-poster.jpg" preload="metadata"><source src="../assets/optimization-descent.webm" type="video/webm"/>動画を再生できません。</video>
+<figcaption>
+<p><strong>山の高さ＝損失。地形上の点＝現在のパラメータ。</strong>横方向の二つの座標を更新すると、点が斜面を下り、損失の小さい谷へ近づきます。色の違う軌跡はSGD・Momentum・RMSProp・Adamによる進み方の違い、下のグラフは更新に伴う損失の変化です。二変数の関数で最適化を可視化した例で、どの方法が速いかは地形や学習率によって変わります。出典：<a href="https://github.com/ajithpinninti/gradient-descent-visualizer">Ajith Pinninti — Gradient Descent Visualizer ↗</a>（MIT）。</p>
+</figcaption>
+</figure>
+<h3 id="learning-rate-demo">学習率と更新幅</h3>
+<p>理解のため、一つの数wだけを調整し、損失をL(w)=w²とします。最小点はw=0、勾配は2wなので、「次のw＝今のw−学習率×2w」です。実際のニューラルネットワークより単純にした例です。</p>
+<figure class="exp-demo exp-optimization" aria-label="学習率と更新の軌跡">
+<p class="exp-title">学習率による更新の比較</p>
+<div class="exp-controls" hidden><label>学習率 <select class="exp-rate"><option value="0.1">0.1：小さく進む</option><option value="0.75">0.75：行き来して近づく</option><option value="1.1">1.1：離れていく</option></select></label><button type="button" data-exp="next">1回更新</button><button type="button" data-exp="reset">最初へ</button></div>
+<svg viewBox="0 0 560 250" role="img" aria-label="横軸は重みw、縦軸は損失wの二乗。出発点はwが2、損失4。"><path d="M 35.00,40.00 L 39.90,46.93 L 44.80,53.72 L 49.70,60.37 L 54.60,66.88 L 59.50,73.25 L 64.40,79.48 L 69.30,85.57 L 74.20,91.52 L 79.10,97.33 L 84.00,103.00 L 88.90,108.53 L 93.80,113.92 L 98.70,119.17 L 103.60,124.28 L 108.50,129.25 L 113.40,134.08 L 118.30,138.77 L 123.20,143.32 L 128.10,147.73 L 133.00,152.00 L 137.90,156.13 L 142.80,160.12 L 147.70,163.97 L 152.60,167.68 L 157.50,171.25 L 162.40,174.68 L 167.30,177.97 L 172.20,181.12 L 177.10,184.13 L 182.00,187.00 L 186.90,189.73 L 191.80,192.32 L 196.70,194.77 L 201.60,197.08 L 206.50,199.25 L 211.40,201.28 L 216.30,203.17 L 221.20,204.92 L 226.10,206.53 L 231.00,208.00 L 235.90,209.33 L 240.80,210.52 L 245.70,211.57 L 250.60,212.48 L 255.50,213.25 L 260.40,213.88 L 265.30,214.37 L 270.20,214.72 L 275.10,214.93 L 280.00,215.00 L 284.90,214.93 L 289.80,214.72 L 294.70,214.37 L 299.60,213.88 L 304.50,213.25 L 309.40,212.48 L 314.30,211.57 L 319.20,210.52 L 324.10,209.33 L 329.00,208.00 L 333.90,206.53 L 338.80,204.92 L 343.70,203.17 L 348.60,201.28 L 353.50,199.25 L 358.40,197.08 L 363.30,194.77 L 368.20,192.32 L 373.10,189.73 L 378.00,187.00 L 382.90,184.13 L 387.80,181.12 L 392.70,177.97 L 397.60,174.68 L 402.50,171.25 L 407.40,167.68 L 412.30,163.97 L 417.20,160.12 L 422.10,156.13 L 427.00,152.00 L 431.90,147.73 L 436.80,143.32 L 441.70,138.77 L 446.60,134.08 L 451.50,129.25 L 456.40,124.28 L 461.30,119.17 L 466.20,113.92 L 471.10,108.53 L 476.00,103.00 L 480.90,97.33 L 485.80,91.52 L 490.70,85.57 L 495.60,79.48 L 500.50,73.25 L 505.40,66.88 L 510.30,60.37 L 515.20,53.72 L 520.10,46.93 L 525.00,40.00" class="exp-curve" fill="none" stroke="#9baea3" stroke-width="2"/><line x1="35" y1="215" x2="525" y2="215" stroke="#657568"/><line x1="280" y1="35" x2="280" y2="215" stroke="#dfe5da"/><text x="12" y="25">損失 L(w)</text><text x="450" y="244">重み w →</text><text class="exp-xmin" x="35" y="237">−3</text><text x="278" y="237">0</text><text class="exp-xmax" x="507" y="237">3</text><text class="exp-ymax" x="5" y="50">9</text><polyline class="exp-trail" fill="none" stroke="#35664d" stroke-width="3"/><circle class="exp-dot" cx="443.33" cy="137.22" r="7" fill="#ba7147"/></svg>
+<p class="exp-result" role="status" aria-live="polite">0回更新：w＝2、損失＝4。</p>
+<figcaption>この関数の更新を実際に計算します。最大8回。大きく離れた場合は軸の範囲も広がります。静的な例：学習率0.1で2→1.6→1.28、0.75で2→−1→0.5、1.1で2→−2.4→2.88。</figcaption></figure>
+<p>学習率0.1なら2→1.6→1.28と近づき、0.75なら2→−1→0.5と左右を行き来しながら近づきます。1.1なら2→−2.4→2.88と離れていきます。「最小点を一回越えた」ことと「発散する」ことは同じではありません。この関数の収束条件を、そのまま複雑なモデルへ当てはめることもできません。</p>
+<h3 id="optimizer-methods">ミニバッチと更新法</h3>
+<p>全写真を毎回読み直して更新方向を求めると高価なので、少数の写真のまとまりである<strong>ミニバッチ</strong>を使います。SGD（確率的勾配降下法）では、この一部のデータから計算した勾配で更新します。選ばれた写真が毎回違うため、更新方向は揺らぎます。</p>
+<p><strong>Momentum</strong>は、過去の更新方向を蓄積して、一貫して下がる方向へ進みやすくする方法です。左右への揺れをならせる場合があります。<strong>Adam</strong>は、勾配の平均と二乗の平均を移動平均で追い、成分ごとの更新の尺度を調整します。勾配の大きさが違う重みを扱いやすくする狙いがありますが、どの方法でも学習率などの設定が重要です。</p>
+<p>更新が大きすぎる場合は学習率を下げる、極端に大きな勾配を一定範囲に抑える、入力の尺度を整えるといった工夫を考えます。数値が不安定な原因と、訓練データへ合いすぎる原因は分けて調べます。</p>
+<p><a href="https://arxiv.org/abs/1412.6980">Adamの原論文</a></p>
+</details>
+<h2 id="generalization">汎化と過学習</h2>
+<p>学習に使っていないデータに対しても、適切に予測できることを<strong>汎化</strong>と呼びます。猫と犬の分類では、訓練用の画像だけでなく、別に撮影された画像でも見分けられることが目標です。</p>
+<p><strong>過学習</strong>は、訓練データの細部や偶然の偏りに適合しすぎて、未知のデータでは十分な性能が得られない状態です。例えば、訓練画像にたまたま「猫は室内、犬は屋外」という偏りがあると、動物の姿より背景に頼るモデルができるかもしれません。そのモデルは訓練画像をよく分類できても、屋外の猫や室内の犬を間違えやすくなります。</p>
+<p>一方、モデルが単純すぎたり、学習が不十分だったりして、訓練データの傾向も十分に捉えられない状態を<strong>未学習（アンダーフィッティング）</strong>と呼びます。</p>
+<p>過学習を抑えるには、多様な訓練データを集める、モデルの複雑さを調整する、学習を適切な時点で止める、といった方法があります。また、重みが極端に大きくならないようにするなど、学習に制約を加える工夫を<strong>正則化</strong>と呼びます。訓練データでの損失が小さいことだけでは、汎化がよいとは判断できません。更新や損失がある値へ落ち着くことを<strong>収束</strong>と呼びますが、収束していることも、未知の画像を正しく見分けられる保証にはなりません。</p>
+<h2 id="evaluation-basics">訓練・検証・テスト</h2>
+<p>未知のデータでの性能を調べるために、データを用途に応じて分けます。代表的なのが、訓練・検証・テストの三つです。</p>
+<figure>
+<div class="figure-scroll" tabindex="0" role="region" aria-label="訓練はモデルを作り、検証は選び、テストは最終性能を確かめる">
+<p><img src="../content/basics/fundamentals/media/data-splits.svg" alt="訓練はモデルを作り、検証は選び、テストは最終性能を確かめる" class="diagram-image"></p>
+</div>
+<figcaption>データの役割を示す模式図。三つのデータはあらかじめ分けます。検証結果をもとに設定を変更して訓練をやり直すことはありますが、テスト結果はその選択に使いません。</figcaption>
+</figure>
+<table>
+<thead>
+<tr>
+<th>データ</th>
+<th>役割</th>
+<th>猫と犬の分類での使い方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>訓練データ</td>
+<td>モデルを学習させる</td>
+<td>画像と正解を使ってパラメータを調整する</td>
+</tr>
+<tr>
+<td>検証データ</td>
+<td>モデルや学習の設定を選ぶ</td>
+<td>学習に使わなかった画像で比べ、モデルの大きさや学習を止める時点を選ぶ</td>
+</tr>
+<tr>
+<td>テストデータ</td>
+<td>選び終えたモデルの性能を評価する</td>
+<td>選択に使わなかった画像で、最終的な性能を調べる</td>
+</tr>
+</tbody>
+</table>
+<p>モデルの大きさや、パラメータの更新幅を決める学習率など、学習の進め方を左右する設定を<strong>ハイパーパラメータ</strong>と呼びます。これらは、訓練によって求めるパラメータと区別し、検証データでの性能などをもとに選びます。</p>
+<p>分類なら正解率、回帰なら予測値と正解の誤差など、タスクに合った<strong>評価指標</strong>で性能を測ります。学習に使う損失と、利用時の性能を判断する評価指標は、同じとは限りません。</p>
+<p>テスト結果を見ながら設定を何度も変更すると、テストデータも実質的にモデル選びに使ったことになります。また、同じ画像やほぼ同じ画像が訓練とテストの両方に入ると、未知の画像への性能を正しく測れません。データを分ける際には、実際の利用場面を考えて、評価用のデータが学習や設定の選択に混ざらないようにします。</p>
+<h2 id="outputs">予測・生成・意思決定</h2>
+<p>機械学習の用途は、猫と犬の分類に限りません。数値や種類を予測するほか、文章や画像を作る<strong>生成</strong>や、ロボットの動作などを選ぶ<strong>意思決定</strong>にも使われます。文章生成ではそれまでの文章に続く語を予測するなど、これらの処理は組み合わせて使われることもあります。</p>
+<p>何を入力し、どのような出力を得たいかによって、必要なデータ、モデル、学習の目標、評価の方法が変わります。いずれの場合も、学習に使ったデータへの適合だけでなく、目的とする利用場面で役立つかを確かめることが基本になります。</p>
+<details>
+<summary>補足：表形式データの前処理</summary>
+<h2 id="preprocessing">入力データの表現・前処理</h2>
+<p>データをモデルが扱える形に整える処理を<strong>前処理</strong>と呼びます。画像のほかに、設備の記録から24時間以内の故障を予測する例を考えます。一行を一台の設備の記録、各列を使用年数・機種・温度などとする表では、予測の手がかりとなる列を<strong>特徴量</strong>、予測したい故障の有無を<strong>目的変数</strong>と呼びます。目的変数は正解として使い、入力の特徴量には含めません。</p>
+<p>同じ記録でも、値の意味に合わせて表現を選びます。</p>
+<ul>
+<li><strong>数値</strong>：温度や使用年数。ニューラルネットワークなどでは、値の尺度の違いが学習に影響するため、平均を引いて標準偏差で割るなどして尺度をそろえることがあります。</li>
+<li><strong>カテゴリ</strong>：小型・大型などの機種。単に0、1と番号を付けても、数量や大小関係を意味しません。種類ごとに別の成分を用意して該当する成分だけを1にするone-hot表現や、種類を学習可能なベクトルに変える埋め込みを使います。</li>
+<li><strong>欠測</strong>：記録されていない温度など。代表値で補い、欠測の有無も別の特徴量として渡す方法があります。0で埋めるだけでは、実際に0℃だった場合と区別できません。センサ故障など、記録されなかった理由も確認します。</li>
+</ul>
+<p>必要な前処理はモデルによって異なり、欠測を直接扱えるモデルもあります。補完に使う代表値や尺度をそろえるための平均・標準偏差は、訓練データだけから求めます。新しい設備の記録にも、その同じ値を使って前処理してから予測します。</p>
+</details>
+<details>
+<summary>補足：データ数とモデルの容量</summary>
+<h2 id="capacity">データ数とモデルの容量</h2>
+<p><strong>訓練誤差</strong>は学習に使ったデータでの誤り、<strong>汎化誤差</strong>は想定する対象から新しく得られるデータでの平均的な誤りです。テストデータで後者を推定する一方、学習理論では、データ数やモデルの自由度をもとに両者の差を調べます。</p>
+<p><strong>モデルの容量</strong>は、どれほど多様な規則を表せるかという自由度です。容量が大きいと複雑な関係を表せますが、データ中の偶然にも合わせやすくなります。データが増えると、偶然の規則を見分けやすくなります。</p>
+<p>猫と犬の画像を分ける規則を、あらかじめ10通り用意して比べる場合を考えます。同じ100枚で1万通りを試す場合には、たまたまその100枚に合う規則を見つける機会も増えます。訓練でよく当たったという結果だけで、新しい画像でも当たると判断しにくくなるわけです。</p>
+<p>理論では、<strong>試せる規則の広さに対して、どのくらいデータがあれば、訓練での成績を信頼できるか</strong>を考えます。例えば候補を固定した基本設定では、データ数を4倍にすると、訓練と未知のデータでの誤差の差を見積もる上限の項は半分になります。実際の誤りが必ず半分になるという意味ではありません。</p>
+<details>
+<summary>候補を有限個に限定した場合の数式</summary>
+<p>簡単な例として、分類器の候補をあらかじめM個に限定します。n個の訓練例が同じ分布から独立に得られ、誤りを0か1で数えるとき、確率1−δ以上で全候補に次が成り立ちます。</p>
+<div class="equation" tabindex="0" aria-label="数式（横にスクロールできます）"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>h</mi><mo stretchy="false">)</mo><mo>≤</mo><mover accent="true"><mi>R</mi><mo stretchy="true">^</mo></mover><mo stretchy="false">(</mo><mi>h</mi><mo stretchy="false">)</mo><mo>+</mo><msqrt><mfrac><mrow><mi>log</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>M</mi><mi mathvariant="normal">/</mi><mi>δ</mi><mo stretchy="false">)</mo></mrow><mrow><mn>2</mn><mi>n</mi></mrow></mfrac></msqrt></mrow><annotation encoding="application/x-tex">R(h)\leq \widehat{R}(h)+\sqrt{\frac{\log(M/\delta)}{2n}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal">h</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1733em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9233em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span><span class="svg-align" style="width:calc(100% - 0.1667em);margin-left:0.1667em;top:-3.6833em;"><span class="pstrut" style="height:3em;"></span><span style="height:0.24em;"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="0.24em" viewBox="0 0 1062 239" preserveAspectRatio="none"><path d="M529 0h5l519 115c5 1 9 5 9 10 0 1-1 2-1 3l-4 22
+c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">h</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.44em;vertical-align:-0.7356em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.7044em;"><span class="svg-align" style="top:-4.4em;"><span class="pstrut" style="height:4.4em;"></span><span class="mord" style="padding-left:1em;"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord mathnormal">n</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top:-3.6644em;"><span class="pstrut" style="height:4.4em;"></span><span class="hide-tail" style="min-width:1.02em;height:2.48em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="2.48em" viewBox="0 0 400000 2592" preserveAspectRatio="xMinYMin slice"><path d="M424,2478
+c-1.3,-0.7,-38.5,-172,-111.5,-514c-73,-342,-109.8,-513.3,-110.5,-514
+c0,-2,-10.7,14.3,-32,49c-4.7,7.3,-9.8,15.7,-15.5,25c-5.7,9.3,-9.8,16,-12.5,20
+s-5,7,-5,7c-4,-3.3,-8.3,-7.7,-13,-13s-13,-13,-13,-13s76,-122,76,-122s77,-121,77,-121
+s209,968,209,968c0,-2,84.7,-361.7,254,-1079c169.3,-717.3,254.7,-1077.7,256,-1081
+l0 -0c4,-6.7,10,-10,18,-10 H400000
+v40H1014.6
+s-87.3,378.7,-272.6,1166c-185.3,787.3,-279.3,1182.3,-282,1185
+c-2,6,-10,9,-24,9
+c-8,0,-12,-0.7,-12,-2z M1001 80
+h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7356em;"><span></span></span></span></span></span></span></span></span></span></div>
+<p>R(h)は汎化誤差、Rに帽子を付けた記号は訓練誤差、δは保証が外れる確率の上限、logは自然対数です。右端は、候補が増えると大きく、データが増えると小さくなります。</p>
+<p>この式は誤差の上限を示します。NNの重みの数をMに代入することはできません。<a href="https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf">教科書</a></p>
+<p>例えば候補M=10、δ=0.05なら、n=100で右端の項は約0.163、n=400で約0.081です。訓練誤差に足す余裕が小さくなる、と読めます。数値は上の式を読むための計算例です。</p>
+</details>
+<p>この保証は、訓練例と新しい例が同じ分布から得られることを前提にしています。昼間の画像についての保証が、そのまま夜間の画像にも成り立つとは限りません。</p>
+<h3 id="implicit-bias">学習方法が選ぶ解と汎化</h3>
+<p>訓練データによく合う重みの組が複数あるとき、どれが選ばれるかによって、未知のデータでの予測は変わり得ます。モデルの構造や学習方法が持つ「どんな規則を選びやすいか」という性質を<strong>帰納バイアス</strong>と呼びます。重みへの罰則を損失に加える正則化に加え、更新方法自体がどのような解を選びやすいかも研究の対象です。</p>
+<p>例えば画像分類について、<a href="https://arxiv.org/abs/1611.03530">Zhangらの実験</a>では、大きなニューラルネットワークが無作為に付けた正解ラベルさえ記憶できることが示されました。一方、正しいラベルで学ぶと汎化する場合があります。表せる規則の多さという容量だけでは、この違いを説明しきれません。</p>
+<p>深層学習の理論では、データの構造、学んだ特徴、最適化が選ぶ解の性質などから、この違いを調べています。訓練損失が同程度でも、どのような予測の仕方を学んだかが重要になります。こうした実験での観察と、特定の前提のもとで成り立つ理論的な保証は区別する必要があります。</p>
+</details>
+<h2 id="sources">出典・参考資料</h2>
+<ul>
+<li><a href="https://www.deeplearningbook.org/contents/ml.html">Goodfellow, Bengio, Courville『Deep Learning』第5章：Machine Learning Basics ↗</a> — 学習アルゴリズム、過学習、検証データなどの基礎。</li>
+</ul>
+
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#basics">機械学習における「学習」とは</a><a data-level="2" href="#model">タスク・モデル・特徴</a><a data-level="2" href="#inference">学習と推論</a><a data-level="2" href="#loss">損失関数と学習の進め方</a><a data-level="2" href="#optimization">パラメータの更新と学習率</a><a data-level="2" href="#generalization">汎化と過学習</a><a data-level="2" href="#evaluation-basics">訓練・検証・テスト</a><a data-level="2" href="#outputs">予測・生成・意思決定</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</body></html>

@@ -1,0 +1,21 @@
+ref-001:
+  url: https://www.robots.ox.ac.uk/~vgg/data/pets/
+  label: Oxford-IIIT Pet
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/html/2103.00020v1#S2
+  label: CLIP原論文の手法とFigure 1
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+inherited-ref-002:
+  url: https://llava-vl.github.io/
+  label: LLaVA：公開結果と実装 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+inherited-ref-003:
+  url: https://arxiv.org/abs/2103.00020
+  label: CLIP：画像と言語の照合 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+
+clip-limitations:
+  url: https://openai.com/index/clip/
+  label: 'CLIP: Connecting text and images — Limitations'
+  verification: 2026-09-22に公式解説のLimitationsを確認。物体の個数を数える課題についての記述を参照。教材のカップ図は独自の模式例で、CLIPの実験結果ではない。

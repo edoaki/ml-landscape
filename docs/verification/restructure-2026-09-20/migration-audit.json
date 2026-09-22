@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-20",
+  "baseline": "移行前の現在の生成済みHTMLとassetsを作業開始時に保存して比較。QA.mdは根拠に使用していない。",
+  "dom_counts": {
+    "svg": {
+      "before": 153,
+      "after": 153
+    },
+    "img": {
+      "before": 47,
+      "after": 47
+    },
+    "video": {
+      "before": 13,
+      "after": 13
+    },
+    "audio": {
+      "before": 11,
+      "after": 11
+    },
+    "button": {
+      "before": 26,
+      "after": 26
+    },
+    "input": {
+      "before": 5,
+      "after": 5
+    },
+    "select": {
+      "before": 5,
+      "after": 5
+    },
+    "annotation": {
+      "before": 38,
+      "after": 38
+    }
+  },
+  "math_tex_multiset_equal": true,
+  "external_source_urls": {
+    "before": 122,
+    "after": 122,
+    "missing": []
+  },
+  "original_asset_files_retained": 161,
+  "changed_original_assets": [
+    "style.css"
+  ],
+  "page_local_media_byte_identical": 50,
+  "unused_import_components_removed": [],
+  "notes": [
+    "研究例13件を分野へ移動。図・操作の新作や過去版からの復活はしていない。",
+    "本文・キャプション・表の文字列も照合。変更箇所は別教材参照の除去、分割に伴う接続、GPT計算量の配置、古いナビゲーション案内。",
+    "LLMの静止図を操作領域の外へ出し、JS無効時の表示を修正。"
+  ]
+}

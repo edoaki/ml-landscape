@@ -1,0 +1,18 @@
+/* GNN: persistent graph and adjacent working, without paging. */
+.gnn-calc{margin:32px 0;padding:24px 0;border-top:1px solid var(--line)}
+.gnn-calc h3{margin:0 0 12px}.gnn-purpose{font-weight:600;color:var(--green);margin:0 0 20px}
+.gnn-calc-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
+.gnn-graph-panel{min-width:0;position:sticky;top:90px}.gnn-value-graph svg{display:block;width:100%;height:auto;min-width:0}
+.gnn-working{min-width:0;background:#f4f7ee;border:1px solid #d6e1cd;border-radius:10px;padding:18px}.gnn-working p{font-size:14px;line-height:1.9}.gnn-working p:first-child{margin-top:0}
+.gnn-working .equation{padding:12px;font-size:13px;background:white}.gnn-working .table-scroll{margin:16px 0}.gnn-working th,.gnn-working td{padding:8px;font-size:12px}.gnn-working th:first-child,.gnn-working td:first-child{min-width:45px}
+.gnn-replay{display:block;margin:10px auto;border:1px solid #bacbae;background:white;color:var(--green);border-radius:6px;padding:9px 14px;cursor:pointer}.gnn-replay[hidden]{display:none}.gnn-replay:disabled{opacity:.5}
+.gnn-pipeline{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}.gnn-pipeline>div{flex:1 1 150px;min-width:0;border:1px solid #bcccb4;background:white;border-radius:8px;padding:16px}.gnn-pipeline strong{display:block;font-size:14px;color:var(--green);margin-bottom:9px}.gnn-pipeline span{font-size:14px;overflow-wrap:anywhere}
+.gnn-running .gnn-node rect{stroke-width:3}.gnn-running .gnn-edge{stroke-dasharray:8 5;animation:gnn-flow .7s linear infinite}
+@keyframes gnn-flow{to{stroke-dashoffset:26}}
+@media(max-width:1200px){.gnn-calc-layout{grid-template-columns:1fr}.gnn-graph-panel{position:static}.gnn-value-graph{max-width:600px;margin:auto}}
+@media(prefers-reduced-motion:reduce){.gnn-running .gnn-edge{animation:none}}
+@media print{.gnn-replay{display:none}.gnn-graph-panel{position:static}.gnn-calc-layout{grid-template-columns:1fr 1fr}.gnn-calc{break-inside:avoid}}
+
+.gnn-animation-note{font-size:11px;line-height:1.7;color:var(--muted);text-align:center;margin:8px 12px}
+
+.gnn-change-legend{font-size:12px;line-height:1.8;text-align:center;color:#975026;margin:6px 8px 14px}.gnn-change-legend strong{display:inline-block;background:#fff0df;border:2px solid #b6531d;border-radius:5px;padding:3px 9px}

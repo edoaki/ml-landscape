@@ -1,0 +1,24 @@
+/* Page-local figures: keep each comparison readable without scripting. */
+.rep-figure { background: #fafbf6; }
+.rep-figure .figure-scroll img { display: block; width: 100%; min-width: 760px; max-width: none; }
+.rep-figure .figure-scroll p { margin: 0; }
+.rep-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 20px; }
+.rep-card { min-width: 0; background: white; border: 1px solid #dfe5da; border-radius: 10px; padding: 18px; }
+.rep-card h3 { margin: 0 0 12px; font-size: 17px; }
+.rep-card p { margin: 10px 0 0; font-size: 14px; line-height: 1.8; }
+.rep-figure .rep-card svg { display: block; width: 100%; height: auto; min-width: 0; padding: 0; font-family: system-ui, sans-serif; }
+.rep-card svg text { fill: #243b30; }
+.rep-details { border-left: 3px solid #9caf90; padding: 10px 18px; margin: 20px 0; }
+.rep-details summary { cursor: pointer; }
+.rep-details p { font-size: 14px; }
+@media (max-width: 1000px) {
+  .rep-cards { grid-template-columns: 1fr; }
+}
+@media (max-width: 650px) {
+  .rep-cards { padding: 12px; gap: 12px; }
+  .rep-card { padding: 14px; }
+}
+
+/* Full-width teaching diagrams follow their own explanations. */
+.rep-wide svg { display: block; width: 100%; min-width: 760px; height: auto; padding: 20px 12px; }
+.rep-wide { overflow-x: auto; }

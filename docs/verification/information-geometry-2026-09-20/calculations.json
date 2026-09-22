@@ -1,0 +1,39 @@
+{
+  "densities_and_metric": [
+    {
+      "mean": 500,
+      "sigma": 1,
+      "density_integral": 0.9999999999999999,
+      "fisher_numeric": [
+        1.0000000000000002,
+        2.0,
+        -2.4211625136518795e-17
+      ]
+    },
+    {
+      "mean": 502,
+      "sigma": 1,
+      "density_integral": 0.9999999999999999,
+      "fisher_numeric": [
+        1.0000000000000002,
+        2.0,
+        -2.4211625136518795e-17
+      ]
+    },
+    {
+      "mean": 500,
+      "sigma": 4,
+      "density_integral": 1.0,
+      "fisher_numeric": [
+        0.0625,
+        0.125,
+        -1.4089845569974805e-18
+      ]
+    }
+  ],
+  "straight_length": 6,
+  "geodesic_length_numeric": 4.233056291429784,
+  "fisher_rao_distance": 4.233056344196924,
+  "peak_sigma": 2.345207879911715,
+  "equal_variance_KL_numeric": 0.00031249999999999784
+}

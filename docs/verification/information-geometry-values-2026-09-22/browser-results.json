@@ -1,0 +1,38 @@
+[
+  {
+    "width": 320,
+    "javascript": false,
+    "overflow": false,
+    "clipped_svg_text": []
+  },
+  {
+    "width": 320,
+    "javascript": true,
+    "overflow": false,
+    "clipped_svg_text": []
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "overflow": false,
+    "clipped_svg_text": []
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "overflow": false,
+    "clipped_svg_text": []
+  },
+  {
+    "width": 1440,
+    "javascript": false,
+    "overflow": false,
+    "clipped_svg_text": []
+  },
+  {
+    "width": 1440,
+    "javascript": true,
+    "overflow": false,
+    "clipped_svg_text": []
+  }
+]

@@ -1,0 +1,25 @@
+ref-001:
+  url: https://arxiv.org/abs/1503.02531
+  label: 知識蒸留 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1712.05877
+  label: 整数量子化の研究例 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/2106.09685
+  label: LoRA ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://arxiv.org/abs/2205.14135
+  label: FlashAttention ↗
+  verification: 2026-09-20に原論文v2の第2.2・3.1節で、HBM/SRAM、タイリング、softmaxの統計量と倍率補正、逆伝播時の再計算を確認。
+ref-005:
+  url: https://arxiv.org/abs/2007.14062
+  label: Big Bird — Transformers for Longer Sequences（Zaheer et al., NeurIPS 2020）
+  verification: 2026-09-20に原論文とGoogle Researchの著者解説で、local・global・randomの参照、線形計算量の条件、ブロック単位の実装を確認。掲載図は独自の教材用模式図。
+  supporting_url: https://research.google/blog/constructing-transformers-for-longer-sequences-with-sparse-attention-methods/
+ref-006:
+  url: https://arxiv.org/abs/2004.05150
+  label: Longformer — The Long-Document Transformer（Beltagy et al., 2020）
+  verification: 2026-09-20に原論文v2の第3.1・6節で、sliding window、双方向のglobal attention、質問応答・分類での位置指定、線形計算量の条件を確認。

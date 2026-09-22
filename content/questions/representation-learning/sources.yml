@@ -1,0 +1,15 @@
+ref-001:
+  url: https://www.robots.ox.ac.uk/~vgg/data/pets/
+  label: Oxford-IIIT Pet
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+exp-geometric:
+  url: https://arxiv.org/abs/2104.13478
+  label: Bronstein et al. (2021), Geometric Deep Learning
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。
+mnist:
+  url: https://github.com/cvdfoundation/mnist
+  label: MNIST database / CVDF mirror
+  verified_on: '2026-09-20'
+  verification: CVDFが原著者の許可を得て提供する訓練60,000枚・テスト10,000枚のミラーであること、配布ファイルと形式を確認。
+  usage: データから教材用MLPを学習し中間表現を独自に可視化。原論文の図の転載ではない。図の条件・取得ファイルのSHA256・抽出インデックス・座標はmedia/mnist-experiment.json、再生成はscripts/make_representation_mnist.pyに記録。

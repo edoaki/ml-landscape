@@ -1,0 +1,18 @@
+/* Two records from one data collection, sharing input/output columns. */
+body[data-page="vision"] .vision-dataset{border:0;background:transparent;border-radius:0;margin:26px 0}
+body[data-page="vision"] .vision-data-head,body[data-page="vision"] .vision-data-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+body[data-page="vision"] .vision-data-head{text-align:center;font-size:16px;font-weight:600;margin-bottom:12px}
+body[data-page="vision"] .vision-data-row+.vision-data-row{margin-top:18px}
+body[data-page="vision"] .vision-data-row svg{display:block;width:100%;min-width:0;padding:0}
+body[data-page="vision"] .vision-data-row img{display:block;width:100%;padding:0;margin:0;border-radius:0}
+body[data-page="vision"] .vision-answer{text-align:center;font-size:24px;color:var(--green)}
+body[data-page="vision"] .vision-dataset figcaption{border:0;background:transparent;padding:12px 0}
+@media(max-width:600px){body[data-page="vision"] .vision-data-head,body[data-page="vision"] .vision-data-row{gap:12px}body[data-page="vision"] .vision-answer{font-size:20px}}
+
+body[data-page="vision"] .vision-data-row .vision-face{width:160px;max-width:100%;height:auto;justify-self:center}
+
+body[data-page="vision"] .vision-data-row .vision-pet{width:auto;max-width:100%;height:230px;object-fit:contain;justify-self:center}
+body[data-page="vision"] .vision-paper-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+body[data-page="vision"] .vision-paper-pair img{display:block;width:100%;padding:0;margin:0}
+@media(max-width:600px){body[data-page="vision"] .vision-data-row .vision-pet{height:180px}body[data-page="vision"] .vision-paper-pair{grid-template-columns:1fr}}
+

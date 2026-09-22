@@ -1,0 +1,12 @@
+fedavg:
+  label: McMahan et al. (2017), Communication-Efficient Learning of Deep Networks
+    from Decentralized Data
+  url: https://proceedings.mlr.press/v54/mcmahan17a.html
+  verified_on: '2026-09-20'
+  verification: 原論文・掲載要旨でローカル更新の反復とモデル平均の方法を確認。数値は平均の仕組みを示す独自例。
+secure:
+  label: Bonawitz et al. (2017), Practical Secure Aggregation for Privacy-Preserving
+    Machine Learning
+  url: https://research.google/pubs/practical-secure-aggregation-for-privacy-preserving-machine-learning/
+  verified_on: '2026-09-20'
+  verification: 著者側の公式論文紹介を参照。

@@ -1,0 +1,12 @@
+ref-001:
+  url: https://arxiv.org/abs/2005.11401
+  label: Retrieval-Augmented Generation 原論文 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://llava-vl.github.io/
+  label: LLaVA：公開結果と実装 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/2103.00020
+  label: CLIP：画像と言語の照合 ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

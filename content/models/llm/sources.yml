@@ -1,0 +1,10 @@
+inherited-ref-001:
+  url: https://arxiv.org/abs/1706.03762
+  label: 原論文：Attention Is All You Need
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+
+bengio:
+  label: Bengio et al. (2003), A Neural Probabilistic Language Model
+  url: https://www.jmlr.org/papers/v3/bengio03a.html
+  verified_on: '2026-09-20'
+  verification: 原論文要旨で語の分散表現と系列確率の学習を確認。

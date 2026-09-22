@@ -1,0 +1,35 @@
+gpt3:
+  url: https://arxiv.org/abs/2005.14165
+  label: Brown et al. (2020), Language Models are Few-Shot Learners
+  verified_on: '2026-09-20'
+  verification: 自己回帰言語モデルの事前学習と、重みを更新せず入力中の例を使うfew-shot設定を確認。
+llama3:
+  url: https://arxiv.org/html/2407.21783v3
+  label: Dubey et al. (2024), The Llama 3 Herd of Models
+  verified_on: '2026-09-20'
+  verification: §2および§3.1の次トークン予測、事後学習の位置付け、データ選別・重複除去・配分・評価データ混入への対処を確認。性能値の転載なし。
+instructgpt:
+  url: https://arxiv.org/html/2203.02155v1
+  label: Ouyang et al. (2022), Training language models to follow instructions with human feedback
+  verified_on: '2026-09-20'
+  verification: §3.1のSFT、回答比較による報酬モデル学習、PPOによる回答モデル更新の三段階を確認。
+ppo:
+  url: https://arxiv.org/abs/1707.06347
+  label: Schulman et al. (2017), Proximal Policy Optimization Algorithms
+  verified_on: '2026-09-20'
+  verification: 方策でデータを集めて代理目的関数を最適化する構成を確認。LLMにおける価値モデルとクリッピングはDeepSeekMath §4.1.1とも照合。
+deepseekmath:
+  url: https://arxiv.org/html/2402.03300v3
+  label: Shao et al. (2024), DeepSeekMath — GRPO
+  verified_on: '2026-09-20'
+  verification: §4.1.1–4.1.2の価値モデルの省略、グループ内の報酬正規化、トークン単位のクリッピング、参照モデルとのKL罰則を確認。本文の4回答・報酬・計算図は独自の教材用例で、実験結果の転載ではない。
+deepseek-r1:
+  url: https://arxiv.org/html/2501.12948v1
+  label: DeepSeek-AI et al. (2025), DeepSeek-R1
+  verified_on: '2026-09-20'
+  verification: §2.2のR1-Zeroの先行SFTなしのRLと正答・形式のルール報酬、§2.3のR1の多段階学習を確認。初版の学習手順の例として引用し、性能値の転載なし。
+exp-dpo:
+  url: https://arxiv.org/html/2305.18290v2
+  label: Rafailov et al. (2023), Direct Preference Optimization
+  verified_on: '2026-09-20'
+  verification: §3–4の選好対と参照方策を使う直接最適化、明示的な報酬モデルや学習中のサンプリングを必要としない構成を確認。図は教材用に独自作成。

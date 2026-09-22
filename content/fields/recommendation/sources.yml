@@ -1,0 +1,42 @@
+ref-001:
+  url: https://help.netflix.com/en/node/100639
+  label: Netflix公式：推薦の仕組み
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://support.google.com/youtube/answer/16089387?hl=en
+  label: YouTube公式：推薦の仕組み
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://support.spotify.com/dm/article/find-playlists/
+  label: Spotify公式：プレイリストについて
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://www.amazon.science/the-history-of-amazons-recommendation-algorithm
+  label: Amazon Science：推薦技術の歴史
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ir:
+  label: Manning, Raghavan & Schütze (2008), Introduction to Information Retrieval
+  url: https://nlp.stanford.edu/IR-book/html/htmledition/irbook.html
+  verified_on: '2026-09-20'
+  verification: 著者公開版の索引・ランキング・評価の章構成を確認。
+dpr:
+  label: Karpukhin et al. (2020), Dense Passage Retrieval for Open-Domain Question
+    Answering
+  url: https://arxiv.org/abs/2004.04906
+  verified_on: '2026-09-20'
+  verification: 原論文要旨のdual encoderと質問・文書の組による埋め込み学習を確認。靴の商品検索への置き換えは教材用の例。
+vector-space:
+  label: Introduction to Information Retrieval — Dot products
+  url: https://nlp.stanford.edu/IR-book/html/htmledition/dot-products-1.html
+  verified_on: '2026-09-20'
+  verification: 著者公開版で内積・長さによる正規化・コサイン類似度を確認。靴の2次元ベクトルと数値は教材独自の架空例。
+collaborative:
+  label: Google Developers — Collaborative filtering
+  url: https://developers.google.com/machine-learning/recommendation/collaborative/basics
+  verified_on: '2026-09-20'
+  verification: 利用者とアイテムの埋め込み、内積による類似度、フィードバック行列の説明を確認。
+candidates:
+  label: Google Developers — Candidate generation overview
+  url: https://developers.google.com/machine-learning/recommendation/overview/candidate-generation
+  verified_on: '2026-09-20'
+  verification: 候補生成、共有埋め込み空間、類似度による検索を確認。

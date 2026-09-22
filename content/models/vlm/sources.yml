@@ -1,0 +1,10 @@
+inherited-ref-002:
+  url: https://llava-vl.github.io/
+  label: LLaVA：Visual Instruction Tuning（2023） ↗
+  verified_on: '2026-09-20'
+  verification: 公式ページの初代LLaVAの構成と二段階の学習・更新対象を再確認。
+exp-llava:
+  url: https://arxiv.org/abs/2304.08485
+  label: Liu et al. (2023), Visual Instruction Tuning
+  verified_on: '2026-09-20'
+  verification: 今回追加する基本概念を原論文の要旨・公式解説で確認。性能値の転載や第三者素材の追加なし。

@@ -1,0 +1,23 @@
+[
+  {
+    "width": 1280,
+    "javascript": true,
+    "figures": 8,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "javascript": true,
+    "figures": 8,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "javascript": false,
+    "figures": 8,
+    "overflow": false,
+    "errors": []
+  }
+]

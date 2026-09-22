@@ -1,0 +1,16 @@
+ref-001:
+  url: https://arxiv.org/abs/1609.02907
+  label: GCN：Kipf & Welling ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-002:
+  url: https://arxiv.org/abs/1710.10903
+  label: GAT：Veličković et al. ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/1706.02216
+  label: GraphSAGE：Hamilton et al. ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://proceedings.mlr.press/v70/gilmer17a.html
+  label: Message Passing Neural Networks ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。

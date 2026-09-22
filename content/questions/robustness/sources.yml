@@ -1,0 +1,15 @@
+inherited-ref-002:
+  url: https://arxiv.org/abs/1412.6572
+  label: Explaining and Harnessing Adversarial Examples ↗
+  verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+media-gradcam-original.png:
+  url: content/questions/robustness/media/gradcam-original.png
+  label: gradcam-original.png
+  provenance: content/shared/media-provenance.md
+  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
+
+domainbed:
+  url: https://github.com/facebookresearch/DomainBed
+  label: DomainBed：ドメイン汎化の評価とモデル選択
+  verification: 2026-09-20 著者公開READMEで、評価用とは別のドメインを用いるモデル選択を確認。

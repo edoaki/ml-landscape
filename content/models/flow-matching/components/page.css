@@ -1,0 +1,9 @@
+/* The static diagrams remain readable with JavaScript disabled. */
+.fm-demo{padding:20px;border:1px solid var(--line);border-radius:10px;background:#f3f6ee;margin:24px 0}
+.fm-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.fm-controls[hidden]{display:none}
+.fm-controls button{border:1px solid #9db09d;border-radius:6px;background:white;color:var(--green);padding:8px 12px}
+.fm-controls label{display:flex;gap:10px;align-items:center;flex:1 1 230px}.fm-controls input{min-width:100px;width:100%}
+.fm-status{font-variant-numeric:tabular-nums;min-height:3em}
+body[data-page="flow-matching"] .figure-scroll>svg{display:block;width:100%;min-width:640px;max-width:850px;margin:auto}
+@media print{.fm-controls{display:none}.fm-demo{break-inside:avoid}}
+

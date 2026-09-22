@@ -1,0 +1,5 @@
+/* SSM: optional technical detail follows the conceptual reading path. */
+.ssm-detail{margin:24px 0;padding:17px 20px;border:1px solid var(--line);border-radius:8px;background:#f6f8f3}.ssm-detail>summary{cursor:pointer;font-weight:600;line-height:1.8}.ssm-detail[open]>summary{margin-bottom:18px}.ssm-detail p:last-child{margin-bottom:0}
+
+.ssm-controls{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}.ssm-controls[hidden]{display:none}.ssm-controls button{padding:9px 16px;border:1px solid #afc1b1;border-radius:6px;background:white;color:#294337;cursor:pointer}.ssm-controls button:disabled{opacity:.4;cursor:default}.ssm-play[aria-pressed=true]{background:#35664d;color:white}.ssm-status{min-height:3.8em;padding:12px 16px;border-left:3px solid #35664d;background:#f6f8f3}.ssm-animation svg g{transform-box:view-box;transform-origin:0 0}.ssm-animation figure{margin-bottom:0}body[data-page="ssm"] #hippo img{max-height:570px;object-fit:contain}body[data-page="ssm"] #hippo figure:has(img){background:white}
+

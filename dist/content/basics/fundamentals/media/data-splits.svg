@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 390" role="img" aria-labelledby="title desc"><title id="title">訓練・検証・テストの役割</title><desc id="desc">あらかじめ分けた訓練データで候補モデルを学習し、検証データでモデルや設定を選び、選択に使わなかったテストデータで最終性能を測る。</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/></marker></defs><rect width="820" height="390" fill="white"/><g font-family="Hiragino Kaku Gothic ProN, Noto Sans JP, sans-serif" fill="#243b30">
+<text x="28" y="34" font-size="21" fill="#243b30" text-anchor="start" font-weight="600">データは、モデルを作る・選ぶ・確かめるために分ける</text>
+<rect x="28" y="65" width="160" height="70" rx="10" fill="#eef3e7" stroke="#35664d" stroke-width="1.5"/><text x="108.0" y="106.0" font-size="18" fill="#35664d" text-anchor="middle" font-weight="600">訓練データ</text>
+<path d="M188 100 H270" fill="none" stroke="#35664d" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="273" y="65" width="240" height="70" rx="10" fill="#eef3e7" stroke="#35664d" stroke-width="1.5"/><text x="393.0" y="106.0" font-size="18" fill="#35664d" text-anchor="middle" font-weight="600">パラメータを調整</text>
+<path d="M513 100 H577" fill="none" stroke="#35664d" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="596" y="107" font-size="17" fill="#35664d" text-anchor="start" font-weight="600">候補モデルを作る</text>
+<rect x="28" y="165" width="160" height="70" rx="10" fill="#edf3f7" stroke="#4d7897" stroke-width="1.5"/><text x="108.0" y="206.0" font-size="18" fill="#4d7897" text-anchor="middle" font-weight="600">検証データ</text>
+<path d="M188 200 H270" fill="none" stroke="#4d7897" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="273" y="165" width="240" height="70" rx="10" fill="#edf3f7" stroke="#4d7897" stroke-width="1.5"/><text x="393.0" y="206.0" font-size="18" fill="#4d7897" text-anchor="middle" font-weight="600">候補の性能を比較</text>
+<path d="M513 200 H577" fill="none" stroke="#4d7897" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="596" y="207" font-size="17" fill="#4d7897" text-anchor="start" font-weight="600">モデルや設定を選ぶ</text>
+<rect x="28" y="265" width="160" height="70" rx="10" fill="#fbf0e8" stroke="#a65c32" stroke-width="1.5"/><text x="108.0" y="306.0" font-size="18" fill="#a65c32" text-anchor="middle" font-weight="600">テストデータ</text>
+<path d="M188 300 H270" fill="none" stroke="#a65c32" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="273" y="265" width="240" height="70" rx="10" fill="#fbf0e8" stroke="#a65c32" stroke-width="1.5"/><text x="393.0" y="306.0" font-size="18" fill="#a65c32" text-anchor="middle" font-weight="600">選択後の性能を測定</text>
+<path d="M513 300 H577" fill="none" stroke="#a65c32" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="596" y="307" font-size="17" fill="#a65c32" text-anchor="start" font-weight="600">最終的な性能を報告</text>
+<text x="28" y="369" font-size="16" fill="#243b30" text-anchor="start" font-weight="400">検証で設定を選び直したら再び訓練する。テストは選択に使わず、最後に行う。</text>
+</g></svg>

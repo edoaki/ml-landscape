@@ -1,0 +1,17 @@
+/* Shared editorial structure; page-specific visuals retain their existing styling. */
+.article section { scroll-margin-top: 5rem; }
+.article > h2[id] { margin: 3.25rem 0 1.5rem; scroll-margin-top: 5rem; }
+.sidenav .nav-category { margin: 1rem .6rem .25rem; color: #617065; font-size: .75rem; }
+.sidenav a[data-parent] { padding-left: 2.5rem; }
+.sidenav small { display: inline; margin-left: .35rem; font-size: .67rem; color: #6a716b; }
+.publication-status { padding: .8rem 1rem; border-left: 3px solid #9ca98d; background: #f3f5ef; font-size: .9rem; }
+.publication-status p { margin: .4rem 0; }
+.legacy-links { margin-top: 2rem; padding: .6rem 1rem; border: 1px solid #d7dfd3; border-radius: .4rem; }
+.article .cards { display: block; }
+.article .cards p { margin: .7rem 0; }
+figure > p > a > img, figure > p > img { max-width: 100%; height: auto; }
+.article table { min-width: 0; }
+@media (max-width: 820px) { .publication-status { font-size: .85rem; } }
+.article section[id$="sources"] ul { font-size: 13px; }
+
+.sidenav a[data-parent]::before { content: "↳ "; color: #6a716b; }
