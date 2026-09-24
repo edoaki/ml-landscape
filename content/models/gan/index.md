@@ -5,7 +5,8 @@ summary: 本物と見分けるモデルを、生成するモデルの学習信�
 url: models/gan.html
 status: migrated
 scope: ページ。生成器・識別器と学習
-prerequisites: []
+prerequisites:
+- generative-overview
 related: []
 origins:
 - gan.html#why

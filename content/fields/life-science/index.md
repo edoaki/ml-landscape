@@ -5,7 +5,8 @@ summary: 配列・分子・細胞のデータから、構造・機能・相互�
 url: fields/life-science.html
 status: ready
 scope: タンパク質、細胞、分子の構造・機能・相互作用、設計
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - science.html#protein

@@ -5,7 +5,8 @@ summary: この先の雨から数日先の気温・風まで、予測したい�
 url: fields/earth-science.html
 status: ready
 scope: 空間と時間を持つ観測、気象予測、予測期間・地域別の評価
-prerequisites: []
+prerequisites:
+- timeseries
 related: []
 origins:
 - science.html#weather

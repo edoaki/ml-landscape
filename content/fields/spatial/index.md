@@ -5,7 +5,8 @@ summary: 3D・空間理解では、カメラや物体の位置と、場面の立
 url: fields/spatial.html
 status: migrated
 scope: SLAM、3D再構成、空間表現、新規視点
-prerequisites: []
+prerequisites:
+- vision
 related: []
 origins:
 - spatial.html#slam

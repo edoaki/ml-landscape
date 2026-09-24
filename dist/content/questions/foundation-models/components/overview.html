@@ -1,6 +1,0 @@
-<figure class="fm-figure" id="fm-stages" aria-label="事前学習・SFT・強化学習で、学習の手がかりがどう変わるか">
-<div class="fm-stage-grid">
-<div class="fm-route"><span class="fm-eyebrow">事前学習</span><h3>元の文章の続きを当てる</h3><div class="fm-paper">本・Web・コードなど<br>「120 × 3 = <b>360</b>」</div><div class="fm-down">↓ 次トークンを正解にする</div><div class="fm-output">文章の規則性を学ぶ<br><b>事前学習済みモデル</b></div></div>
-<div class="fm-route"><span class="fm-eyebrow">SFT</span><h3>回答のお手本を学ぶ</h3><div class="fm-paper">質問 ＋ お手本の回答<br>「計算を添えて説明」</div><div class="fm-down">↓ お手本を出しやすくする</div><div class="fm-output">指示への答え方を学ぶ<br><b>回答の形式や手順</b></div></div>
-<div class="fm-route"><span class="fm-eyebrow">強化学習</span><h3>生成した回答を採点する</h3><div class="fm-paper">質問 → 自分で回答<br>正答や好ましさで採点</div><div class="fm-down">↓ 報酬から生成確率を調整</div><div class="fm-output">高い評価につながる<br><b>回答の生成を増やす</b></div></div>
-</div><figcaption>事前学習 → SFT → 強化学習という代表的な流れ。どの段階でも重みを更新しますが、更新の手がかりが違います。数値と文章は教材用の例です。</figcaption></figure>

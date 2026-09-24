@@ -8,6 +8,7 @@ import attrs from "markdown-it-attrs";
 import cjkFriendly from "markdown-it-cjk-friendly";
 import YAML from "yaml";
 import { decodeHTML } from "entities";
+import { load } from "cheerio";
 const require = createRequire(import.meta.url);
 const katex = require("../source/katex.min.cjs");
 export const ROOT = path.resolve(
@@ -110,6 +111,14 @@ export function rewriteReferences(html, fn) {
     (_, attr, value) => `${attr}="${esc(fn(decodeHTML(value)))}"`,
   );
 }
+// Components draw on a light ground; the dark theme keeps them light (see style.css).
+function lightIsland(html) {
+  const $ = load(html, null, false);
+  const roots = $.root().children().not("script,style,link");
+  if (!roots.length) return html;
+  roots.addClass("light-island");
+  return $.html();
+}
 export function render(file, body, registry) {
   const sourceFile = path.join(path.dirname(file), "sources.yml");
   const sources = fs.existsSync(sourceFile)
@@ -125,7 +134,9 @@ export function render(file, body, registry) {
     if (!/^[a-z0-9-]+$/.test(name))
       throw new Error(`${file}: invalid component ${name}`);
     return hold(
-      read(path.join(path.dirname(file), "components", name + ".html")),
+      lightIsland(
+        read(path.join(path.dirname(file), "components", name + ".html")),
+      ),
     );
   });
   body = body.replace(/^\$\$\r?\n([\s\S]*?)\r?\n\$\$$/gm, (_, tex) =>

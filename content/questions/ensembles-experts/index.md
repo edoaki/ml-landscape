@@ -5,7 +5,8 @@ summary: 複数の予測を合わせるアンサンブルを、モデルの学�
 url: questions/ensembles-experts.html
 status: ready
 scope: アンサンブルの集約、バギング、ランダムフォレスト、ブースティング、スタッキング、Deep Ensembles、密なMoEと疎なMoE
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - efficiency.html#systems (MoE)

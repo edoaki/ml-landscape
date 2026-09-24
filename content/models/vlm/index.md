@@ -5,7 +5,9 @@ summary: 赤いカップの画像への質問を例に、生成型VLMの構造�
 url: models/vlm.html
 status: ready
 scope: 視覚言語モデルの範囲と、生成型の画像エンコーダ・接続部・言語モデル、学習と利用
-prerequisites: []
+prerequisites:
+- clip
+- llm
 related: []
 origins:
 - vit.html#vlm

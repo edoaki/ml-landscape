@@ -22,7 +22,7 @@
         panel.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
         audio.setAttribute('aria-label', '切り替え試聴：' + labels[track]);
         status.textContent = labels[track] + '：' + details[track];
-        audio.src = new URL('assets/audio-score-' + track + '.wav', new URL(document.body.dataset.siteRoot + "/", document.baseURI)).href;
+        audio.src = new URL('content/fields/audio/media/audio-score-' + track + '.wav', new URL(document.body.dataset.siteRoot + "/", document.baseURI)).href;
         audio.addEventListener('loadedmetadata', () => {
           if (version !== revision) return;
           audio.currentTime = Math.min(position, Math.max(0, audio.duration - .01));

@@ -5,7 +5,8 @@ summary: 入力を潜在表現へまとめ、そこから再構成する。VAE�
 url: models/vae.html
 status: migrated
 scope: ページ。潜在変数・生成と学習を説明し、比較に必要なAEの構造・計算も残す
-prerequisites: []
+prerequisites:
+- generative-overview
 related: []
 origins:
 - vae.html#ae

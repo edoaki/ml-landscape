@@ -10,7 +10,7 @@ document.querySelectorAll('.spatial-frame-viewer').forEach(viewer => {
     const frame = frames[index];
     viewer.querySelectorAll('[data-frame-kind]').forEach(panel => {
       const input = panel.dataset.frameKind === 'input';
-      const src = new URL(`assets/sam2-${input ? 'input' : 'track'}-${frame}.${input ? 'jpg' : 'png'}`, new URL(document.body.dataset.siteRoot + "/", document.baseURI)).href;
+      const src = new URL(`content/fields/video/media/sam2-${input ? 'input' : 'track'}-${frame}.${input ? 'jpg' : 'png'}`, new URL(document.body.dataset.siteRoot + "/", document.baseURI)).href;
       const image = panel.querySelector('img');
       image.src = src;
       image.alt = `SAM 2の${input ? '元画像' : '推論結果'}、frame ${frame}。`;

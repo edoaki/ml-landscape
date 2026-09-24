@@ -1,9 +1,3 @@
-media-reliability.svg:
-  url: content/basics/fundamentals/media/reliability.svg
-  label: reliability.svg
-  provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
-  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
 ref-ml-basics:
   url: https://www.deeplearningbook.org/contents/ml.html
   label: Goodfellow, Bengio, Courville『Deep Learning』第5章：Machine Learning Basics

@@ -5,7 +5,8 @@ summary: 猫がノイズへ崩れ、ノイズから猫が現れる。予測器�
 url: models/diffusion.html
 status: migrated
 scope: ページ。ノイズを使う学習と生成過程
-prerequisites: []
+prerequisites:
+- generative-overview
 related: []
 origins:
 - diffusion.html#why

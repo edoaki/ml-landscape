@@ -5,7 +5,8 @@ summary: 原因を変えたら、結果も変わる？ 肥料と植物の図で�
 url: questions/causal-inference.html
 status: ready
 scope: 介入すると結果はどう変わるか。予測と介入、交絡、因果構造、識別に必要な仮定
-prerequisites: []
+prerequisites:
+- probabilistic-inference
 related:
 - evaluation
 origins: []

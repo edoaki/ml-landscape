@@ -16,3 +16,4 @@ body[data-page="vision"] .vision-paper-pair{display:grid;grid-template-columns:1
 body[data-page="vision"] .vision-paper-pair img{display:block;width:100%;padding:0;margin:0}
 @media(max-width:600px){body[data-page="vision"] .vision-data-row .vision-pet{height:180px}body[data-page="vision"] .vision-paper-pair{grid-template-columns:1fr}}
 
+[data-theme=dark] body[data-page="vision"] .vision-dataset{background:#fcfcf8;border-radius:8px;padding:0 14px}

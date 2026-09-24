@@ -5,7 +5,8 @@ summary: 同じグラフでGCN・GAT・GraphSAGEを比較。近隣の選び方�
 url: models/gnn.html
 status: migrated
 scope: ページ。グラフ上の情報の集約・更新
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - gnn.html#basics

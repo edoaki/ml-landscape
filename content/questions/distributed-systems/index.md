@@ -5,7 +5,8 @@ summary: データを分けるか、モデルを分けるか。複数GPUへの�
 url: questions/distributed-systems.html
 status: ready
 scope: 大きな学習・推論をどう実行するか。計算の分担、通信、メモリ、遅延・処理量
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - efficiency.html#systems

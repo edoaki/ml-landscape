@@ -5,7 +5,8 @@ summary: 動画では、一枚の画像の内容に加えて、時間に沿っ�
 url: fields/video.html
 status: migrated
 scope: 時間的な変化、追跡、フロー、動画生成
-prerequisites: []
+prerequisites:
+- vision
 related: []
 origins:
 - spatial.html#video
@@ -18,6 +19,9 @@ scripts:
 - content/fields/video/components/spatial.js
 styles:
 - content/fields/video/components/page.css
+runtime_assets:
+- media/sam2-input-*.jpg
+- media/sam2-track-*.png
 english_title: Video Understanding and Generation
 ---
 

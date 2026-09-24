@@ -5,7 +5,9 @@ summary: Vision Transformer（ViT）は、画像を小領域の列に分け、�
 url: models/vit.html
 status: migrated
 scope: 独立ページ。画像パッチと処理を説明。目次の親子関係は先行読書を要求しない
-prerequisites: []
+prerequisites:
+- transformer
+- cnn
 related:
 - transformer
 - vlm

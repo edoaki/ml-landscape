@@ -5,7 +5,8 @@ summary: 電力需要と設備の温度を例に、未来の予測、異常検�
 url: fields/timeseries.html
 status: migrated
 scope: 予測、異常検知、変化点、欠測補完
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - time-graphs.html#series

@@ -5,7 +5,8 @@ summary: 過去を一定サイズの状態にまとめる。その情報をど�
 url: models/rnn.html
 status: migrated
 scope: ページ。状態を更新する処理と各方式の違い
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - rnn.html#why

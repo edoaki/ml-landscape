@@ -5,7 +5,8 @@ summary: 工場の製品検査を例に、転移・少数例・メタ学習・�
 url: questions/transfer-learning.html
 status: ready
 scope: 得た知識を別の課題・環境にどう使うか。転移、少数例、メタ学習、マルチタスク、ドメイン適応、テスト時適応
-prerequisites: []
+prerequisites:
+- representation-learning
 related: []
 origins:
 - learning.html#transfer

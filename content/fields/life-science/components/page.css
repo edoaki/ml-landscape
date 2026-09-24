@@ -46,7 +46,7 @@ body[data-page="life-science"] .science-explained svg{max-height:240px;margin:12
 body[data-page="life-science"] .science-structure svg{height:225px;width:100%;padding:0}
 .science-seq-panel{display:flex;flex-direction:column;justify-content:center;min-height:245px;text-align:left}
 .science-seq-panel>div{display:flex;align-items:baseline;gap:10px;line-height:2}
-.science-seq-panel span{font:9px ui-monospace,monospace;color:#99aaa0}
+.science-seq-panel span{font:9px ui-monospace,monospace;color:#6f8379}
 body[data-page="life-science"] .science-seq-panel code{font:13px ui-monospace,monospace;color:#326f74;background:transparent;padding:0;letter-spacing:.01em}
 .science-condition{font-size:12px;padding:10px 14px;background:#eef3ef;border-left:2px solid #719485;margin-top:20px}.science-condition strong{margin-left:14px}
 .science-key{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.science-key.target{background:#53b3ad}.science-key.binder{background:#e9a6bc}

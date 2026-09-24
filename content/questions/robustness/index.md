@@ -5,7 +5,8 @@ summary: 工場や照明が変わる製品検査を例に、自然な変化・�
 url: questions/robustness.html
 status: ready
 scope: 条件が変わっても性能を保てるか。自然な変化・摂動、未知の環境、ドメイン汎化
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - reliability.html#robustness

@@ -75,7 +75,7 @@ robot-media-decision-orbit.mp4:
   url: content/fields/decision-making/media/decision-orbit.mp4
   label: decision-orbit.mp4
   provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  conditions: 2026-09-24に配信用へ再圧縮（H.264・CRF 27・30 fps、音声AAC 96 kbps）。内容・尺は変更なし。本文の対応キャプションと素材記録を参照。
   verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
 robot-media-rt2-result-poster.jpg:
   url: content/fields/decision-making/media/rt2-result-poster.jpg

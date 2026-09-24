@@ -5,7 +5,8 @@ summary: 経路・仕事の割り当て・スケジューリングを例に、�
 url: fields/combinatorial-optimization.html
 status: ready
 scope: 経路、割り当て、スケジューリング
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - decision-science.html#problem

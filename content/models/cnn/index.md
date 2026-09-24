@@ -5,7 +5,8 @@ summary: 画像のどこにあるかが変わっても、同じ模様を同じ�
 url: models/cnn.html
 status: migrated
 scope: ページ。局所的な処理、重み共有、特徴の階層
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - cnn.html#why-cnn

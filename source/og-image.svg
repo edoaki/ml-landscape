@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#fcfcf8"/>
+<rect x="0" y="0" width="24" height="630" fill="#35664d"/>
+<g fill="none" stroke="#b9cbae" stroke-width="3"><path d="M760 470L880 250L1000 380L1120 170"/><path d="M760 470L1000 380M880 250L1120 170"/></g>
+<g fill="#35664d"><circle cx="760" cy="470" r="18"/><circle cx="880" cy="250" r="18"/><circle cx="1000" cy="380" r="18"/><circle cx="1120" cy="170" r="18" fill="#ba7147"/></g>
+<text x="90" y="190" font-family="IPAPGothic, DejaVu Sans, sans-serif" font-size="30" letter-spacing="6" fill="#35664d" font-weight="700">MACHINE LEARNING</text>
+<text x="90" y="300" font-family="IPAPGothic, DejaVu Sans, sans-serif" font-size="84" fill="#243b30" font-weight="700">機械学習の全体像</text>
+<text x="90" y="380" font-family="IPAPGothic, DejaVu Sans, sans-serif" font-size="32" fill="#657568">基礎・分野・横断研究・モデルを図と計算でたどる</text>
+</svg>

@@ -5,7 +5,9 @@ summary: 画像・音声・文章などを組み合わせて扱うマルチモ�
 url: fields/multimodal.html
 status: ready
 scope: 異種情報の対応付け・統合・生成、画像と言語の利用例、映像と発話の対応
-prerequisites: []
+prerequisites:
+- vision
+- language
 related: []
 origins:
 - language.html#vlm

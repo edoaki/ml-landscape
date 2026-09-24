@@ -5,7 +5,8 @@ summary: 過去を小さな記憶にまとめるSSM。その記憶に「何を�
 url: models/ssm.html
 status: migrated
 scope: ページ。状態空間モデルと選択的な状態更新
-prerequisites: []
+prerequisites:
+- rnn
 related: []
 origins:
 - ssm.html#why

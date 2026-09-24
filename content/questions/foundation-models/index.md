@@ -5,7 +5,8 @@ summary: LLMは文章の続きを学び、回答のお手本や報酬から答�
 url: questions/foundation-models.html
 status: ready
 scope: LLMを中心とした事前学習、継続事前学習、SFT、報酬と方策、RLHF・PPO、検証可能な報酬・GRPO、DPO、文脈内学習とRAG、学習後の評価
-prerequisites: []
+prerequisites:
+- transfer-learning
 related: []
 origins:
 - foundations.html#combination
