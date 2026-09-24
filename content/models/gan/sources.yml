@@ -6,3 +6,31 @@ ref-002:
   url: https://arxiv.org/abs/1611.07004
   label: pix2pix：Image-to-Image Translation（2016） ↗
   verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-003:
+  url: https://arxiv.org/abs/1511.06434
+  label: "DCGAN：Unsupervised Representation Learning with Deep Convolutional GANs（2015） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-004:
+  url: https://arxiv.org/abs/1701.07875
+  label: "Wasserstein GAN（2017） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-005:
+  url: https://arxiv.org/abs/1704.00028
+  label: "WGAN-GP：Improved Training of Wasserstein GANs（2017） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-006:
+  url: https://arxiv.org/abs/1802.05957
+  label: "Spectral Normalization for GANs（2018） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-007:
+  url: https://arxiv.org/abs/1812.04948
+  label: "StyleGAN：A Style-Based Generator Architecture（2019） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-008:
+  url: https://arxiv.org/abs/1706.08500
+  label: "FID：GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium（2017） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-009:
+  url: https://arxiv.org/abs/1904.06991
+  label: "Improved Precision and Recall Metric for Assessing Generative Models（2019） ↗"
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。

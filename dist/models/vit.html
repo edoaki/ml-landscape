@@ -35,6 +35,40 @@
 <p>各パッチの画素値を一列に並べ、学習する線形層で同じ長さのベクトルに変換します。さらに<strong>位置埋め込み</strong>を足し、画像内の位置を区別できるようにします。</p>
 <p>例えば224×224画素の画像を16×16画素ずつに分けると、14×14＝196パッチです。一画素ずつ渡すより系列を短くできます。CNNのような局所性の前提が少なく、原論文では大規模データでの事前学習が性能を引き出す鍵になりました。</p>
 </section>
+<section id="patch-size">
+<h2>パッチの大きさと計算量</h2>
+<p>パッチ埋め込みは、「16×16のフィルタを16画素ずつずらす畳み込み」を一回かけるのと同じ計算です。RGB画像なら一つのパッチは16×16×3＝768個の数値で、ViT-Baseではこれを768次元のベクトルへ変換します（入力と出力の次元が同じなのは、この大きさの組み合わせでの偶然です）。モデル名の<strong>ViT-B/16</strong>は、Baseの大きさでパッチが16×16であることを表します。</p>
+<p>パッチを小さくすると細部を捉えやすくなりますが、系列が長くなります。Self-Attentionは全ての位置の組を比べるため、比べる組の数は系列の長さの2乗で増えます。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>224×224画像のパッチ</th>
+<th>パッチ数（CLSを除く）</th>
+<th>Attentionで比べる組の数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>32×32</td>
+<td>7×7＝49</td>
+<td>49²＝2,401</td>
+</tr>
+<tr>
+<td>16×16</td>
+<td>14×14＝196</td>
+<td>196²＝38,416</td>
+</tr>
+<tr>
+<td>8×8</td>
+<td>28×28＝784</td>
+<td>784²＝614,656</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>パッチの一辺を半分にすると、パッチ数は4倍、比べる組は16倍になります。細かく分けるほど計算とメモリが急に増えるため、パッチの大きさは精度と計算量の釣り合いで選びます。</p>
+</section>
 <section id="cls">
 <h2>CLSトークンと画像分類</h2>
 <p>分類用に、学習可能な<strong>CLS（クラストークン）</strong>を一つ加えます。これは画像の一部分ではなく、分類に使う表現を作るための特別な位置です。196パッチなら、CLSと合わせて197個のベクトルを入力します。</p>
@@ -46,6 +80,58 @@
 </figure>
 <p>Self-Attentionで各パッチとCLSが互いを参照し、FFNで各位置の特徴を加工します。この処理をN層繰り返すと、CLSにも画像全体の情報が取り込まれます。最後のCLSの表現を分類ヘッドへ渡し、softmaxでクラスごとの確率を求めます。</p>
 <p>GPT型の文章生成では<strong>最後のトークンの表現</strong>から次のトークンを予測します。ここでは<strong>最後の層のCLSの表現</strong>から画像のクラスを予測します。図は全結合層で分類する例です。ViT原論文では事前学習時に隠れ層を持つMLPヘッドを使い、微調整時には線形層を使います。</p>
+<p>原論文は、層の数と表現の次元を変えた三つの大きさを比べました。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>モデル</th>
+<th>層の数</th>
+<th>表現の次元</th>
+<th>Attentionのhead数</th>
+<th>パラメータ数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ViT-Base</td>
+<td>12</td>
+<td>768</td>
+<td>12</td>
+<td>約8,600万</td>
+</tr>
+<tr>
+<td>ViT-Large</td>
+<td>24</td>
+<td>1,024</td>
+<td>16</td>
+<td>約3億700万</td>
+</tr>
+<tr>
+<td>ViT-Huge</td>
+<td>32</td>
+<td>1,280</td>
+<td>16</td>
+<td>約6億3,200万</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="data">
+<h2>データの量と、構造に組み込む前提</h2>
+<p>CNNは、近くの画素をまとめて見る（局所性）、同じフィルタを位置をずらして使う（重み共有）という前提を構造に組み込んでいます。ViTでは、パッチ内の変換を除くとこの前提が弱く、パッチどうしの位置関係も位置埋め込みを通してデータから学びます。</p>
+<p>原論文では、ImageNet（約130万枚）だけで事前学習したViTは、同程度の大きさのResNetより数ポイント低い精度にとどまりました。一方、ImageNet-21k（約1,400万枚）やJFT-300M（約3億枚）で事前学習すると差が縮まり、JFT-300MではResNetを上回りました。前提が少ない分、多くのデータから学ぶ必要がある、という読み方ができます。</p>
+<p>その後DeiTは、ImageNetだけでも、強いデータ拡張と正則化、CNNを教師にした蒸留を組み合わせればViTを十分に学習できることを示しました。データの量の問題は、構造だけでなく学習の工夫でも補えます。<a href="https://arxiv.org/abs/2012.12877">DeiT ↗</a></p>
+</section>
+<section id="resolution">
+<h2>解像度を変えるときの位置埋め込み</h2>
+<p>微調整では、事前学習より高い解像度（例えば384×384）を使うことがあります。パッチを16×16のまま変えなければ、パッチ数は14×14＝196から24×24＝576に増えます。学習した位置埋め込みは196位置分しかないため、原論文では位置埋め込みを14×14の格子として2次元で補間し、24×24の格子に広げて使いました。</p>
+</section>
+<section id="after">
+<h2>ViTを部品として使うモデル</h2>
+<p>ViTは、画像の表現を作る部品として広く使われます。自己教師あり学習のDINOは、ラベルなしの画像からViTの表現を学びます（<a href="../questions/representation-learning.html">表現学習</a>）。<a href="clip.html">CLIP</a>は画像側のエンコーダにViTを使えます。<a href="vlm.html">VLM</a>では、ViTが作ったパッチの表現を言語モデルへ渡します。</p>
+<p>長い系列の計算量を抑える工夫もあります。Swin Transformerは、近くの小さな窓の中だけでAttentionを計算し、層を進むごとに隣り合うパッチをまとめて解像度を下げます。CNNに近い階層構造を持たせ、物体検出など高解像度の課題にも使いやすくしました。<a href="https://arxiv.org/abs/2103.14030">Swin Transformer ↗</a></p>
 </section>
 <section id="sources">
 <h2>出典・参考資料</h2>
@@ -53,8 +139,10 @@
 <li><a href="https://arxiv.org/abs/2010.11929">ViT：An Image is Worth 16x16 Words（2020） ↗</a></li>
 <li><a href="https://llava-vl.github.io/">LLaVA：Visual Instruction Tuning（2023） ↗</a></li>
 <li><a href="https://arxiv.org/abs/2103.00020">CLIP：Learning Transferable Visual Models From Natural Language Supervision（2021） ↗</a></li>
+<li><a href="https://arxiv.org/abs/2012.12877">DeiT：Training data-efficient image transformers &amp; distillation through attention（2021） ↗</a></li>
+<li><a href="https://arxiv.org/abs/2103.14030">Swin Transformer：Hierarchical Vision Transformer using Shifted Windows（2021） ↗</a></li>
 </ul>
 </section>
 
-</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#bridge">画像へのTransformerの適用</a><a data-level="2" href="#patches">ViTのパッチ埋め込み</a><a data-level="2" href="#cls">CLSトークンと画像分類</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#bridge">画像へのTransformerの適用</a><a data-level="2" href="#patches">ViTのパッチ埋め込み</a><a data-level="2" href="#patch-size">パッチの大きさと計算量</a><a data-level="2" href="#cls">CLSトークンと画像分類</a><a data-level="2" href="#data">データの量と、構造に組み込む前提</a><a data-level="2" href="#resolution">解像度を変えるときの位置埋め込み</a><a data-level="2" href="#after">ViTを部品として使うモデル</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
 </body></html>

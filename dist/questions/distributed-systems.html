@@ -30,6 +30,82 @@
 
 <p>データ並列では各GPUにモデル全体を置きます。一台に収まらない場合は、層や層内の計算を分けます。パイプライン並列は複数の入力を重ねて処理し、テンソル並列は一つの層を複数GPUで計算します。<a href="https://docs.pytorch.org/tutorials/intermediate/pipelining_tutorial.html">パイプライン並列</a>・<a href="https://docs.vllm.ai/en/latest/serving/parallelism_scaling/">テンソル並列</a></p>
 <p><strong>メモリには重み以外も必要です。</strong> 学習では勾配、更新用の記録、計算途中の出力も保存します。FSDPなどは重み・勾配・更新用の記録を分割保存し、必要な重みを計算時に集めます。保存量を減らす代わりに通信が増えます。<a href="https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html">FSDPの解説</a></p>
+<h2 id="memory-estimate">学習に必要なメモリを見積もる</h2>
+<p>よく使われる設定として、重みと勾配を16ビット（2バイト）で持ち、更新には32ビットの重みの控えと、Adamの二つの記録（勾配の移動平均と、二乗の移動平均）を持つ場合を考えます。パラメータ一つあたりのバイト数は次のとおりです。</p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>保存するもの</th>
+<th>バイト数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>重み（16ビット）</td>
+<td>2</td>
+</tr>
+<tr>
+<td>勾配（16ビット）</td>
+<td>2</td>
+</tr>
+<tr>
+<td>重みの控え（32ビット）</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Adamの記録 2種類（各32ビット）</td>
+<td>4＋4</td>
+</tr>
+<tr>
+<td>合計</td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>70億パラメータのモデルなら、16×70億＝1,120億バイト、約112GBです。計算途中の出力（活性化）を含めなくても、80GBのGPU一台には収まりません。</p>
+<p>ZeROは、この記録を段階的にGPUへ分けて持たせます。8台で分けた場合の一台あたりの量は次のとおりです（活性化を除く）。<a href="https://arxiv.org/abs/1910.02054">ZeRO ↗</a></p>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>分ける対象</th>
+<th>一台あたりのバイト数／パラメータ</th>
+<th>70億パラメータ・8台</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分けない（通常のデータ並列）</td>
+<td>16</td>
+<td>約112GB</td>
+</tr>
+<tr>
+<td>更新用の記録（12バイト）</td>
+<td>2＋2＋12÷8＝5.5</td>
+<td>約38.5GB</td>
+</tr>
+<tr>
+<td>＋勾配</td>
+<td>2＋14÷8＝3.75</td>
+<td>約26.3GB</td>
+</tr>
+<tr>
+<td>＋重み</td>
+<td>16÷8＝2</td>
+<td>約14GB</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>分けるほど一台のメモリは減りますが、計算のたびに他のGPUから重みを集める通信が増えます。FSDPは最後の行に近い分け方です。</p>
+<h2 id="allreduce">勾配の平均にかかる通信</h2>
+<p>データ並列では、更新のたびに全GPUの勾配を平均します（all-reduce）。よく使われるリング型の方法では、各GPUが送る量は勾配の大きさの約2×(N−1)/N倍です（NはGPUの台数）。</p>
+<p>例えば70億パラメータの勾配を16ビットで送ると14GBです。8台なら各GPUは2×7/8×14＝24.5GBを送ります。仮に一台あたり毎秒100GBで送れるとしても、約0.25秒かかります。一回の更新の計算が1秒なら、通信を計算と重ねない限り、時間の約2割が待ちになります。層ごとに勾配ができた順に通信を始める、何回か分の勾配をためてから平均する、といった工夫で待ちを減らします。数値は説明用の仮定です。</p>
+<h2 id="pipeline-bubble">パイプライン並列の待ち時間</h2>
+<p>パイプライン並列では、層を段に分けて別々のGPUに置きます。一回分の写真をそのまま流すと、前の段の計算が終わるまで後ろの段は待ちます。そこで一回分を小さなまとまり（マイクロバッチ）に分け、段ごとに少しずつずらして流します。</p>
+<p>段の数をp、マイクロバッチの数をmとすると、GPUが待っている時間の割合はおよそ(p−1)/(m＋p−1)です。4段で4つに分けると3/7≈43%、16に分けると3/19≈16%です。細かく分けるほど待ちは減りますが、一つのまとまりが小さすぎるとGPUの計算効率が下がります。<a href="https://arxiv.org/abs/1811.06965">GPipe ↗</a></p>
 <h2 id="systems">台数を増やしても、そのまま速くはならない</h2>
 <figure class="systems-figure light-island"><div class="figure-scroll" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 316" role="img" aria-labelledby="communication-title"><title id="communication-title">計算120msを4分割しても通信と待ち20msで合計50msになる</title><defs><marker id="communication-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#527c64"></path></marker></defs><g font-family="sans-serif"><text x="360" y="32" text-anchor="middle" font-size="19" fill="#243b30">同じ128枚を処理する時間を比べる</text><text x="25" y="88" text-anchor="start" font-size="16" fill="#243b30">1台</text><rect x="110" y="58" width="540" height="48" rx="6" fill="#e6efdf" stroke="#94ab91"></rect><text x="380.0" y="87.0" text-anchor="middle" font-size="15" fill="#243b30">計算 120 ms</text><text x="25" y="170" text-anchor="start" font-size="16" fill="#243b30">4台</text><rect x="110" y="140" width="135" height="48" rx="6" fill="#e6efdf" stroke="#94ab91"></rect><text x="177.5" y="169.0" text-anchor="middle" font-size="15" fill="#243b30">計算 30 ms</text><rect x="245" y="140" width="90" height="48" rx="6" fill="#f2e3d4" stroke="#94ab91"></rect><text x="290.0" y="169.0" text-anchor="middle" font-size="15" fill="#243b30">20 ms</text><text x="390" y="171" text-anchor="start" font-size="17" fill="#243b30">合計 50 ms</text><path d="M290,219 L290,191" fill="none" stroke="#527c64" stroke-width="2" marker-end="url(#communication-arrow)"></path><text x="290" y="244" text-anchor="middle" font-size="14" fill="#243b30">通信・待ち</text><text x="360" y="290" text-anchor="middle" font-size="17" fill="#243b30">計算は1/4でも、全体では 120 ÷ 50 ＝ 2.4倍の速さ</text></g></svg></div><figcaption>説明用の仮定で、実機の測定値ではない。計算と通信を重ねない場合を示す。</figcaption></figure>
 
@@ -39,6 +115,10 @@
 
 <p>推論は、学習済みの重みで新しい入力に答える処理です。写真をまとめて計算すると処理量が増える場合がありますが、写真が集まるのを待つと一件の遅延は増えます。<strong>一件を早く返すことと、多数に答えることは別の目標</strong>です。</p>
 <p>文章生成では、最初のトークン（単語やその一部）が出るまでと、その後の生成間隔も分けて測ります。過去の計算結果を保存する<strong>KVキャッシュ</strong>は再計算を減らしますが、文章が長いほど、同時に扱う依頼が多いほどメモリを使います。</p>
+<h2 id="kv-cache">KVキャッシュの大きさを見積もる</h2>
+<p>KVキャッシュは、層ごと・トークンごとにKeyとValueのベクトルを保存します。一トークンあたりの量は、2（KとV）×層の数×ベクトルの次元×1要素のバイト数です。</p>
+<p>例として、32層・次元4,096・16ビット（2バイト）のモデルなら、2×32×4,096×2＝524,288バイト、つまり一トークンあたり0.5MiBです。4,096トークンの文脈では一件あたり2GiB、16件を同時に扱えば32GiBになり、重みとは別にGPUのメモリを使います。</p>
+<p>KeyとValueを複数のheadで共有する方法（GQA）では、例えばheadの数32に対してKey・Valueを8組だけ持てば、キャッシュは1/4になります。vLLMのPagedAttentionは、キャッシュを固定の大きさのブロックに分けて管理し、依頼ごとに長さが違っても空き領域が無駄になりにくくしました。数値は説明用の仮定です。<a href="https://arxiv.org/abs/2309.06180">PagedAttention ↗</a></p>
 
-</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#distributed-example">複数GPUで、仕事とメモリを分担する</a><a data-level="2" href="#data-parallel-example">データ並列：同じモデルで、別々の写真を学ぶ</a><a data-level="2" href="#model-parallel-example">モデル並列：モデルの計算を分ける</a><a data-level="2" href="#systems">台数を増やしても、そのまま速くはならない</a><a data-level="2" href="#latency-throughput">推論：多数の依頼を同時に処理する</a></aside></div>
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#distributed-example">複数GPUで、仕事とメモリを分担する</a><a data-level="2" href="#data-parallel-example">データ並列：同じモデルで、別々の写真を学ぶ</a><a data-level="2" href="#model-parallel-example">モデル並列：モデルの計算を分ける</a><a data-level="2" href="#memory-estimate">学習に必要なメモリを見積もる</a><a data-level="2" href="#allreduce">勾配の平均にかかる通信</a><a data-level="2" href="#pipeline-bubble">パイプライン並列の待ち時間</a><a data-level="2" href="#systems">台数を増やしても、そのまま速くはならない</a><a data-level="2" href="#latency-throughput">推論：多数の依頼を同時に処理する</a><a data-level="2" href="#kv-cache">KVキャッシュの大きさを見積もる</a></aside></div>
 </body></html>

@@ -66,6 +66,18 @@
 </table>
 </div>
 <p>D(G(z))が0.2ならGの損失−log(0.2)≈1.61、0.8なら≈0.22。Gはこの損失を下げる方向へ変わります。Dも変化するため、固定した一つの損失面を下る状況とは異なります。</p>
+<h3 id="non-saturating">non-saturating損失を使う理由</h3>
+<p>Dの出力を、sigmoid関数σを使ってD＝σ(a)と書きます（aはsigmoidに入る前の値）。原論文のminimax式でGが下げる項log(1−D)をaで微分すると、その大きさはDです。non-saturating損失−log Dでは1−Dです。</p>
+<p>学習の初期にDが生成物をすぐ見抜き、D(G(z))＝0.01になったとします。minimax式の勾配の大きさは0.01、non-saturating損失では0.99です。前者ではGがほとんど学習信号を受け取れません。原論文も、学習初期にはlog D(G(z))を大きくする形でGを学習することを勧めています。</p>
+</section>
+<section id="optimal-d">
+<h2>最適な識別器と、生成器が近づけるもの</h2>
+<p>Gを固定すると、各データxで最もよい識別器は次の形になります。p_dataは実データの確率（密度）、p_GはGが作るデータの確率です。</p>
+<p>$
+D^*(x) = \frac{p_{\mathrm{data}}(x)}{p_{\mathrm{data}}(x) + p_G(x)}
+$</p>
+<p>例えば、ある種類の画像が実データでは30%、生成物では10%の割合で現れるなら、D<em>＝0.3÷(0.3＋0.1)＝0.75です。逆に生成物に多すぎる種類では0.5を下回ります。Dの判定は、その種類を増やすか減らすかの手がかりになります。p_Gがp_dataと一致すれば、どのxでもD</em>＝1/2となり、Dは見分けられません。</p>
+<p>原論文は、このD*のもとでminimax式の値が−log 4＋2·JSD(p_data‖p_G)になることを示しました。JSD（Jensen–Shannonダイバージェンス）は二つの分布の違いを測る量で、分布が一致したときだけ0になります。つまり理想的には、Gは実データの分布に一致したときに最もよくなります。ただし実際には、各段階でDを最適まで学習せず、ネットワークの表現力やデータ数にも限りがあるため、この理想どおりには進みません。</p>
 </section>
 <section id="use">
 <h2>画像生成と画像変換</h2>
@@ -80,6 +92,42 @@
 <section id="limits">
 <h2>生成品質と多様性</h2>
 <p>生成器が少数の似た画像ばかり出しても、その一枚は自然に見えるかもしれません。これがmode collapse（生成の多様性の崩壊）の問題です。またDが強すぎるなどの理由でGが有効な勾配を得にくい場合があります。損失の値だけで画質・多様性を判断せず、複数の評価を使います。</p>
+<p><strong>FID</strong>（Fréchet Inception Distance）は、学習済みの画像分類モデル（Inception）の特徴空間で、本物と生成物の特徴をそれぞれ正規分布で近似し、平均と共分散の違いを測ります。小さいほど二つの分布が近いことを表します。一つの値に画質と多様性が混ざり、標本の数や画像の前処理でも値が変わるため、同じ条件で比べます。<a href="https://arxiv.org/abs/1706.08500">FID ↗</a></p>
+<p>画質と多様性を分けるには、<strong>適合率</strong>（生成物のうち、本物の特徴が集まる範囲に入るものの割合）と<strong>再現率</strong>（本物のうち、生成物の範囲に覆われるものの割合）を使います。mode collapseでは、適合率が高いまま再現率が下がります。<a href="https://arxiv.org/abs/1904.06991">適合率と再現率 ↗</a></p>
+<h3 id="stabilizing">学習を安定させる工夫</h3>
+<div class="table-scroll" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>課題</th>
+<th>代表的な工夫</th>
+<th>考え方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画像での学習が不安定</td>
+<td><a href="https://arxiv.org/abs/1511.06434">DCGAN（2015）</a></td>
+<td>畳み込みと転置畳み込み、Batch Normalizationなど、学習しやすい構成を整理した</td>
+</tr>
+<tr>
+<td>本物と生成物の分布が重ならないと、勾配が乏しい</td>
+<td><a href="https://arxiv.org/abs/1701.07875">WGAN（2017）</a>、<a href="https://arxiv.org/abs/1704.00028">WGAN-GP（2017）</a></td>
+<td>JSDの代わりにWasserstein距離を近似する。識別器（critic）の傾きを、重みの切り詰めや勾配への罰則で制限する</td>
+</tr>
+<tr>
+<td>識別器の出力が急に変わる</td>
+<td><a href="https://arxiv.org/abs/1802.05957">Spectral Normalization（2018）</a></td>
+<td>各層の重みを最大特異値で割り、入力の変化に対する識別器の変化を抑える</td>
+</tr>
+<tr>
+<td>高解像度で、生成の性質を制御したい</td>
+<td><a href="https://arxiv.org/abs/1812.04948">StyleGAN（2019）</a></td>
+<td>潜在変数を中間の表現に写し、各解像度の生成に「スタイル」として与える</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>GANは通常、各画像の厳密な尤度を直接は計算しません。次のNormalizing Flowは可逆性を制約として、密度を計算できる方向から生成を考えます。DiffusionやFlow Matchingは反復的な生成過程を学ぶ別の方向です。</p>
 </section>
 <section id="sources">
@@ -87,8 +135,15 @@
 <ul>
 <li><a href="https://arxiv.org/abs/1406.2661">Generative Adversarial Networks（2014） ↗</a></li>
 <li><a href="https://arxiv.org/abs/1611.07004">pix2pix：Image-to-Image Translation（2016） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1511.06434">DCGAN：Unsupervised Representation Learning with Deep Convolutional GANs（2015） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1701.07875">Wasserstein GAN（2017） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1704.00028">WGAN-GP：Improved Training of Wasserstein GANs（2017） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1802.05957">Spectral Normalization for GANs（2018） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1812.04948">StyleGAN：A Style-Based Generator Architecture（2019） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1706.08500">FID：GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium（2017） ↗</a></li>
+<li><a href="https://arxiv.org/abs/1904.06991">Improved Precision and Recall Metric for Assessing Generative Models（2019） ↗</a></li>
 </ul>
 </section>
 
-</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#why">GANの基本</a><a data-level="2" href="#two-networks">生成器と識別器</a><a data-level="2" href="#loss">生成器・識別器の学習</a><a data-level="2" href="#use">画像生成と画像変換</a><a data-level="2" href="#limits">生成品質と多様性</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
+</main><aside class="toc" aria-label="このページの目次"><strong>このページ</strong><a data-level="2" href="#why">GANの基本</a><a data-level="2" href="#two-networks">生成器と識別器</a><a data-level="2" href="#loss">生成器・識別器の学習</a><a data-level="3" href="#non-saturating">non-saturating損失を使う理由</a><a data-level="2" href="#optimal-d">最適な識別器と、生成器が近づけるもの</a><a data-level="2" href="#use">画像生成と画像変換</a><a data-level="2" href="#limits">生成品質と多様性</a><a data-level="3" href="#stabilizing">学習を安定させる工夫</a><a data-level="2" href="#sources">出典・参考資料</a></aside></div>
 </body></html>
