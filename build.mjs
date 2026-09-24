@@ -19,6 +19,7 @@ export const MAX_ASSET_BYTES = 15e6;
 // Public GitHub Pages address, used only for canonical/OGP URLs and the sitemap.
 export const SITE_URL = "https://edoaki.github.io/ml-landscape/";
 const OG_IMAGE = "assets/og-image.png";
+const PROVENANCE = "content/shared/media-provenance.md";
 const publicURL = (url) => SITE_URL + (url === "index.html" ? "" : url);
 // label: page banner, nav: sidebar badge, message: banner text (unpublished states only).
 export const STATUS = {
@@ -334,6 +335,8 @@ export function build(outputArg) {
   }))
     resources.set(file, path.join(ROOT, file));
   resources.set(OG_IMAGE, path.join(ROOT, OG_IMAGE));
+  // The distribution README points readers to the media record.
+  resources.set(PROVENANCE, path.join(ROOT, PROVENANCE));
   resources.delete("README.md");
   for (const [dest, file] of resources) {
     const size = fs.statSync(file).size;
