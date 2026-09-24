@@ -64,18 +64,6 @@ media-audio-score-backing.wav:
   provenance: content/shared/media-provenance.md
   conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
   verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
-media-low.wav:
-  url: content/fields/audio/media/low.wav
-  label: low.wav
-  provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
-  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
-media-mix.wav:
-  url: content/fields/audio/media/mix.wav
-  label: mix.wav
-  provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
-  verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
 media-audio-score-mix.wav:
   url: content/fields/audio/media/audio-score-mix.wav
   label: audio-score-mix.wav

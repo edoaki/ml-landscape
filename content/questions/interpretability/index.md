@@ -5,7 +5,8 @@ summary: AIが何を手がかりに、どう判断したかを調べます。画
 url: questions/interpretability.html
 status: ready
 scope: 判断の手がかり・反実仮想・内部機構を図と実例で説明し、個別手法の計算も同じページに置く
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - xai-advanced.html#start

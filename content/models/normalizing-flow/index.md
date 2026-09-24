@@ -5,7 +5,8 @@ summary: 生成したものを逆にたどれる。変換の伸縮を計算で�
 url: models/normalizing-flow.html
 status: migrated
 scope: ページ。可逆変換と密度・生成
-prerequisites: []
+prerequisites:
+- generative-overview
 related: []
 origins:
 - normalizing-flow.html#why

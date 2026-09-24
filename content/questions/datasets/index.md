@@ -5,7 +5,8 @@ summary: 製品検査を例に、収集・注釈、能動学習、不均衡・�
 url: questions/datasets.html
 status: ready
 scope: 何を学び測るために、どんなデータを用意するか。設計・収集・注釈、能動学習と費用、ラベルノイズ・不均衡・欠測、品質・範囲・更新、データ拡張・合成データ
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - learning.html#active-learning

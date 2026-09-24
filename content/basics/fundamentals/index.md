@@ -5,7 +5,8 @@ summary: 機械学習は、データから規則性を学び、未知のデー�
 url: basics/fundamentals.html
 status: ready
 scope: ページ。タスク・モデル・損失関数・学習アルゴリズム・勾配降下法・学習率・更新法、特徴・表現、入力データの表現・前処理、訓練・検証・テスト、過学習・汎化、データ数とモデルの容量、学習と推論、予測・生成・意思決定
-prerequisites: []
+prerequisites:
+- introduction
 related: []
 origins:
 - reliability.html#generalization

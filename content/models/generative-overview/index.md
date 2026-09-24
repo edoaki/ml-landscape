@@ -5,7 +5,8 @@ summary: 手書き数字を例に、分布を学ぶこと、条件を付ける�
 url: models/generative-overview.html
 status: ready
 scope: ページ。分布の学習、条件付き生成、標本の生成、各方式の位置付け
-prerequisites: []
+prerequisites:
+- probabilistic-inference
 related: []
 origins:
 - models.html#generative

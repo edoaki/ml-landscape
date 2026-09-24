@@ -5,7 +5,8 @@ summary: 手書き数字が表現の中で分かれる様子から、学習目�
 url: questions/representation-learning.html
 status: ready
 scope: どんな特徴を獲得するか。埋め込み、対比学習、AE・再構成、転用可能な表現、帰納バイアス・対称性
-prerequisites: []
+prerequisites:
+- learning
 related:
 - learning
 - vae

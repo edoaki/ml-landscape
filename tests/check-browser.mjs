@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { chromium } from "playwright";
 import { ROOT, pageFiles, readPage } from "../scripts/render-content.mjs";
+import { lowContrastText } from "./contrast.mjs";
 const { values } = parseArgs({
   options: {
     site: { type: "string", default: path.join(ROOT, "dist") },
@@ -27,7 +28,10 @@ const report = {
   interactions: [],
   errors: [],
 };
-const browser = await chromium.launch();
+// CHROMIUM_PATH lets preinstalled Chromium builds run the same checks.
+const browser = await chromium.launch(
+  process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
+);
 try {
   for (const js of [true, false])
     for (const width of [1440, 390, 320]) {
@@ -212,11 +216,20 @@ try {
   assert.ok(Math.abs((await audio.evaluate((a) => a.currentTime)) - at) < 1);
   await audio.evaluate((a) => a.pause());
   await visit("spatial");
-  const video = page.locator("video").first();
-  await video.evaluate((v) => v.play());
-  await page.waitForTimeout(250);
-  assert.ok((await video.evaluate((v) => v.currentTime)) > 0);
-  await video.evaluate((v) => v.pause());
+  // Open-source Chromium builds ship without H.264; playback cannot be checked there.
+  const h264 = await page.evaluate(
+    () =>
+      document
+        .createElement("video")
+        .canPlayType('video/mp4; codecs="avc1.42E01E"') !== "",
+  );
+  if (h264) {
+    const video = page.locator("video").first();
+    await video.evaluate((v) => v.play());
+    await page.waitForTimeout(250);
+    assert.ok((await video.evaluate((v) => v.currentTime)) > 0);
+    await video.evaluate((v) => v.pause());
+  } else report.skipped = ["H.264 video playback (browser lacks the codec)"];
   await visit("video");
   if (await page.locator('[data-frame-step="1"]').count()) {
     await page.locator('[data-frame-step="1"]').first().click();
@@ -370,7 +383,62 @@ try {
   report.interactions.push(
     "Robot states/reset, federated static stages, Bayesian values, direct disclosure anchor",
   );
+  // Offline search: the index loads over file://, results link to section anchors.
+  await visit("introduction");
+  await page.keyboard.press("/");
+  assert.ok(await page.locator("#search-input").isVisible());
+  await page.locator("#search-input").fill("Self-Attention");
+  await page.waitForFunction(
+    () => document.querySelectorAll(".search-results a").length > 0,
+  );
+  const hit = page.locator(".search-results a").first();
+  assert.match(await hit.getAttribute("href"), /\.html#/);
+  await hit.click();
+  await page.waitForLoadState();
+  assert.ok((await page.locator("main").innerText()).includes("Self-Attention"));
+  await page.locator(".search-toggle").click();
+  await page.locator("#search-input").fill("存在しない語句ぬぬぬ");
+  await page.waitForFunction(() =>
+    document.querySelector(".search-status").textContent.includes("見つかりません"),
+  );
+  await page.keyboard.press("Escape");
+  assert.ok(await page.locator(".search-panel").isHidden());
+  // Theme toggle overrides the OS setting and persists across pages.
+  await page.locator(".theme-toggle").click();
+  assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
+  await visit("cnn");
+  assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
+  await page.locator(".theme-toggle").click();
+  assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
+  report.interactions.push("Search (keyboard, results, anchors, no-hit, Escape) and theme toggle");
   await ctx.close();
+  // Text contrast in both themes, with every optional explanation expanded.
+  for (const colorScheme of ["light", "dark"]) {
+    const themed = await browser.newContext({
+      viewport: { width: 1440, height: 1000 },
+      offline: true,
+      reducedMotion: "reduce",
+      colorScheme,
+    });
+    const view = await themed.newPage();
+    for (const meta of pages) {
+      await view.goto(pathToFileURL(path.join(site, meta.url)).href);
+      await view.evaluate(() =>
+        document.querySelectorAll("details").forEach((d) => (d.open = true)),
+      );
+      assert.equal(
+        await view.locator("html").getAttribute("data-theme"),
+        colorScheme,
+      );
+      assert.deepEqual(
+        await view.evaluate(lowContrastText, 3),
+        [],
+        `${meta.id}: low contrast (${colorScheme})`,
+      );
+    }
+    await themed.close();
+  }
+  report.interactions.push("Text contrast ≥ 3:1 on all pages in light and dark themes");
   const timed = await browser.newContext({
       offline: true,
       reducedMotion: "no-preference",
@@ -420,5 +488,6 @@ try {
   );
 }
 console.log(
-  `Passed ${report.views.length * pages.length} offline page views and ${report.interactions.length} interaction groups.`,
+  `Passed ${report.views.length * pages.length} offline page views and ${report.interactions.length} interaction groups.` +
+    (report.skipped ? ` Skipped: ${report.skipped.join("; ")}.` : ""),
 );

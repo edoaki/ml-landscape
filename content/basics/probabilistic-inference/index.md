@@ -5,7 +5,8 @@ summary: コインの例で、データから未知の値を推定し、次の�
 url: basics/probabilistic-inference.html
 status: ready
 scope: 独立ページ。事前分布・尤度・事後分布・予測分布、ベイズ学習、潜在変数、MCMC・変分推論の入口
-prerequisites: []
+prerequisites:
+- fundamentals
 related:
 - uncertainty-unknowns
 origins: []

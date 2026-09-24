@@ -5,7 +5,8 @@ summary: 製品検査の例で、新しいことを学びながら以前の能�
 url: questions/continual-learning.html
 status: ready
 scope: 順次入る情報をどう学ぶか。更新、過去データへのアクセス、忘却
-prerequisites: []
+prerequisites:
+- transfer-learning
 related: []
 origins:
 - learning.html#continual

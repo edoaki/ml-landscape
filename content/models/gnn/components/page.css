@@ -16,3 +16,4 @@
 .gnn-animation-note{font-size:11px;line-height:1.7;color:var(--muted);text-align:center;margin:8px 12px}
 
 .gnn-change-legend{font-size:12px;line-height:1.8;text-align:center;color:#975026;margin:6px 8px 14px}.gnn-change-legend strong{display:inline-block;background:#fff0df;border:2px solid #b6531d;border-radius:5px;padding:3px 9px}
+[data-theme=dark] .gnn-value-graph{background:#fcfcf8;border-radius:8px;padding:6px}

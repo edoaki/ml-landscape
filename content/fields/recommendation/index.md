@@ -5,7 +5,8 @@ summary: 言葉や好みをベクトルで表し、大量の候補から合う�
 url: fields/recommendation.html
 status: migrated
 scope: 関連度、疎な検索・密な検索、候補生成、ランキング、フィードバック、評価、バンディットとの接点
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - time-graphs.html#recommendation

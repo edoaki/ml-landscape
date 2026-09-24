@@ -5,7 +5,8 @@ summary: 話し声から文字へ、文章から音声や音楽へ、混ざっ�
 url: fields/audio.html
 status: migrated
 scope: 認識、合成、生成、分離
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - audio.html#tasks
@@ -20,6 +21,8 @@ scripts:
 - content/fields/audio/components/audio.js
 styles:
 - content/fields/audio/components/page.css
+runtime_assets:
+- media/audio-score-*.wav
 english_title: Speech, Audio and Music
 ---
 

@@ -1,6 +1,0 @@
-<div class="fa-demo" aria-label="通常の実装とFlashAttentionの計算を順に見る">
-<div class="attention-patterns">
-<div class="fa-panel" data-method="normal"><h4>通常の素直な実装</h4><div class="fa-input">同じ入力を3つの範囲に分ける</div><div class="fa-arrow">↓ 計算して保存</div><div class="fa-memory"><strong>大容量メモリ</strong><div class="fa-blocks"><span class="fa-block filled" data-block="0"><b>1</b><span>▦</span></span><span class="fa-block filled" data-block="1"><b>2</b><span>▦</span></span><span class="fa-block filled" data-block="2"><b>3</b><span>▦</span></span></div><small>関連度・重みの表がたまる</small></div><div class="fa-arrow fa-transfer">↓ 表全体を読み戻す</div><div class="fa-output done">出力が完成</div><p class="fa-status">大きな表を保存し、読み戻して出力を計算。</p></div>
-<div class="fa-panel" data-method="flash"><h4>FlashAttention</h4><div class="fa-input">同じ入力を3つの範囲に分ける</div><div class="fa-arrow">↓ 小分けに読み込む</div><div class="fa-memory"><strong>小さく高速なメモリ</strong><div class="fa-work"><span class="fa-tile">▦</span><span class="fa-tile-label">同じ場所を使い回す</span></div><small>小さな作業領域を使い回せる</small></div><div class="fa-arrow fa-transfer">↓ その場で出力に反映</div><div class="fa-output done">出力が完成</div><p class="fa-status">範囲ごとに途中結果を補正しながら更新。</p></div></div>
-<p class="fa-explanation"><strong>計算結果を保ちながら、保存する途中の表と読み書きを減らす。</strong>メモリを節約でき、データの移動待ちも減るため高速化につながる。</p>
-</div>

@@ -4,8 +4,9 @@ title: GAN
 summary: 本物と見分けるモデルを、生成するモデルの学習信号に使う。更新する重みと、勾配が通る経路を分けて見ます。
 url: models/gan.html
 status: migrated
-scope: ページ。生成器・識別器と学習
-prerequisites: []
+scope: ページ。生成器・識別器と学習、non-saturating損失、最適な識別器、評価と安定化
+prerequisites:
+- generative-overview
 related: []
 origins:
 - gan.html#why
@@ -67,6 +68,28 @@ Dは本物を1、生成を0と判定するよう学ぶ。Gは生成物をDが1�
 
 D(G(z))が0.2ならGの損失−log(0.2)≈1.61、0.8なら≈0.22。Gはこの損失を下げる方向へ変わります。Dも変化するため、固定した一つの損失面を下る状況とは異なります。
 
+### non-saturating損失を使う理由 {#non-saturating}
+
+Dの出力を、sigmoid関数σを使ってD＝σ(a)と書きます（aはsigmoidに入る前の値）。原論文のminimax式でGが下げる項log(1−D)をaで微分すると、その大きさはDです。non-saturating損失−log Dでは1−Dです。
+
+学習の初期にDが生成物をすぐ見抜き、D(G(z))＝0.01になったとします。minimax式の勾配の大きさは0.01、non-saturating損失では0.99です。前者ではGがほとんど学習信号を受け取れません。原論文も、学習初期にはlog D(G(z))を大きくする形でGを学習することを勧めています。
+
+</section>
+
+<section id="optimal-d" markdown="1">
+
+## 最適な識別器と、生成器が近づけるもの
+
+Gを固定すると、各データxで最もよい識別器は次の形になります。p_dataは実データの確率（密度）、p_GはGが作るデータの確率です。
+
+$
+D^*(x) = \frac{p_{\mathrm{data}}(x)}{p_{\mathrm{data}}(x) + p_G(x)}
+$
+
+例えば、ある種類の画像が実データでは30%、生成物では10%の割合で現れるなら、D*＝0.3÷(0.3＋0.1)＝0.75です。逆に生成物に多すぎる種類では0.5を下回ります。Dの判定は、その種類を増やすか減らすかの手がかりになります。p_Gがp_dataと一致すれば、どのxでもD*＝1/2となり、Dは見分けられません。
+
+原論文は、このD*のもとでminimax式の値が−log 4＋2·JSD(p_data‖p_G)になることを示しました。JSD（Jensen–Shannonダイバージェンス）は二つの分布の違いを測る量で、分布が一致したときだけ0になります。つまり理想的には、Gは実データの分布に一致したときに最もよくなります。ただし実際には、各段階でDを最適まで学習せず、ネットワークの表現力やデータ数にも限りがあるため、この理想どおりには進みません。
+
 </section>
 
 <section id="use" markdown="1">
@@ -93,6 +116,23 @@ D(G(z))が0.2ならGの損失−log(0.2)≈1.61、0.8なら≈0.22。Gはこの�
 
 生成器が少数の似た画像ばかり出しても、その一枚は自然に見えるかもしれません。これがmode collapse（生成の多様性の崩壊）の問題です。またDが強すぎるなどの理由でGが有効な勾配を得にくい場合があります。損失の値だけで画質・多様性を判断せず、複数の評価を使います。
 
+**FID**（Fréchet Inception Distance）は、学習済みの画像分類モデル（Inception）の特徴空間で、本物と生成物の特徴をそれぞれ正規分布で近似し、平均と共分散の違いを測ります。小さいほど二つの分布が近いことを表します。一つの値に画質と多様性が混ざり、標本の数や画像の前処理でも値が変わるため、同じ条件で比べます。[FID ↗](source:ref-008)
+
+画質と多様性を分けるには、**適合率**（生成物のうち、本物の特徴が集まる範囲に入るものの割合）と**再現率**（本物のうち、生成物の範囲に覆われるものの割合）を使います。mode collapseでは、適合率が高いまま再現率が下がります。[適合率と再現率 ↗](source:ref-009)
+
+### 学習を安定させる工夫 {#stabilizing}
+
+<div class="table-scroll" tabindex="0" markdown="1">
+
+| 課題 | 代表的な工夫 | 考え方 |
+| --- | --- | --- |
+| 画像での学習が不安定 | [DCGAN（2015）](source:ref-003) | 畳み込みと転置畳み込み、Batch Normalizationなど、学習しやすい構成を整理した |
+| 本物と生成物の分布が重ならないと、勾配が乏しい | [WGAN（2017）](source:ref-004)、[WGAN-GP（2017）](source:ref-005) | JSDの代わりにWasserstein距離を近似する。識別器（critic）の傾きを、重みの切り詰めや勾配への罰則で制限する |
+| 識別器の出力が急に変わる | [Spectral Normalization（2018）](source:ref-006) | 各層の重みを最大特異値で割り、入力の変化に対する識別器の変化を抑える |
+| 高解像度で、生成の性質を制御したい | [StyleGAN（2019）](source:ref-007) | 潜在変数を中間の表現に写し、各解像度の生成に「スタイル」として与える |
+
+</div>
+
 GANは通常、各画像の厳密な尤度を直接は計算しません。次のNormalizing Flowは可逆性を制約として、密度を計算できる方向から生成を考えます。DiffusionやFlow Matchingは反復的な生成過程を学ぶ別の方向です。
 
 </section>
@@ -103,5 +143,12 @@ GANは通常、各画像の厳密な尤度を直接は計算しません。次�
 
 * [Generative Adversarial Networks（2014） ↗](source:ref-001)
 * [pix2pix：Image-to-Image Translation（2016） ↗](source:ref-002)
+* [DCGAN：Unsupervised Representation Learning with Deep Convolutional GANs（2015） ↗](source:ref-003)
+* [Wasserstein GAN（2017） ↗](source:ref-004)
+* [WGAN-GP：Improved Training of Wasserstein GANs（2017） ↗](source:ref-005)
+* [Spectral Normalization for GANs（2018） ↗](source:ref-006)
+* [StyleGAN：A Style-Based Generator Architecture（2019） ↗](source:ref-007)
+* [FID：GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium（2017） ↗](source:ref-008)
+* [Improved Precision and Recall Metric for Assessing Generative Models（2019） ↗](source:ref-009)
 
 </section>

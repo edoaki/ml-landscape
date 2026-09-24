@@ -5,7 +5,8 @@ summary: 文章の理解・要約・翻訳・生成を、具体的な文章と�
 url: fields/language.html
 status: ready
 scope: 認識・分類、翻訳、質問応答、文章生成、LLMの利用例、RAGの設計と評価、言語固有の能力評価
-prerequisites: []
+prerequisites:
+- learning
 related:
 - llm
 - multimodal

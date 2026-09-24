@@ -5,7 +5,8 @@ summary: 学習に使える情報の違いを、製品検査の例で比べま�
 url: basics/learning.html
 status: ready
 scope: ページ。教師あり、教師なし、自己教師あり、半教師あり、弱教師あり、強化学習。教師信号の得方と利用できる情報
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - foundations.html#supervised

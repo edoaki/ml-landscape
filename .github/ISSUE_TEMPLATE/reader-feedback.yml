@@ -1,0 +1,44 @@
+name: 読者からの感想・指摘
+description: 分かりにくい説明、誤り、読むのにかかった時間などを知らせる
+labels: [reader-feedback]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: ページ
+      description: ページのURLまたはタイトル（節が分かれば見出しも）
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 種類
+      options:
+        - 分かりにくい・前提知識が足りない
+        - 内容や数値の誤り
+        - 出典・図の条件
+        - 表示や操作の不具合
+        - その他
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: 内容
+      description: どこで、何が、なぜ気になったか
+    validations:
+      required: true
+  - type: dropdown
+    id: background
+    attributes:
+      label: 読んだ人の背景（任意）
+      options:
+        - 学部生（機械学習は初学者）
+        - 学部生・院生（授業や研究で扱った）
+        - 実務で扱っている
+        - その他
+  - type: input
+    id: time
+    attributes:
+      label: 読むのにかかった時間（任意）
+      description: 例：約25分（図の操作を含む）

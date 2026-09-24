@@ -18,3 +18,15 @@ inference:
   label: vLLM：分散推論と並列化
   verified_on: '2026-09-20'
   verification: 公式解説で分担方法と通信の必要性を確認。本文の数値例は独自の仮定。
+zero:
+  url: https://arxiv.org/abs/1910.02054
+  label: "ZeRO：Memory Optimizations Toward Training Trillion Parameter Models（2019）"
+  verification: 2026-09-24追加。本文の数式は著者論文の定義に基づき、数値例は独自の仮定。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+gpipe:
+  url: https://arxiv.org/abs/1811.06965
+  label: "GPipe：Efficient Training of Giant Neural Networks using Pipeline Parallelism（2018）"
+  verification: 2026-09-24追加。本文の数式は著者論文の定義に基づき、数値例は独自の仮定。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+paged-attention:
+  url: https://arxiv.org/abs/2309.06180
+  label: "PagedAttention：Efficient Memory Management for Large Language Model Serving（2023）"
+  verification: 2026-09-24追加。本文の数式は著者論文の定義に基づき、数値例は独自の仮定。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。

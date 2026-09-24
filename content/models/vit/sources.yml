@@ -11,3 +11,11 @@ ref-003:
   label: CLIP：Learning Transferable Visual Models From Natural Language Supervision（2021）
     ↗
   verification: 既存掲載情報を保持。移行時の一次資料再確認は未実施。
+ref-004:
+  url: https://arxiv.org/abs/2012.12877
+  label: DeiT：Training data-efficient image transformers & distillation through attention（2021） ↗
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。
+ref-005:
+  url: https://arxiv.org/abs/2103.14030
+  label: Swin Transformer：Hierarchical Vision Transformer using Shifted Windows（2021） ↗
+  verification: 2026-09-24追加。既知の要旨に基づく記述。作業環境から著者論文へ接続できず、一次資料の再確認は未実施。

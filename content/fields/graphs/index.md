@@ -5,7 +5,8 @@ summary: 論文の引用と分子を例に、ノード・辺・グラフ全体�
 url: fields/graphs.html
 status: ready
 scope: ノード・辺・グラフ全体の問い、GNN以外の方法
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - time-graphs.html#graphs

@@ -5,7 +5,8 @@ summary: 熱の伝わり方を例に、数値計算の代わりとなる代理�
 url: fields/science.html
 status: ready
 scope: 物理法則の組み込み、逆問題、PINNs、代理モデル、ニューラルオペレーター
-prerequisites: []
+prerequisites:
+- learning
 related:
 - life-science
 - earth-science

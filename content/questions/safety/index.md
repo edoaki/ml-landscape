@@ -5,7 +5,8 @@ summary: 教材推薦を例に、失敗が人に及ぼす影響、集団ごと�
 url: questions/safety.html
 status: ready
 scope: 人に関わるモデルの影響をどう評価し抑えるか。失敗の影響と人への引き継ぎ、集団別の誤りや不利益、データの情報漏洩と保護
-prerequisites: []
+prerequisites:
+- fundamentals
 related:
 - uncertainty-unknowns
 - federated-learning

@@ -5,7 +5,8 @@ summary: 確率分布の集まりに長さの測り方を与え、分布どう�
 url: questions/information-geometry.html
 status: ready
 scope: 分布を点として表す空間、座標と長さの区別、KLの局所近似からFisher計量へ、経路とFisher–Rao距離、損失と計量から自然勾配を考える。
-prerequisites: []
+prerequisites:
+- probabilistic-inference
 related:
 - fundamentals
 - probabilistic-inference

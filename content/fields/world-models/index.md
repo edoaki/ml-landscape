@@ -5,7 +5,8 @@ summary: 箱を押す例で、環境変化の学習、候補行動の予測、�
 url: fields/world-models.html
 status: ready
 scope: 行動に応じた環境変化の予測、候補行動の比較、モデルの誤差
-prerequisites: []
+prerequisites:
+- decision-making
 related: []
 origins:
 - decision-science.html#planning

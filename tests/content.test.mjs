@@ -11,24 +11,22 @@ import {
   pageFiles,
   render,
 } from "../scripts/render-content.mjs";
-import { pageToc, validatePages } from "../build.mjs";
+import {
+  pageToc,
+  validatePages,
+  validatePrerequisites,
+  searchEntries,
+  SITE_URL,
+  MAX_ASSET_BYTES,
+} from "../build.mjs";
 
-test("navigation matches content plan, page metadata and hierarchy", () => {
+test("navigation matches page metadata and hierarchy", () => {
   const nav = YAML.parse(read(path.join(ROOT, "navigation.yml"))),
     ids = nav.flatMap((g) => g.items.map((p) => p.page));
-  const plan = read(path.join(ROOT, "docs/content-plan.md"))
-    .split("## 2.")[1]
-    .split("## 3.")[0];
-  const expected = new Set([
-    "introduction",
-    ...[...plan.matchAll(/\| `([a-z][a-z-]+)` \|/g)].map((m) => m[1]),
-  ]);
+  const expected = new Set(pageFiles().map((p) => readPage(p)[0].id));
   assert.deepEqual(new Set(ids), expected);
   assert.equal(ids.length, expected.size);
-  assert.deepEqual(
-    new Set(pageFiles().map((p) => readPage(p)[0].id)),
-    expected,
-  );
+  assert.ok(expected.has("introduction"));
   assert.deepEqual(
     nav.map((g) => g.title),
     [
@@ -137,7 +135,7 @@ test("checked-in distribution is complete and independent of source/development 
     if (!/^(?:[a-z]+:|\/\/|#)/i.test(value))
       assert.ok(fs.existsSync(path.join(ROOT, value.split(/[?#]/)[0])), value);
   });
-  const pdb = read(path.join(site, "assets/alphafold-P69905-v6.pdb"))
+  const pdb = read(path.join(ROOT, "assets/alphafold-P69905-v6.pdb"))
     .split("\n")
     .filter((s) => s.startsWith("ATOM") && s.slice(12, 16).trim() === "CA");
   assert.equal(pdb.length, 142);
@@ -177,4 +175,95 @@ test("source metadata and bundled fonts resolve", () => {
           path.join(ROOT, "assets", value.replace(/^['"]|['"]$/g, "")),
         ),
       );
+});
+
+test("prerequisites name existing pages without cycles", () => {
+  const registry = Object.fromEntries(
+    pageFiles().map((file) => {
+      const [meta] = readPage(file);
+      return [meta.id, meta];
+    }),
+  );
+  validatePrerequisites(registry);
+  for (const [id, meta] of Object.entries(registry))
+    if (id !== "introduction") assert.ok(meta.prerequisites.length, id);
+  assert.throws(
+    () =>
+      validatePrerequisites({
+        a: { prerequisites: ["b"] },
+        b: { prerequisites: ["a"] },
+      }),
+    /Cyclic/,
+  );
+  assert.throws(
+    () => validatePrerequisites({ a: { prerequisites: ["missing"] } }),
+    /unknown/,
+  );
+});
+test("search index splits pages at anchored headings and drops markup noise", () => {
+  const $ = load(
+    '<p>導入の<strong>本文</strong>です。</p><section id="attn"><h2>注意機構</h2><p>Self-<em>Attention</em>は</p><div class="equation"><span class="katex">x^2</span></div><svg><text>図の文字</text></svg></section><h3 id="next">次</h3><p>続き</p>',
+  );
+  const entries = searchEntries($, { url: "models/x.html", title: "X" });
+  assert.deepEqual(
+    entries.map((e) => [e.h, e.s, e.x]),
+    [
+      ["", "X", "導入の本文です。"],
+      ["attn", "注意機構", "Self-Attentionは"],
+      ["next", "次", "続き"],
+    ],
+  );
+});
+test("distribution ships search, sitemap, OGP and only referenced media", () => {
+  const site = path.resolve(
+    process.env.ML_LANDSCAPE_SITE || path.join(ROOT, "dist"),
+  );
+  const pages = pageFiles().map((file) => readPage(file)[0]);
+  global.window = {};
+  new Function(read(path.join(site, "assets/search-index.js")))();
+  const index = global.window.ML_SEARCH_INDEX;
+  delete global.window;
+  assert.deepEqual(
+    new Set(index.map((e) => e.u)),
+    new Set(pages.filter((m) => m.status !== "planned").map((m) => m.url)),
+  );
+  const sitemap = read(path.join(site, "sitemap.xml"));
+  for (const meta of pages)
+    assert.ok(
+      sitemap.includes(
+        SITE_URL + (meta.url === "index.html" ? "" : meta.url) + "<",
+      ),
+      meta.id,
+    );
+  const vit = load(read(path.join(site, "models/vit.html")));
+  assert.equal(vit('link[rel="canonical"]').attr("href"), SITE_URL + "models/vit.html");
+  assert.ok(fs.existsSync(path.join(site, "assets/og-image.png")));
+  assert.ok(fs.existsSync(path.join(site, "assets/favicon.svg")));
+  // Every asset or page media file must be shipped; only notes and raw data may stay unreferenced.
+  const shipped = new Set(
+    fs.globSync("**/*", { cwd: site }).map((p) => p.split(path.sep).join("/")),
+  );
+  const unused = fs
+    .globSync(["assets/*", "content/*/*/media/*"], { cwd: ROOT })
+    .map((p) => p.split(path.sep).join("/"))
+    .filter((p) => !shipped.has(p) && !/\.(md|txt|json|pdb)$/.test(p));
+  assert.deepEqual(unused, [], "unreferenced media: delete or reference them");
+  for (const file of shipped) {
+    const size = fs.statSync(path.join(site, file)).size;
+    assert.ok(size <= MAX_ASSET_BYTES, file);
+  }
+});
+test("every page component and page script/style is used by its page", () => {
+  for (const file of pageFiles()) {
+    const dir = path.dirname(file),
+      [meta, body] = readPage(file);
+    const used = new Set([
+      ...[...body.matchAll(/\{\{component:([a-z0-9-]+)\}\}/g)].map((m) => m[1] + ".html"),
+      ...[...(meta.scripts || []), ...(meta.styles || [])].map((p) => path.basename(p)),
+    ]);
+    const components = path.join(dir, "components");
+    if (!fs.existsSync(components)) continue;
+    for (const name of fs.readdirSync(components))
+      assert.ok(used.has(name), `${path.relative(ROOT, components)}/${name} is unused`);
+  }
 });

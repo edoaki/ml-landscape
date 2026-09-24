@@ -5,7 +5,8 @@ summary: Transformerは、要素どうしの関係に応じて情報を集め、
 url: models/transformer.html
 status: migrated
 scope: ページ。注意機構、FFN、残差・正規化、位置情報、マスクとEncoder・Decoderの構造
-prerequisites: []
+prerequisites:
+- fundamentals
 related:
 - llm
 - vit

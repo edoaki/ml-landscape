@@ -5,7 +5,8 @@ summary: モデルを保存する容量、予測する計算、追加学習の�
 url: questions/efficiency.html
 status: ready
 scope: 計算・保存・更新の費用をどう減らすか。蒸留、量子化、枝刈り、PEFT、疎なAttentionとFlashAttention
-prerequisites: []
+prerequisites:
+- transfer-learning
 related: []
 origins:
 - efficiency.html#cost

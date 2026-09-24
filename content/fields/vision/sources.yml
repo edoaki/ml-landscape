@@ -46,7 +46,7 @@ media-pose-result.png:
   url: content/fields/vision/media/pose-result.png
   label: pose-result.png
   provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  conditions: 2026-09-24にPNGを可逆再圧縮（画素値は同一、メタデータは除去）。本文の対応キャプションと素材記録を参照。
   verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
 media-depth-bicycle-input.jpg:
   url: content/fields/vision/media/depth-bicycle-input.jpg
@@ -82,11 +82,11 @@ media-blazepose-fig6-yoga1.png:
   url: content/fields/vision/media/blazepose-fig6-yoga1.png
   label: blazepose-fig6-yoga1.png
   provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  conditions: 2026-09-24にPNGを可逆再圧縮（画素値は同一、メタデータは除去）。本文の対応キャプションと素材記録を参照。
   verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。
 media-blazepose-fig6-yoga2.png:
   url: content/fields/vision/media/blazepose-fig6-yoga2.png
   label: blazepose-fig6-yoga2.png
   provenance: content/shared/media-provenance.md
-  conditions: 本文の対応キャプションと素材記録を参照。既存ファイルをバイト単位で保持。
+  conditions: 2026-09-24にPNGを可逆再圧縮（画素値は同一、メタデータは除去）。本文の対応キャプションと素材記録を参照。
   verification: 今回の移行では素材の同一性を照合。一次資料の再確認は未実施。

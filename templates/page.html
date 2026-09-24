@@ -4,14 +4,19 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="$description"><meta name="color-scheme" content="light">
 <title>$title | 機械学習の全体像</title>
+<link rel="canonical" href="$canonical"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="$ogtype"><meta property="og:site_name" content="機械学習の全体像"><meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="$title"><meta property="og:description" content="$description"><meta property="og:url" content="$canonical">
+<meta property="og:image" content="$ogimage"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/katex.css"><link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="assets/navigation.css"><link rel="stylesheet" href="assets/content.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('landscape-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}</script>
 <noscript><link rel="stylesheet" href="assets/no-script.css"></noscript>
 <script src="assets/navigation.js" defer></script>
 $scripts
 </head>
 <body data-page="$id" data-site-root=".">
 <a class="skip" href="#main">本文へ移動</a>
-<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div></header>
+<header class="topbar"><div class="brand-group"><button class="mobile-menu" type="button" aria-label="目次を切り替える" aria-expanded="true" aria-controls="chapter-nav">☰</button><a class="brand" href="index.html">MACHINE LEARNING <span>機械学習の全体像</span></a></div><div class="top-actions"><button class="theme-toggle" type="button" hidden aria-pressed="false" title="暗い配色に切り替える"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M13.5 10.2A6 6 0 0 1 5.8 2.5a6 6 0 1 0 7.7 7.7z" fill="currentColor"/></svg><span class="sr-only">暗い配色</span></button><div class="site-search" hidden><button class="search-toggle" type="button" aria-expanded="false" aria-controls="search-panel" title="本文を検索（/ キー）"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M11 11l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>検索</span></button><div class="search-panel" id="search-panel" role="search" hidden><label class="sr-only" for="search-input">本文を検索</label><input id="search-input" type="search" placeholder="語句で本文を検索" autocomplete="off" spellcheck="false"><p class="search-status" aria-live="polite"></p><ol class="search-results"></ol></div></div></div></header>
 <div class="layout"><nav class="sidenav" id="chapter-nav" aria-label="教材の目次">$navigation</nav>
 <main class="article" id="main"><header class="hero"><p class="eyebrow">$group</p><h1>$title</h1><p class="lead">$summary</p>$status</header>
 $body

@@ -5,7 +5,8 @@ summary: 大規模言語モデル（Large Language Model; LLM）は、大量の�
 url: models/llm.html
 status: ready
 scope: 独立ページ。GPT型を例に文章の入力から次トークンの予測・生成、学習時との違い、系列確率・サンプリング・温度を説明。構造・計算の詳説はTransformerへリンク
-prerequisites: []
+prerequisites:
+- transformer
 related:
 - transformer
 - language

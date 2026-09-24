@@ -5,7 +5,8 @@ summary: 何があるか、どこにあるか、どの画素か、どれだけ�
 url: fields/vision.html
 status: migrated
 scope: 分類、回帰、検出、領域分割、深度、姿勢
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - vision.html#output

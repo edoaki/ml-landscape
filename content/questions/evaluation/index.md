@@ -5,7 +5,8 @@ summary: モデルを適切に比較するための評価指標、データ分�
 url: questions/evaluation.html
 status: ready
 scope: 能力や改善をどう測るか。指標、比較条件、データ分割、モデル選択・ハイパーパラメータ探索、汚染・漏洩、ばらつき、再現性、ベンチマークの限界
-prerequisites: []
+prerequisites:
+- fundamentals
 related:
 - datasets
 - fundamentals

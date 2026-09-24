@@ -5,7 +5,8 @@ summary: 行動と報酬から学ぶ基本を起点に、行動記録からの�
 url: fields/decision-making.html
 status: ready
 scope: 状態・行動・報酬、方策・価値、探索と活用、バンディット、模倣・オフライン・逆強化学習、マルチエージェント、ロボットと実環境への移行
-prerequisites: []
+prerequisites:
+- learning
 related: []
 origins:
 - decision-science.html#decision

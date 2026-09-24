@@ -5,7 +5,8 @@ summary: バラバラに結んだ直線の速度から、なぜ新しいデー�
 url: models/flow-matching.html
 status: migrated
 scope: ページ。分布間の流れと速度場の学習
-prerequisites: []
+prerequisites:
+- diffusion
 related: []
 origins:
 - flow-matching.html#purpose

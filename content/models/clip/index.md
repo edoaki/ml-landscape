@@ -5,7 +5,9 @@ summary: 猫と犬の写真を例に、画像と言葉の一致度を比べる�
 url: models/clip.html
 status: ready
 scope: 二つのエンコーダ、共通特徴空間、対照学習、利用時の検索と分類
-prerequisites: []
+prerequisites:
+- representation-learning
+- vit
 related: []
 origins:
 - language.html#matching

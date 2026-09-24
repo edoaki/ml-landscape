@@ -5,7 +5,8 @@ summary: データを持ち出さず、各地で学習したモデルを持ち�
 url: questions/federated-learning.html
 status: ready
 scope: データを各端末・組織に置いてどう協力するか。通信、データの違い、個別化
-prerequisites: []
+prerequisites:
+- distributed-systems
 related:
 - safety
 - distributed-systems

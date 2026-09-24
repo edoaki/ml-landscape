@@ -5,7 +5,8 @@ summary: ぼけた猫と未知のウサギを例に、不確実性・校正・�
 url: questions/uncertainty-unknowns.html
 status: ready
 scope: 予測をどこまで信頼できるか。不確実性、校正、未知クラス・分布外の検出、判断の保留
-prerequisites: []
+prerequisites:
+- probabilistic-inference
 related: []
 origins:
 - reliability.html#uncertainty

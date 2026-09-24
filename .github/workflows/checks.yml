@@ -1,0 +1,41 @@
+name: Checks
+
+# Verification only: this workflow never publishes. Pages stays manual (pages.yml).
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      links:
+        description: "Also request every external source URL"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Generated files match the sources
+        run: npm run check:dist
+      - run: npm test
+      - run: npm run check:sources
+      - name: Browser checks
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-results
+          path: test-results/browser/
+      - name: External source URLs
+        if: github.event_name == 'workflow_dispatch' && inputs.links
+        run: npm run check:links

@@ -5,7 +5,8 @@ summary: 来客数の予測と購入履歴の分析を例に、線形モデル�
 url: basics/classical.html
 status: ready
 scope: 代表的な古典的手法の目的、学習と利用の仕組み、具体的な計算、使い分けと研究の広がり
-prerequisites: []
+prerequisites:
+- fundamentals
 related: []
 origins:
 - classics.html#prediction

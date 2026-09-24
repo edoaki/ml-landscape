@@ -1,5 +1,4 @@
 page_local:
-  reliability.svg: fundamentals
   dino-supervised.png: learning
   dino-self-supervised.png: learning
   hippo-framework.png: ssm
@@ -35,8 +34,6 @@ page_local:
   audio-spectrogram.png: audio
   audio-score-melody.wav: audio
   audio-score-backing.wav: audio
-  low.wav: audio
-  mix.wav: audio
   audio-score-mix.wav: audio
   audio-tts-normal.wav: audio
   audio-tacotron2-human.wav: audio
@@ -47,8 +44,9 @@ page_local:
   decision-diamond.mp4: world-models
   dgmr-rain-poster.jpg: earth-science
   dgmr-rain.mp4: earth-science
-  gradcam-original.png: robustness
   optimization-descent-poster.jpg: optimization
+  sam2-input-*.jpg: video
+  sam2-track-*.png: video
 shared:
   pet-cat.jpg:
   - efficiency
@@ -61,16 +59,9 @@ shared:
   - video
   sam2-result.jpg:
   - video
-  sam2-:
-  - spatial
-  - video
   genie3-racetrack-poster.jpg:
   - video
   genie3-racetrack.mp4:
-  - video
-  sam2-input-0.jpg:
-  - video
-  sam2-track-0.png:
   - video
   sora-tokyo-clip.mp4:
   - video
@@ -112,6 +103,4 @@ shared:
   - interpretability
   counterfactual.png:
   - interpretability
-  gradcam-:
-  - interpretability
-legacy_assets: 旧素材パスは互換性と既存作図スクリプトのため保持。公開本文の編集はcontent/を使用。
+legacy_assets: 2026-09-24に、どのページからも参照されない旧素材（重複コピー・差し替え前の図・未使用の動画など109件）をassets/から削除。必要な場合はGit履歴から復元できる。
