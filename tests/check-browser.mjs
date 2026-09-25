@@ -403,7 +403,7 @@ try {
   );
   await page.keyboard.press("Escape");
   assert.ok(await page.locator(".search-panel").isHidden());
-  // Theme toggle overrides the OS setting and persists across pages.
+  // Theme toggle remembers an explicit choice across pages.
   await page.locator(".theme-toggle").click();
   assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
   await visit("cnn");
@@ -412,7 +412,22 @@ try {
   assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
   report.interactions.push("Search (keyboard, results, anchors, no-hit, Escape) and theme toggle");
   await ctx.close();
-  // Text contrast in both themes, with every optional explanation expanded.
+  // A dark OS and legacy saved preference must still start with the white design.
+  const defaults = await browser.newContext({ colorScheme: "dark" });
+  await defaults.addInitScript(() => localStorage.setItem("landscape-theme", "dark"));
+  const defaultView = await defaults.newPage();
+  await defaultView.goto(pathToFileURL(path.join(site, "index.html")).href);
+  assert.equal(await defaultView.locator("html").getAttribute("data-theme"), "light");
+  assert.equal(await defaultView.evaluate(() => getComputedStyle(document.documentElement).backgroundColor), "rgb(255, 255, 255)");
+  await defaultView.emulateMedia({ colorScheme: "light" });
+  await defaultView.emulateMedia({ colorScheme: "dark" });
+  assert.equal(await defaultView.locator("html").getAttribute("data-theme"), "light");
+  await defaultView.locator(".theme-toggle").click();
+  await defaultView.reload();
+  assert.equal(await defaultView.locator("html").getAttribute("data-theme"), "dark");
+  await defaults.close();
+  report.interactions.push("White default despite dark OS and legacy preference; explicit dark choice persists");
+  // Text contrast in both explicitly selected themes, with optional explanations expanded.
   for (const colorScheme of ["light", "dark"]) {
     const themed = await browser.newContext({
       viewport: { width: 1440, height: 1000 },
@@ -420,6 +435,7 @@ try {
       reducedMotion: "reduce",
       colorScheme,
     });
+    await themed.addInitScript((theme) => localStorage.setItem("landscape-theme-v2", theme), colorScheme);
     const view = await themed.newPage();
     for (const meta of pages) {
       await view.goto(pathToFileURL(path.join(site, meta.url)).href);

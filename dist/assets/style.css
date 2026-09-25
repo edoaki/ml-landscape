@@ -9,7 +9,7 @@ figure .diagram-image{min-width:720px;max-width:none;width:100%;padding:0}.demo>
 .equation .katex-display>.katex{text-align:left}
 .equation .katex{font-size:1.15em}
 @media print{.equation{overflow:visible;break-inside:avoid}}
-/* Dark theme. navigation.js sets data-theme before paint from the saved choice or the OS setting.
+/* Dark theme. navigation.js sets data-theme before paint from an explicit saved choice, defaulting to light.
    Figures and demos stay light "islands" because their hand-drawn SVGs assume a light ground. */
 :root[data-theme=dark]{--ink:#e2e8e1;--muted:#a7b5a9;--green:#8fc6a2;--paper:#131916;--line:#2e3a32;--tint:#1d2821;--blue:#91b8d6;--accent:#e2a57c;--surface:#1a211d;--highlight:#6d5c1d;--panel:#1a211d;--note:#1c271f;--th:#1f2a22;--th-ink:#c5d9c3;color-scheme:dark}
 [data-theme=dark] a:hover{color:#b6dcc2}

@@ -42,20 +42,15 @@
   }
   window.addEventListener('hashchange',revealFragment);
   revealFragment();
-  // Theme: the head script applied the saved or OS choice; the button overrides and remembers it.
+  // Default to light; only an explicit choice in this version enables dark mode.
   const themeButton=$('.theme-toggle'),docEl=document.documentElement;
   if(themeButton){
-    const osDark=window.matchMedia('(prefers-color-scheme: dark)');
     const sync=()=>{const dark=docEl.dataset.theme==='dark';themeButton.setAttribute('aria-pressed',String(dark));themeButton.title=dark?'明るい配色に切り替える':'暗い配色に切り替える';};
     themeButton.hidden=false;sync();
     themeButton.addEventListener('click',()=>{
       const next=docEl.dataset.theme==='dark'?'light':'dark';
       docEl.dataset.theme=next;sync();
-      try{localStorage.setItem('landscape-theme',next);}catch{}
-    });
-    osDark.addEventListener('change',()=>{
-      let saved=null;try{saved=localStorage.getItem('landscape-theme');}catch{}
-      if(!saved){docEl.dataset.theme=osDark.matches?'dark':'light';sync();}
+      try{localStorage.setItem('landscape-theme-v2',next);}catch{}
     });
   }
   // Offline full-text search: the index is a script so it also loads over file://.
