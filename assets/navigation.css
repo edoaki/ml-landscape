@@ -1,4 +1,14 @@
 /* Shared navigation layout, kept separate from lesson illustrations. */
+:root{--nav-section:#334e68;--nav-category:#596579;--nav-page:#35664d;--nav-child:#725789}
+.sidenav summary{color:var(--nav-section);background:#f5f7fa;border-radius:5px;margin-top:8px;padding-bottom:12px}
+.sidenav a{color:var(--nav-page)}
+.sidenav a[data-parent]{color:var(--nav-child)}
+.sidenav a:hover{background:#f7f9f8}
+.sidenav a[data-parent]:hover{background:#f8f6fb}
+.sidenav a[data-parent][aria-current=page]{color:var(--nav-child);background:#f4f0f8;border-left-color:var(--nav-child)}
+.toc a[data-level="2"]{color:var(--nav-page)}
+.toc a[data-level="3"]{color:var(--nav-child)}
+.toc a.active{font-weight:700;text-decoration:underline;text-underline-offset:4px}
 .brand-group{display:flex;align-items:center;gap:14px;min-width:0}
 .mobile-menu{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:36px;height:36px;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted)}
 .mobile-menu:hover{background:var(--tint);color:var(--green)}
@@ -41,3 +51,12 @@
 .search-results mark{background:var(--highlight);color:inherit;padding:0 1px}
 @media(max-width:520px){.search-toggle span{display:none}.search-toggle{padding:0 10px}.search-panel{position:fixed;left:12px;right:12px;top:58px;width:auto}}
 @media print{.site-search{display:none}}
+
+/* Preserve hierarchy and contrast when the reader chooses the dark theme. */
+:root[data-theme=dark]{--nav-section:#b5cde3;--nav-category:#adbacc;--nav-page:#8fc6a2;--nav-child:#cbb5e0}
+[data-theme=dark] .sidenav summary{color:var(--nav-section);background:#1c252e}
+[data-theme=dark] .sidenav .nav-category{color:var(--nav-category)}
+[data-theme=dark] .sidenav a:hover{background:#202b24}
+[data-theme=dark] .sidenav a[data-parent]:hover{background:#2a2233}
+[data-theme=dark] .sidenav a[data-parent][aria-current=page]{color:var(--nav-child);background:#2a2233;border-left-color:var(--nav-child)}
+[data-theme=dark] .sidenav a[data-parent]::before{color:var(--nav-child)}
